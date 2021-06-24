@@ -1,0 +1,596 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE rfc SYSTEM "rfc2629-xhtml.ent">
+
+<?rfc toc="yes"?>
+<?rfc tocompact="yes"?>
+<?rfc tocdepth="3"?>
+<?rfc tocindent="yes"?>
+<?rfc symrefs="yes"?>
+<?rfc sortrefs="yes"?>
+<?rfc comments="yes"?>
+<?rfc inline="yes"?>
+<?rfc compact="no"?>
+<?rfc subcompact="no"?>
+<?rfc authorship="yes"?>
+<?rfc tocappendix="yes"?>
+<rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true" updates='' obsoletes="" consensus="true" submissionType="IETF" xml:lang="en" version="3" docName="draft-thubert-bess-evnp-Host-injection-00" >
+
+
+<front>
+
+
+    <title abbrev='eVPN Unaware Hosts'>Routing for eVPN Hosts</title>
+
+   <author initials='P' surname='Thubert' fullname='Pascal Thubert'>
+      <organization abbrev='Cisco Systems'>Cisco Systems, Inc</organization>
+      <address>
+         <postal>
+            <street>Building D</street>
+            <street>45 Allee des Ormes - BP1200 </street>
+            <city>Mougins - Sophia Antipolis</city>
+            <code>06254</code>
+          <country>France</country>
+         </postal>
+         <phone>+33 497 23 26 34</phone>
+         <email>pthubert@cisco.com</email>
+      </address>
+   </author>
+
+   <author initials='S' surname='Litkowski' fullname='Stephane Litkowski' >
+      <organization abbrev='Cisco Systems'>Cisco Systems, Inc</organization>
+      <address>
+         <postal>
+          <country>France</country>
+         </postal>
+         <phone></phone>
+         <email>slitkows@cisco.com</email>
+      </address>
+   </author>
+
+   <author initials='A' surname='Sajassi' fullname='Ali Sajassi' >
+      <organization abbrev='Cisco Systems'>Cisco Systems, Inc</organization>
+      <address>
+         <postal>
+          <country>France</country>
+         </postal>
+         <phone></phone>
+         <email>sajassi@cisco.com</email>
+      </address>
+   </author>
+
+<date/>
+<area>Routing</area>
+<workgroup>ROLL</workgroup>
+
+
+<abstract>
+<t>
+  RFC8505 provides a routing-agnostic Host interface to advertise the Host
+  address and obtain reachability services in return. The interface provides the
+  means to discriminated duplicate addresses from mobility and anycast
+  advertisements. RFC 8928 adds the capability to verify the ownership of the
+  address by the advertising Host.
+  This specification redistributes Hosts routes learned from RFC8505 into eVPN
+  and adds new NLRIs and behaviours to reject duplicates and impersonations.
+</t>
+</abstract>
+
+
+</front>
+
+<middle>
+
+
+<section anchor='introduction'><name>Introduction</name>
+
+
+<t>
+  <xref target='RFC8505'/> provides a routing-agnostic Host interface to advertise the Host
+  address and obtain reachability services in return. The interface provides the
+  means to discriminated duplicate addresses from mobility and anycast
+  advertisements. <xref target='RFC8928'/> adds the capability to verify the ownership of the
+  address by the advertising Host.
+  This specification redistributes Hosts routes learned from <xref target='RFC8505'/> into eVPN
+  and adds new NLRIs and behaviours to reject duplicates and impersonations.
+</t>
+
+
+
+
+</section>
+
+<section><name>Terminology</name>
+<section anchor='bcp'><name>Requirements Language</name>
+<t>
+
+    The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+    "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+    "OPTIONAL" in this document are to be interpreted as described in BCP 14
+ <xref target='RFC2119'/> <xref target='RFC8174'/> when, and only when, they
+    appear in all capitals, as shown here.
+
+</t>
+</section>	<!-- end section "Requirements Language" -->
+
+
+<section anchor='gloss'><name>Glossary</name>
+ <t> This document uses the following acronyms:
+    </t><dl  spacing='compact'>
+    <dt>6LN:</dt><dd> 6LoWPAN Node (the Host) </dd>
+    <dt>6LR:</dt><dd> 6LoWPAN router (the router) </dd>
+    <dt>6LBR:</dt><dd> 6LoWPAN Border router (the reflector)</dd>
+    <dt>EARO:</dt><dd> Extended Address Registration Option </dd>
+    <dt>DAD:</dt><dd> Duplicate Address Detection </dd>
+    <dt>NA:</dt><dd>  Neighbor Advertisement </dd>
+    <dt>NCE:</dt><dd>  Neighbor Cache Entry  </dd>
+    <dt>ND:</dt><dd>  Neighbor Discovery  </dd>
+    <dt>NS:</dt><dd>  Neighbor Solicitation  </dd>
+    <dt>RA:</dt><dd>  Router Advertisement  </dd>
+    <dt>ROVR:</dt><dd> Registration Ownership Verifier </dd>
+    <dt>TID:</dt><dd> Transaction ID (a sequence counter in the EARO) </dd>
+    <dt>TIO:</dt><dd> Transit Information Option</dd>
+
+    </dl><t>
+ </t>
+</section>	<!-- end section "Subset of a 6LoWPAN Glossary" -->
+
+
+<section anchor='lo'><name>References</name>
+
+
+<t>
+This document uses the terms Clos fabric and Fat Tree interchangeably, to
+refer to a folded spine-and-leaf topology as defined in the terminology section
+of <xref target='I-D.ietf-rift-rift'>"RIFT: Routing in Fat Trees"</xref>.
+</t>
+<t>
+The term "leaf" represents the access switch that connects the servers to the
+Fat Tree. The leaf is typically a Top-of-Rack (ToR) switch.
+</t>
+<t>
+This specification uses the terms 6LN, 6LR and 6LBR to refer specifically to
+nodes that implement the said roles in <xref target='RFC8505'/> and does not
+expect other functionality such as 6LoWPAN Header Compression:
+</t>
+
+<ul>
+   <li>
+   In the context of this document, the 6LN is a server that adversises an
+   address mapping using <xref target='RFC8505'/>, and optionally protects its
+   ownership with <xref target='RFC8928'/>.
+   </li><li>
+   The 6LR and 6LBR function are collapsed at the leaf and its state is
+   synchonized with that of the eVPN functional support using an internal
+   interface that is out of scope. That interface could be "pull" meaning that
+   the 6LBR fetches the eVPN information when it needs it, or "push", meaning
+   that any information that eVPn distributes is immediately fed in all the
+   6LBRs in all the leaves. Note that this is pure control plane and is not
+   subject to abbreviating optimization as the FIB may be.
+   </li>
+</ul>
+
+<t>
+	In this document, readers will encounter terms and concepts
+	that are discussed in the following documents:
+</t>
+<dl>
+	<dt>eVPN:</dt><dd> <xref target='RFC7432'>"BGP MPLS-Based Ethernet VPN"
+		</xref> and
+	    <xref target='RFC8365'>"Network Virtualization Overlay Solution"
+		</xref>, </dd>
+
+	<dt>Classical IPv6 ND:</dt><dd> <xref target='RFC4861'>"Neighbor Discovery for IP version 6"
+		</xref> and
+	    <xref target='RFC4862'>"IPv6 Stateless Address Autoconfiguration"
+		</xref>, </dd>
+
+
+	<dt>6LoWPAN ND:</dt><dd> <xref target='RFC6775'>Neighbor Discovery Optimization for Low-Power
+		and Lossy Networks</xref>,
+	    <xref target='RFC8505'>
+		"Registration Extensions for 6LoWPAN Neighbor Discovery"</xref>,
+        <xref target='RFC8928'>
+        "Address Protected Neighbor Discovery for Low-power and Lossy Networks"
+        </xref>, and <xref target='RFC8929'>"IPv6 Backbone Router"</xref>.
+	</dd>
+</dl>
+</section>	<!-- end section "References" -->
+
+</section>	<!-- end section "Terminology" -->
+
+
+<section anchor='lpnd'><name>6LoWPAN Neighbor Discovery</name>
+<t>
+This section goes through the 6LoWPAN ND mechanisms that this specification leverages, as a non-normative reference to the reader.
+The full normative text is to be found in <xref target='RFC6775'/>, <xref target='RFC8505'/>, and <xref target='RFC8928'/>.
+</t>
+<section anchor='R6775'><name>RFC 6775 Address Registration</name>
+
+<t>
+   The classical "IPv6 Neighbor Discovery (IPv6 ND) Protocol"
+   <xref target='RFC4861'/> <xref target='RFC4862'/> was defined for serial
+   links and transit media such as Ethernet. It is a reactive protocol that
+   relies heavily on multicast operations for Address Discovery (aka Lookup) and
+   Duplicate Address Detection (DAD).
+</t><t>
+   <xref target='RFC6775'>
+   "Neighbor Discovery Optimizations for 6LoWPAN networks"</xref>
+   adapts IPv6 ND for operations over energy-constrained LLNs.
+   The main functions of <xref target='RFC6775'/> are to proactively establish
+   the Neighbor Cache Entry (NCE) in the 6LR and to prevent address duplication.
+   To that effect, <xref target='RFC6775'/> introduces a new unicast Address
+   Registration  mechanism that contributes to reducing the use of multicast
+   messages compared to the classical IPv6 ND protocol.
+
+</t><t><xref target='RFC6775'/> defines a new Address
+   Registration Option (ARO) that is carried in the unicast
+   Neighbor Solicitation (NS) and Neighbor Advertisement (NA) messages between
+   the 6LoWPAN Node (6LN) and the 6LoWPAN router (6LR).
+
+   It also defines the Duplicate Address Request (DAR) and Duplicate
+   Address Confirmation (DAC) messages between the 6LR and the 6LBR).
+   In an LLN, the 6LBR is the central repository of all the Registered Addresses
+   in its domain and the source of truth for uniqueness and ownership.
+</t>
+</section>	<!-- end section "RFC 6775" -->
+<section anchor='R8505E'><name>RFC 8505 Extended Address Registration</name>
+
+<t>
+   <xref target='RFC8505'>
+   "Registration Extensions for 6LoWPAN Neighbor Discovery"</xref>
+   updates RFC 6775 into a generic Address Registration mechanism that can be
+   used to access services such as routing and ND proxy. To that effect,
+   <xref target='RFC8505'/> defines the Extended Address Registration Option
+   (EARO), shown in <xref target='EARO'/>:
+</t>
+ <figure anchor='EARO'><name>EARO Option Format</name>
+ <artwork align="center"> <![CDATA[
+   0                   1                   2                   3
+   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  |     Type      |     Length    |    Status     |    Opaque     |
+  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  |  Rsvd | I |R|T|     TID       |     Registration Lifetime     |
+  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  |                                                               |
+ ...             Registration Ownership Verifier                 ...
+  |                                                               |
+  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    ]]></artwork>
+ </figure>
+
+
+<section anchor='R8505ER'><name>R Flag</name>
+<t>
+<xref target='RFC8505'/> introduces the R Flag in the EARO.
+   The Registering Node sets the R Flag to indicate whether the 6LR should
+   ensure reachability for the Registered Address.
+   If the R Flag is set to 0, then the Registering Node handles the reachability
+   of the Registered Address by other means. In an eVPN network, this means that
+   either it is a RAN that injects the route by itself or that it uses another
+   eVPN router for reachability services.
+</t><t>
+   This document specifies how the R Flag is used in the context of eVPN.
+   An eVPN Host that implements the 6LN functionality from <xref target='RFC8505'/>
+   requires reachability services for an IPv6 address if and only if it sets
+   the R Flag in the NS(EARO) used to register the address to a 6LR acting as
+   an eVPN border router. Upon receiving the NS(EARO), the eVPN router
+   generates a BGP advertisement for the Registered Address if and only if the R
+   flag is set to 1.
+</t><t>
+</t><t>
+
+   <xref target='I-D.ietf-roll-unaware-leaves'/> specifies that the 'R' flags is
+   set in the responded NA messages if and only if the route was installed.
+   This specification echoes that behaviour.
+</t>
+
+</section> <!-- end section "R Flag" -->
+<section anchor='R8505ETID'><name>TID, "I" Field and Opaque Fields</name>
+
+<t>
+   When the T Flag is set to 1, the EARO includes a sequence counter called
+   Transaction ID (TID), that is needed to fill the Path Sequence Field in the
+   eVPN Transit Option.
+   This is the reason why the support of <xref target='RFC8505'/>
+   by the Host, as opposed to only <xref target='RFC6775'/>, is a prerequisite for
+   this specification); this requirement is fully explained in
+   <xref target='prereq6lp'/>. The EARO also
+   transports an Opaque field and an associated "I" field that describes what
+   the Opaque field transports and how to use it.
+</t><t>
+   This document specifies the use of the "I" field and the Opaque
+   field by a Host.
+</t>
+
+</section> <!-- end section "TID, I Field and Opaque Fields" -->
+<section anchor='R8505EROVR'><name>Route Ownership Verifier</name>
+<t>
+   Section 5.3 of <xref target='RFC8505'/> introduces the Registration
+   Ownership Verifier (ROVR) field of variable length from 64 to 256 bits.
+   The ROVR is a replacement of the EUI-64 in the ARO
+   <xref target='RFC6775'/> that was used to identify uniquely an Address
+   Registration with the Link-Layer address of the owner but provided no
+   protection against spoofing.
+</t><t>
+
+   <xref target='RFC8928'>"Address Protected Neighbor Discovery for
+   Low-power and Lossy Networks"</xref> leverages the ROVR field as a
+   cryptographic proof of ownership to prevent a rogue third party from
+   registering an address that is already owned.
+   The use of ROVR field enables the 6LR to block traffic that is not
+   sourced at an owned address.
+</t><t>
+
+   This specification does not address how the protection by
+   <xref target='RFC8928'/> could be extended for use in eVPN.
+   On the other hand, it adds the ROVR to the BGP advertisement to share the
+   state with the other routers via the Reflector (see <xref target='tgt'/>),
+   which means that the routers that are aware of the Host route are also aware
+   of the ROVR associated to the Target Address, whether it is cryptographic
+   and should be verified.
+</t>
+
+</section> <!-- end section "ROVR" -->
+
+</section> <!-- end section "RFC 8505 Extended ARO" -->
+<section anchor='R8505D'><name>RFC 8505 Extended DAR/DAC</name>
+<t>
+   <xref target='RFC8505'/> updates the DAR/DAC messages into the Extended
+   DAR/DAC to carry the ROVR field. The EDAR/EDAC exchange is not needed in this
+   specification as the BGP fabric as a whole is synchronized to the same state
+   via BGP and the reflector. Based on its local state, the router can check
+   whether the proposed route is new and legit, and reject it otherwise.
+</t>
+
+<section anchor='R7400'><name>RFC 7400 Capability Indication Option</name>
+
+<t>
+   <xref target='RFC7400'> "6LoWPAN-GHC: Generic Header Compression for IPv6
+   over Low-Power Wireless Personal Area Networks (6LoWPANs)"</xref> defines the
+   6LoWPAN Capability Indication Option (6CIO) that enables a node to expose its
+   capabilities in router Advertisement (RA) messages.
+</t><t>
+   <xref target='RFC8505'/> defines a number of bits in the 6CIO, in particular:
+</t>
+	<dl spacing='compact'>
+	<dt>L:</dt><dd> Node is a 6LR.  </dd>
+	<dt>E:</dt><dd> Node is an IPv6 ND Registrar -- i.e., it supports
+			  registrations based on EARO.  </dd>
+	<dt>P:</dt><dd> Node is a Routing Registrar, -- i.e., an IPv6 ND Registrar
+         that also provides reachability services for the Registered Address.
+         </dd>
+	</dl>
+ <figure anchor='CIO'><name>6CIO flags</name>
+ <artwork align="center">
+    0                   1                   2                   3
+    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |     Type      |   Length = 1  |     Reserved      |D|L|B|P|E|G|
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+   |                           Reserved                            |
+   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</artwork>
+ </figure>
+ <t>
+
+    A 6LR that provides reachability services for a Host in an eVPN network
+    as specified in this document includes a 6CIO in its RA messages and
+    set the L, P and E flags to 1 as prescribed by <xref target='RFC8505'/>.
+ </t>
+
+</section> <!-- end section "RFC 7400 Capability Indication Option" -->
+
+</section> <!-- end section "RFC 8505 Extended DAR/DAC" -->
+
+</section> <!-- end section "6LoWPAN Neighbor Discovery" -->
+
+
+
+
+
+
+<section anchor='prereq'><name>Requirements on the eVPN-Unaware Host</name>
+<t>
+   This document describes how eVPN routing can be extended to reach a Host.
+   This section specifies the minimal eVPN-independent functionality that the Host
+   needs to implement to obtain routing services for its addresses.
+</t>
+
+ <section anchor='prereq6lp'><name>Support of 6LoWPAN ND</name>
+<t>
+   To obtain routing services from a router that implements this specification,
+   a Host needs to implement <xref target='RFC8505'/> and sets the "R" and "T"
+   flags in the EARO to 1 as discussed in <xref target='R8505ER'/> and
+   <xref target='R8505ETID'/>, respectively. This document specifies new
+   behaviors for the Host, e.g., when the R Flag set to 1 in a NS(EARO) is not
+   echoed in the NA(EARO), which indicates that the route injection failed.
+</t><t>
+   The Host is expected to request routing services from a router only if that
+   router originates RA messages with a 6CIO that has the L, P, and E flags all
+   set to 1 as discussed in <xref target='R7400'/>, unless configured to do so.
+   It is suggested that the Host also implements
+   <xref target='RFC8928'/> to protect the ownership of its addresses.
+</t><t>
+   A Host that may attach to multiple 6LRs is expected to prefer those that provide routing services.
+   The Host needs to register to all the 6LRs from which it desires routing services.
+</t>
+<t>
+   Parallel Address Registrations to several 6LRs should be performed in a rapid sequence, using the same EARO for the same Address. Gaps between
+   the Address Registrations will invalidate some of the routes till the Address
+   Registration finally shows on those routes.
+</t>
+<t><xref target='RFC8505'/> introduces error Status values in the NA(EARO)
+   which can be received synchronously upon an NS(EARO) or asynchronously. The
+   Host needs to support both cases and refrain from using the address
+   when the Status value indicates a rejection.
+
+</t>
+
+</section> <!-- end section "Support of 6LoWPAN ND" -->
+
+
+
+</section> <!-- "Requirements to be an eVPN-Unaware Host" -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section anchor='upd'><name>Enhancements to eVPN</name>
+<t>
+   This document specifies a new behavior whereby a 6LR injects BGP advertisements
+   for unicast addresses (see <xref target='op'/>) on behalf of Hosts that are not aware of eVPN.
+   This document also synchronizes the liveness monitoring at the Address Registration period.
+</t>
+
+<section anchor='tgt'><name>New NLRIs</name>
+
+ <figure anchor='feVPNtgt' suppress-title='false'><name>New NLRI</name>
+ <artwork>
+   0                   1                   2                   3
+   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+</artwork>
+ </figure>
+ <t> New fields:
+	</t>
+
+    <dl  spacing='normal'>
+
+	<dt>:</dt><dd>  </dd>
+
+	</dl>
+
+</section> <!-- end section "Updated eVPN Target Option" -->
+
+
+</section> <!-- Enhancements to  eVPN -->
+
+
+
+
+
+
+<section anchor='upd2'><name>Enhancements to RFC8928 and RFC8505</name>
+
+<t>
+   This document extends <xref target='RFC8928'/> and <xref target='RFC8505'/> as follows
+
+   </t><t>
+   This document also updates the behavior of a 6LR acting as eVPN router and of a 6LN acting as Host in the 6LoWPAN ND Address Registration  as follows:
+   </t>
+   <ul>
+   <li>
+   The use of the R Flag is extended to the NA(EARO) to confirm whether the route was installed.
+ </li>
+   </ul>
+
+</section> <!-- end section "Enhancements to RFC8928 and RFC8505" -->
+
+
+
+
+
+<section anchor='op'><name>Protocol Operations </name>
+
+<t>
+
+ </t>
+ <figure anchor='fReg1' suppress-title='false'><name>First Host Registration Flow</name>
+ <artwork align="center"><![CDATA[
+
+
+   6LN/Host            6LR         Reflector             6LR
+      |                |              |                   |
+      |   NS(EARO)     |              |                   |
+      |--------------->|              |                   |
+      |   NA(EARO)     |              |                   |
+      |<---------------|              |                   |
+      |                |              |                   |
+    ]]></artwork>
+ </figure>
+ <figure anchor='fReg2' suppress-title='false'><name>Next Host Registration Flow</name>
+ <artwork align="center"><![CDATA[
+   6LN/Host           6LR         Reflector              6LR
+      |                |              |                   |
+      |   NS(EARO)     |              |                   |
+      |--------------->|              |                   |
+      |                |   BGP        |                   |
+      |                |------------->|                   |
+      |                |    BGP       |                   |
+      |                |<-------------|                   |
+      |   NA(EARO)     |              |                   |
+      |<---------------|              |                   |
+    ]]></artwork>
+ </figure>
+
+</section>
+
+
+
+<section anchor='security-considerations'><name>Security Considerations</name>
+ <t>TBD
+ </t>
+
+</section>
+
+
+<section anchor='iana-considerations'><name>IANA Considerations</name>
+<t>TBD</t>
+
+</section>
+
+<section anchor='Acks'><name>Acknowledgments</name>
+<t>
+   The authors wish to thank you for reading that far.
+  </t>
+
+</section>
+
+
+  </middle>
+
+ <back>
+
+      <displayreference   target="RFC8928"           to="AP-ND"/>
+      <displayreference   target="I-D.ietf-roll-unaware-leaves"           to="RPL-UNAWARE-LEAVES"/>
+      <displayreference   target="I-D.ietf-rift-rift"           to="RIFT"/>
+
+
+ <references><name>Normative References</name>
+	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml'/>
+
+   <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4861.xml'/>
+   <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6775.xml'/>
+   <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7400.xml'/>
+   <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7432.xml'/>
+   <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml'/>
+   <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8505.xml'/>
+   <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8365.xml'/>
+   <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8928.xml'/>
+<xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-roll-unaware-leaves.xml'/>
+<xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-rift-rift.xml'/>
+
+
+
+ </references>
+ <references><name>Informative References</name>
+	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4862.xml'/>
+      <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8929.xml'/>
+ </references>
+
+
+ </back>
+</rfc>
