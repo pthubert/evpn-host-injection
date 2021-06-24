@@ -91,9 +91,9 @@ Table of Contents
    "Registration Extensions for IPv6 over 6LoWPAN Neighbor Discovery"
    [RFC8505] (ND) provides a routing-agnostic Host-to-Router Link-Local
    interface to claim an IPv6 address and obtain reachability services
-   for that address.  [RFC8505] is already leverage to redistribute host
-   routes in RPL [RPL-UNAWARE-LEAVES] and "RIFT: Routing in Fat Trees"
-   [RIFT], and establish a proxy-ND state in a backbone router
+   for that address.  [RFC8505] is already used to redistribute host
+   routes in RPL [RPL-UNAWARE-LEAVES] and RIFT "Routing in Fat Trees"
+   [RIFT], and to maintain a proxy-ND state in a backbone router
    [RFC8929].
 
    The interface provides the means to reject claims for duplicate

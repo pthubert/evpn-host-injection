@@ -90,11 +90,10 @@
   <xref target='RFC8505'>"Registration Extensions for IPv6 over 6LoWPAN
   Neighbor Discovery"</xref> (ND) provides a routing-agnostic Host-to-Router
   Link-Local interface to claim an IPv6 address and obtain reachability services
-  for that address. <xref target='RFC8505'/> is already leverage to redistribute
-  host routes in RPL <xref target='RFC9010'/> and
-  <xref target='I-D.ietf-rift-rift'>"RIFT: Routing in Fat Trees"</xref>,
-  and establish a proxy-ND state in a backbone router <xref target='RFC8929'/>.
-
+  for that address. <xref target='RFC8505'/> is already used to redistribute
+  host routes in RPL <xref target='RFC9010'/> and RIFT
+  <xref target='I-D.ietf-rift-rift'>"Routing in Fat Trees"</xref>, and to
+  maintain a proxy-ND state in a backbone router <xref target='RFC8929'/>.
 </t>
 <t>
   The interface provides the means to reject claims for duplicate addresses and
