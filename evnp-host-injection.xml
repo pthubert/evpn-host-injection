@@ -36,6 +36,7 @@
       </address>
    </author>
 
+<!--
    <author initials='S' surname='Litkowski' fullname='Stephane Litkowski' >
       <organization abbrev='Cisco Systems'>Cisco Systems, Inc</organization>
       <address>
@@ -46,6 +47,8 @@
          <email>slitkows@cisco.com</email>
       </address>
    </author>
+
+
 
    <author initials='A' surname='Sajassi' fullname='Ali Sajassi' >
       <organization abbrev='Cisco Systems'>Cisco Systems, Inc</organization>
@@ -58,9 +61,11 @@
       </address>
    </author>
 
+-->
+
 <date/>
 <area>Routing</area>
-<workgroup>ROLL</workgroup>
+<workgroup>BESS</workgroup>
 
 
 <abstract>

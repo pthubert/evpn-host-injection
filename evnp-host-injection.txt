@@ -2,11 +2,10 @@
 
 
 
-ROLL                                                          P. Thubert
-Internet-Draft                                              S. Litkowski
-Intended status: Standards Track                              A. Sajassi
-Expires: 16 December 2021                                  Cisco Systems
-                                                            14 June 2021
+BESS                                                          P. Thubert
+Internet-Draft                                             Cisco Systems
+Intended status: Standards Track                            24 June 2021
+Expires: 26 December 2021
 
 
                          Routing for eVPN Hosts
@@ -38,26 +37,32 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 16 December 2021.
+   This Internet-Draft will expire on 26 December 2021.
 
 Copyright Notice
 
    Copyright (c) 2021 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
+
+
+
+
+
+
+
+
+
+Thubert                 Expires 26 December 2021                [Page 1]
+
+Internet-Draft             eVPN Unaware Hosts                  June 2021
+
+
    This document is subject to BCP 78 and the IETF Trust's Legal
    Provisions Relating to IETF Documents (https://trustee.ietf.org/
    license-info) in effect on the date of publication of this document.
    Please review these documents carefully, as they describe your rights
    and restrictions with respect to this document.  Code Components
-
-
-
-Thubert, et al.         Expires 16 December 2021                [Page 1]
-
-Internet-Draft             eVPN Unaware Hosts                  June 2021
-
-
    extracted from this document must include Simplified BSD License text
    as described in Section 4.e of the Trust Legal Provisions and are
    provided without warranty as described in the Simplified BSD License.
@@ -65,7 +70,7 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
-   2.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   2
+   2.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   3
      2.1.  Requirements Language . . . . . . . . . . . . . . . . . .   3
      2.2.  Glossary  . . . . . . . . . . . . . . . . . . . . . . . .   3
      2.3.  References  . . . . . . . . . . . . . . . . . . . . . . .   3
@@ -88,7 +93,7 @@ Table of Contents
    10. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  10
    11. Normative References  . . . . . . . . . . . . . . . . . . . .  10
    12. Informative References  . . . . . . . . . . . . . . . . . . .  11
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  11
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  11
 
 1.  Introduction
 
@@ -101,18 +106,15 @@ Table of Contents
    [RFC8505] into eVPN and adds new NLRIs and behaviours to reject
    duplicates and impersonations.
 
-2.  Terminology
 
 
 
-
-
-
-
-Thubert, et al.         Expires 16 December 2021                [Page 2]
+Thubert                 Expires 26 December 2021                [Page 2]
 
 Internet-Draft             eVPN Unaware Hosts                  June 2021
 
+
+2.  Terminology
 
 2.1.  Requirements Language
 
@@ -149,7 +151,7 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
    [RIFT].
 
    The term "leaf" represents the access switch that connects the
-   servers to the Fat Tree. the leaf is typically a Top-of-Rack (ToR)
+   servers to the Fat Tree.  The leaf is typically a Top-of-Rack (ToR)
    switch.
 
    This specification uses the terms 6LN, 6LR and 6LBR to refer
@@ -159,13 +161,11 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
    *  In the context of this document, the 6LN is a server that
       adversises an address mapping using [RFC8505], and optionally
-      protects its ownership with [AP-ND].  of scope.
+      protects its ownership with [AP-ND].
 
 
 
-
-
-Thubert, et al.         Expires 16 December 2021                [Page 3]
+Thubert                 Expires 26 December 2021                [Page 3]
 
 Internet-Draft             eVPN Unaware Hosts                  June 2021
 
@@ -221,7 +221,7 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert, et al.         Expires 16 December 2021                [Page 4]
+Thubert                 Expires 26 December 2021                [Page 4]
 
 Internet-Draft             eVPN Unaware Hosts                  June 2021
 
@@ -277,7 +277,7 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert, et al.         Expires 16 December 2021                [Page 5]
+Thubert                 Expires 26 December 2021                [Page 5]
 
 Internet-Draft             eVPN Unaware Hosts                  June 2021
 
@@ -333,7 +333,7 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert, et al.         Expires 16 December 2021                [Page 6]
+Thubert                 Expires 26 December 2021                [Page 6]
 
 Internet-Draft             eVPN Unaware Hosts                  June 2021
 
@@ -389,7 +389,7 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert, et al.         Expires 16 December 2021                [Page 7]
+Thubert                 Expires 26 December 2021                [Page 7]
 
 Internet-Draft             eVPN Unaware Hosts                  June 2021
 
@@ -445,7 +445,7 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert, et al.         Expires 16 December 2021                [Page 8]
+Thubert                 Expires 26 December 2021                [Page 8]
 
 Internet-Draft             eVPN Unaware Hosts                  June 2021
 
@@ -501,7 +501,7 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert, et al.         Expires 16 December 2021                [Page 9]
+Thubert                 Expires 26 December 2021                [Page 9]
 
 Internet-Draft             eVPN Unaware Hosts                  June 2021
 
@@ -557,7 +557,7 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert, et al.         Expires 16 December 2021               [Page 10]
+Thubert                 Expires 26 December 2021               [Page 10]
 
 Internet-Draft             eVPN Unaware Hosts                  June 2021
 
@@ -592,7 +592,7 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
               "IPv6 Backbone Router", RFC 8929, DOI 10.17487/RFC8929,
               November 2020, <https://www.rfc-editor.org/info/rfc8929>.
 
-Authors' Addresses
+Author's Address
 
    Pascal Thubert
    Cisco Systems, Inc
@@ -605,24 +605,6 @@ Authors' Addresses
    Email: pthubert@cisco.com
 
 
-   Stephane Litkowski
-   Cisco Systems, Inc
-   France
-
-   Email: slitkows@cisco.com
-
-
-
-Thubert, et al.         Expires 16 December 2021               [Page 11]
-
-Internet-Draft             eVPN Unaware Hosts                  June 2021
-
-
-   Ali Sajassi
-   Cisco Systems, Inc
-   France
-
-   Email: sajassi@cisco.com
 
 
 
@@ -631,42 +613,4 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Thubert, et al.         Expires 16 December 2021               [Page 12]
+Thubert                 Expires 26 December 2021               [Page 11]
