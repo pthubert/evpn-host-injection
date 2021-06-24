@@ -70,13 +70,10 @@
 
 <abstract>
 <t>
-  RFC8505 provides a routing-agnostic Host interface to advertise the Host
-  address and obtain reachability services in return. The interface provides the
-  means to discriminated duplicate addresses from mobility and anycast
-  advertisements. RFC 8928 adds the capability to verify the ownership of the
-  address by the advertising Host.
-  This specification redistributes Hosts routes learned from RFC8505 into eVPN
-  and adds new NLRIs and behaviours to reject duplicates and impersonations.
+  This specification adds attributes to eVPN to carry host-related information
+  learned from RFC 8505 and RFC 8928 so as to maintain a synchronized copy of
+  the 6LoWPAN ND registrar at each eVPN router and perform a local unicast
+  IPv6 ND service for address lookup and duplicate address detection.
 </t>
 </abstract>
 
@@ -90,13 +87,30 @@
 
 
 <t>
-  <xref target='RFC8505'/> provides a routing-agnostic Host interface to advertise the Host
-  address and obtain reachability services in return. The interface provides the
-  means to discriminated duplicate addresses from mobility and anycast
-  advertisements. <xref target='RFC8928'/> adds the capability to verify the ownership of the
-  address by the advertising Host.
-  This specification redistributes Hosts routes learned from <xref target='RFC8505'/> into eVPN
-  and adds new NLRIs and behaviours to reject duplicates and impersonations.
+  <xref target='RFC8505'>"Registration Extensions for IPv6 over 6LoWPAN
+  Neighbor Discovery"</xref> (ND) provides a routing-agnostic Host-to-Router
+  Link-Local interface to claim an IPv6 address and obtain reachability services
+  for that address. <xref target='RFC8505'/> is already leverage to redistribute
+  host routes in RPL <xref target='RFC9010'/> and
+  <xref target='I-D.ietf-rift-rift'>"RIFT: Routing in Fat Trees"</xref>,
+  and establish a proxy-ND state in a backbone router <xref target='RFC8929'/>.
+
+</t>
+<t>
+  The interface provides the means to reject claims for duplicate addresses and
+  discriminate mobility from multihoming. <xref target='RFC8928'/> adds the
+  capability to verify the ownership of the address and prevent an attacker
+  from stealing and/or impersonating an address. <xref target='RFC8505'/>
+  is based on an abstract registrar, the 6LoWPAN Border router (6LBR),
+  that stores host-related information.
+</t>
+<t>
+  This specification adds attributes to eVPN to cary host-related information
+  learned from <xref target='RFC8505'/> and <xref target='RFC8928'/> so as to
+  maintain a synchronized copy of the 6LBR abstract data at each eVPN router.
+  It also extends the 6LBR abstract data model to store the Link Layer Address
+  of the Registering Node and perform locally, and using unicast communication,
+  the IPv6 ND services of address lookup and duplicate address detection.
 </t>
 
 
@@ -126,6 +140,7 @@
     <dt>6LBR:</dt><dd> 6LoWPAN Border router (the reflector)</dd>
     <dt>EARO:</dt><dd> Extended Address Registration Option </dd>
     <dt>DAD:</dt><dd> Duplicate Address Detection </dd>
+    <dt>EVPN:</dt><dd> Ethernet VPN </dd>
     <dt>NA:</dt><dd>  Neighbor Advertisement </dd>
     <dt>NCE:</dt><dd>  Neighbor Cache Entry  </dd>
     <dt>ND:</dt><dd>  Neighbor Discovery  </dd>
@@ -285,7 +300,7 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
 </t><t>
 </t><t>
 
-   <xref target='I-D.ietf-roll-unaware-leaves'/> specifies that the 'R' flags is
+   <xref target='RFC9010'/> specifies that the 'R' flags is
    set in the responded NA messages if and only if the route was installed.
    This specification echoes that behaviour.
 </t>
@@ -569,9 +584,9 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
 
  <back>
 
-      <displayreference   target="RFC8928"           to="AP-ND"/>
-      <displayreference   target="I-D.ietf-roll-unaware-leaves"           to="RPL-UNAWARE-LEAVES"/>
-      <displayreference   target="I-D.ietf-rift-rift"           to="RIFT"/>
+      <displayreference   target="RFC8928"             to="AP-ND"/>
+      <displayreference   target="RFC9010"             to="RPL-UNAWARE-LEAVES"/>
+      <displayreference   target="I-D.ietf-rift-rift"  to="RIFT"/>
 
 
  <references><name>Normative References</name>
@@ -585,15 +600,16 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
    <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8505.xml'/>
    <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8365.xml'/>
    <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8928.xml'/>
-<xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-roll-unaware-leaves.xml'/>
-<xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-rift-rift.xml'/>
+   <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.9010.xml'/>
+
 
 
 
  </references>
  <references><name>Informative References</name>
-	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4862.xml'/>
-      <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8929.xml'/>
+   <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4862.xml'/>
+   <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8929.xml'/>
+   <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-rift-rift.xml'/>
  </references>
 
 
