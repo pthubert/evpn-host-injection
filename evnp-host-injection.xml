@@ -70,9 +70,9 @@
 
 <abstract>
 <t>
-  This specification adds attributes to eVPN to carry host-related information
+  This specification adds attributes to eVPN to carry IPv6 address metadata
   learned from RFC 8505 and RFC 8928 so as to maintain a synchronized copy of
-  the 6LoWPAN ND registrar at each eVPN router and perform a local unicast
+  the 6LoWPAN ND registrar at each eVPN router and perform locally a unicast
   IPv6 ND service for address lookup and duplicate address detection.
 </t>
 </abstract>
@@ -95,21 +95,38 @@
   <xref target='I-D.ietf-rift-rift'>"Routing in Fat Trees"</xref>, and to
   maintain a proxy-ND state in a backbone router <xref target='RFC8929'/>.
 </t>
+
 <t>
-  The interface provides the means to reject claims for duplicate addresses and
-  discriminate mobility from multihoming. <xref target='RFC8928'/> adds the
-  capability to verify the ownership of the address and prevent an attacker
-  from stealing and/or impersonating an address. <xref target='RFC8505'/>
-  is based on an abstract registrar, the 6LoWPAN Border router (6LBR),
-  that stores host-related information.
+  <xref target="RFC8505"/> specifies a unicast address registration mechanism
+  that enables the host called a 6LowPAN Node (6LN) to install a ND binding
+  state in the 6LowPAN Router (6LR) that can serve as Neighbor Cache Entry (NCE),
+  though it is not operated as a cache.
+  The protocol provides the means to reject the registation in case of address
+  duplication. It also enables to discriminate mobility from multihoming.
+  <xref target='RFC8928'/> adds the capability to verify the ownership of the address and prevent an attacker from stealing and/or impersonating an address.
 </t>
+
 <t>
-  This specification adds attributes to eVPN to cary host-related information
-  learned from <xref target='RFC8505'/> and <xref target='RFC8928'/> so as to
-  maintain a synchronized copy of the 6LBR abstract data at each eVPN router.
-  It also extends the 6LBR abstract data model to store the Link Layer Address
-  of the Registering Node and perform locally, and using unicast communication,
-  the IPv6 ND services of address lookup and duplicate address detection.
+  <xref target="RFC8505"/> defines the 6LoWPAN Border Router (6LBR) as an
+  abstract address registrar that provides autoritative service for Address
+  Registration and duplicate detection. The 6LBR stores address metadata
+  that is obtained during the Address Registration, including a owner ID and a
+  sequence counter.
+  As part of the process of a new Address Registration, the 6LR queries the 6LBR
+  for existing metadata related to the address being registered. This enables in
+  particular to detect a duplication and reject the registration.
+  This specification extends the 6LBR abstract data model to store the
+  Link Layer Address (LLA) of the Registering Node. This enables the 6LBR to
+  perform locally, and using unicast communication, the IPv6 ND services of
+  address lookup and duplicate address detection.
+</t>
+
+<t>
+  The <xref target='RFC8505'/> address registrar can be centralized, but it can
+  also be distributed and maintained synchronized using a routing protocol.
+  This specification adds attributes to eVPN to carry the IPv6 address metadata
+  learned from <xref target='RFC8505'/> so as to maintain a synchronized copy of
+  the 6LBR abstract data at each eVPN router.
 </t>
 
 
@@ -140,6 +157,7 @@
     <dt>EARO:</dt><dd> Extended Address Registration Option </dd>
     <dt>DAD:</dt><dd> Duplicate Address Detection </dd>
     <dt>EVPN:</dt><dd> Ethernet VPN </dd>
+    <dt>LLA:</dt><dd> Link-Layer Address (the MAC address on Ethernet)</dd>
     <dt>NA:</dt><dd>  Neighbor Advertisement </dd>
     <dt>NCE:</dt><dd>  Neighbor Cache Entry  </dd>
     <dt>ND:</dt><dd>  Neighbor Discovery  </dd>
@@ -148,6 +166,7 @@
     <dt>ROVR:</dt><dd> Registration Ownership Verifier </dd>
     <dt>TID:</dt><dd> Transaction ID (a sequence counter in the EARO) </dd>
     <dt>TIO:</dt><dd> Transit Information Option</dd>
+    <dt>TLLAO:</dt><dd>Target Link-Layer Address Option</dd>
 
     </dl><t>
  </t>
@@ -402,10 +421,194 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
 
 </section> <!-- end section "RFC 8505 Extended DAR/DAC" -->
 
+
+<section anchor='ext8505'><name>Extending 6LoWPAN ND</name>
+
+
+   <t>
+	This specification enables to distribute the 6LBR at the edge of the eVPN
+    network and collapse the 6LBR function with that of the eVPN support.
+    In that model, the eVPM to 6LBR interaction becomes an internal interface,
+    where each side informs the other in case of new information concerning an
+    IP to Link-Layer Address (LLA) mapping.
+    This specification augments the abstract data model of the 6LBR to store
+    the LLA associated with the registered address. Based on that additional
+    state, the 6LBR can communicate the mapping to the colocated eVPN function.
+   </t>
+   <t>
+    In an environment where the server is a classical host or hosts a collection
+    of virtual hosts interconnected by a virtual switch, the 6LR and the 6LBR
+    functions are also collapsed in the leaf. The 6LR to 6LBR interaction also
+    becomes an internal interface, and there is no need for EDAR/EDAC messages.
+    In that case, the MAC address associated to the Registered Address is indicated in the Target Link-Layer Address Option (TLLAO) in the NS message
+    used for the registration, as shown in <xref target="Figdir"/>:
+    </t>
+
+<figure anchor="Figdir">
+          <name>direct Registration</name>
+       <artwork align="center" name="" type="" alt="">
+       <![CDATA[
+
+           Server              Leaf
+     +--------------+   +-------------------+
+     |              |   |                   |
+      6LN                6LR/6LBR       eVPN
+       |                    |            |
+       |       Ethernet     | <call I/F> |
+       |                    |            |
+       |       NS(EARO)     |            |
+       |------------------->|            |
+       |                    |   call     |
+       |                    |----------->|
+       |                    |            | Inject/maintain
+       |                    |            | eVPN route type 2
+       |                    |            | <----------------->
+       |       NA(EARO)     |            |
+       |<-------------------|            |
+       |                    |            |
+    ]]>
+       </artwork>
+</figure>
+   <t>
+    In another type of deployment, the 6LR may be a virtual router in the server
+    whereas the 6LBR runs in the leaf node. To address that case, the EDAR/EDAC
+    may be used to communicate as shown in figure 5 of <xref target="RFC8505"/>.
+    This draft leverages the capability to insert IPv6 ND options in the EDAR
+    and EDAC messages introduced in <xref target="RFC9010"/> to place a TLLAO
+    that carries the MAC address associated to the Registered address in the
+    EDAR and EDAC messages, as shown in  <xref target="FigDAR"/>:
+   </t>
+
+<figure anchor="FigDAR">
+          <name>leveraging EDAR</name>
+       <artwork align="center" name="" type="" alt="">
+       <![CDATA[
+
+           Server                       Leaf
+     +----------------+          +----------------+
+     |                |          |                |
+      6LN          6LR            6LBR        eVPN
+       |            |              |            |
+       | <vSwitch>  |  Ethernet    | <call I/F> |
+       |            |              |            |
+       |  NS(EARO)  |              |            |
+       |----------->|              |            |
+       |            |  EDAR(TLLAO) |            |
+       |            |------------->|            |
+       |            |              |   call     |
+       |            |              |----------->|
+       |            |              |            | Inject/maintain
+       |            |              |            | eVPN route type 2
+       |            |              |            | <----------------->
+       |            |  EDAC(TLLAO) |            |
+       |            |<-------------|            |
+       |  NA(EARO)  |              |            |
+       |<-----------|              |            |
+       |            |              |            |
+    ]]>
+       </artwork>
+</figure>
+<t>
+   Alternatively, the virtual router may proxy the registration as shown in
+   <xref target="Figprox"/>:
+</t>
+<figure anchor="Figprox">
+          <name>Proxy Registration</name>
+       <artwork align="center" name="" type="" alt="">
+       <![CDATA[
+
+           Server                       Leaf
+     +----------------+          +----------------+
+     |                |          |                |
+      6LN          6LR            6LBR        eVPN
+       |            |              |            |
+       | <vSwitch>  |  Ethernet    | <call I/F> |
+       |            |              |            |
+       |  NS(EARO)  |              |            |
+       |----------->|              |            |
+       |            |    proxy     |            |
+       |            |   NS(EARO)   |            |
+       |            |------------->|            |
+       |            |              |   call     |
+       |            |              |----------->|
+       |            |              |            | Inject/maintain
+       |            |              |            | eVPN route type 2
+       |            |              |            | <----------------->
+       |            |    proxy     |            |
+       |            |   NA(EARO)   |            |
+       |            |<-------------|            |
+       |  NA(EARO)  |              |            |
+       |<-----------|              |            |
+       |            |              |            |
+    ]]>
+       </artwork>
+</figure>
+   <!--t>
+	It extends DAR and DAR ICMP messages for address lookup
+    in <xref target="DAM"/> that use the same ICMP types as EDAR and EDAC but a
+    different Code Prefix.
+   </t-->
+
+   <t>
+    Based on that state, the specification also enables the 6LBR to respond to
+    a NS(lookup) for a known binding, whether the bin=di
+    It also adds a new Status "Not Found" in
+    <xref target="earo"/>) that indicates that the address being searched is
+    not present in the Address Registrar.
+   </t>
+
+   <t>
+   A 6LBR signals itself by setting the "B" bit in the 6CIO of the RA
+   messages that it generates <xref target="RFC8505"/>.
+   This specification adds a new "A" bit in the 6CIO to indicate support of
+   address mapping (see <xref target="CIO"/>).
+   </t>
+
+	<t>
+    It results that the 6LBR is capable of providing the LLA mapping for any
+    address that was proactively registered with an SLLAO. This draft defines
+    the protocol elements and the operations to try a unicast lookup with the
+    6LBR. This may save a reactive IPv6 ND Neighbor Solicitation (NS) message,
+    which is based on multicast and may be problematic in extensive wireless
+    domains (see <xref target="I-D.ietf-mboned-ieee802-mcast-problems"/>) as
+    well as in large switched fabrics.
+    </t>
+
+
+
+</section> <!-- Extending 6LoWPAN ND -->
+
+
 </section> <!-- end section "6LoWPAN Neighbor Discovery" -->
 
 
 
+
+    <section anchor="earo" title="New ARO Status">
+    <t>
+    The Extended Address Registration Option (EARO) is defined in section 4.1
+    of <xref target="RFC8505"/>. It contains a Status field that is common with
+    with the EDAR and EDAC messages defined in section 4.2 of
+    <xref target="RFC8505"/>.
+    This specification defines a new Status "Not Found" as indicated in
+    <xref target="AROstatus"/>
+    </t>
+
+	<texttable anchor="AROstatus" title="EARO Status" >
+	  	<ttcol align="center">Value</ttcol>
+	  	<ttcol align="left">Description </ttcol>
+
+	<c> 0..10 </c>
+    <c>As defined in <xref target="RFC6775"/> and <xref target="RFC8505"/>.</c>
+	<c> 11 </c> <c>Not Found: The address is not present in the Address Registrar (value to be confirmed by IANA)</c>
+	</texttable> <!-- end table "EARO Status" -->
+
+    <t>
+    The Status of "Not Found" can be used in an NA(EARO) and in an AMC messages
+    as a response to an address lookup operation.
+    </t>
+
+    </section><!-- end section "New ARO Status"-->
 
 
 
@@ -583,8 +786,6 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
 
  <back>
 
-      <displayreference   target="RFC8928"             to="AP-ND"/>
-      <displayreference   target="RFC9010"             to="RPL-UNAWARE-LEAVES"/>
       <displayreference   target="I-D.ietf-rift-rift"  to="RIFT"/>
 
 
@@ -608,6 +809,7 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
  <references><name>Informative References</name>
    <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4862.xml'/>
    <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8929.xml'/>
+   <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-mboned-ieee802-mcast-problems.xml'/>
    <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-rift-rift.xml'/>
  </references>
 
