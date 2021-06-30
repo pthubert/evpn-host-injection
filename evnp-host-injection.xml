@@ -150,12 +150,15 @@
 
 <section anchor='gloss'><name>Glossary</name>
  <t> This document uses the following acronyms:
-    </t><dl  spacing='compact'>
+    </t>
+
+    <dl  spacing='compact'>
     <dt>6LN:</dt><dd> 6LoWPAN Node (the Host) </dd>
     <dt>6LR:</dt><dd> 6LoWPAN router (the router) </dd>
     <dt>6LBR:</dt><dd> 6LoWPAN Border router (the reflector)</dd>
     <dt>EARO:</dt><dd> Extended Address Registration Option </dd>
     <dt>DAD:</dt><dd> Duplicate Address Detection </dd>
+    <dt>ICMPv6:</dt><dd> Internet Control Message Protocol for IPv6, see <xref target='RFC4443'/></dd>
     <dt>EVPN:</dt><dd> Ethernet VPN </dd>
     <dt>LLA:</dt><dd> Link-Layer Address (the MAC address on Ethernet)</dd>
     <dt>NA:</dt><dd>  Neighbor Advertisement </dd>
@@ -168,9 +171,11 @@
     <dt>TIO:</dt><dd> Transit Information Option</dd>
     <dt>TLLAO:</dt><dd>Target Link-Layer Address Option</dd>
 
-    </dl><t>
- </t>
-</section>	<!-- end section "Subset of a 6LoWPAN Glossary" -->
+
+    </dl>
+
+
+</section> <!-- end section "Subset of a 6LoWPAN Glossary" -->
 
 
 <section anchor='lo'><name>References</name>
@@ -424,6 +429,8 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
 
 <section anchor='ext8505'><name>Extending 6LoWPAN ND</name>
 
+<section anchor='dist'><name>Distributing the 6LBR</name>
+
 
    <t>
 	This specification enables to distribute the 6LBR at the edge of the eVPN
@@ -452,11 +459,11 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
            Server              Leaf
      +--------------+   +-------------------+
      |              |   |                   |
-      6LN                6LR/6LBR       eVPN
-       |                    |            |
-       |       Ethernet     | <call I/F> |
-       |                    |            |
-       |       NS(EARO)     |            |
+      6LN                6LR/6LBR       eVPN      . ..
+       |                    |            |   . .. .  ..
+       |       Ethernet     | <call I/F> |   eVPN infra .
+       |                    |            |    . .... ..
+       |  NS(EARO)          |            |        ...
        |------------------->|            |
        |                    |   call     |
        |                    |----------->|
@@ -487,11 +494,11 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
            Server                       Leaf
      +----------------+          +----------------+
      |                |          |                |
-      6LN          6LR            6LBR        eVPN
-       |            |              |            |
-       | <vSwitch>  |  Ethernet    | <call I/F> |
-       |            |              |            |
-       |  NS(EARO)  |              |            |
+      6LN          6LR            6LBR        eVPN      . ..
+       |            |              |            |   . .. .  ..
+       | <vSwitch>  |  Ethernet    | <call I/F> |   eVPN infra .
+       |            |              |            |    . .... ..
+       |  NS(EARO)  |              |            |        ...
        |----------->|              |            |
        |            |  EDAR(TLLAO) |            |
        |            |------------->|            |
@@ -520,11 +527,11 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
            Server                       Leaf
      +----------------+          +----------------+
      |                |          |                |
-      6LN          6LR            6LBR        eVPN
-       |            |              |            |
-       | <vSwitch>  |  Ethernet    | <call I/F> |
-       |            |              |            |
-       |  NS(EARO)  |              |            |
+      6LN          6LR            6LBR        eVPN      . ..
+       |            |              |            |   . .. .  ..
+       | <vSwitch>  |  Ethernet    | <call I/F> |   eVPN infra .
+       |            |              |            |    . .... ..
+       |  NS(EARO)  |              |            |        ...
        |----------->|              |            |
        |            |    proxy     |            |
        |            |   NS(EARO)   |            |
@@ -543,72 +550,172 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
     ]]>
        </artwork>
 </figure>
-   <!--t>
-	It extends DAR and DAR ICMP messages for address lookup
-    in <xref target="DAM"/> that use the same ICMP types as EDAR and EDAC but a
-    different Code Prefix.
-   </t-->
-
-   <t>
-    Based on that state, the specification also enables the 6LBR to respond to
-    a NS(lookup) for a known binding, whether the bin=di
-    It also adds a new Status "Not Found" in
-    <xref target="earo"/>) that indicates that the address being searched is
-    not present in the Address Registrar.
-   </t>
-
-   <t>
-   A 6LBR signals itself by setting the "B" bit in the 6CIO of the RA
-   messages that it generates <xref target="RFC8505"/>.
-   This specification adds a new "A" bit in the 6CIO to indicate support of
-   address mapping (see <xref target="CIO"/>).
-   </t>
-
-	<t>
-    It results that the 6LBR is capable of providing the LLA mapping for any
-    address that was proactively registered with an SLLAO. This draft defines
-    the protocol elements and the operations to try a unicast lookup with the
-    6LBR. This may save a reactive IPv6 ND Neighbor Solicitation (NS) message,
-    which is based on multicast and may be problematic in extensive wireless
-    domains (see <xref target="I-D.ietf-mboned-ieee802-mcast-problems"/>) as
-    well as in large switched fabrics.
-    </t>
 
 
+
+</section> <!-- Distributing the 6LBR -->
+
+
+<section anchor='unic'><name>Unicast Address Lookup with the 6LBR</name>
+
+
+<t>
+  A classical IPv6 ND stack in the server that treats the subnet prefix as
+  on-link (more in section 4.6.2. of <xref target="RFC4861" format="default" sectionFormat="of"/>), will resolve an unknown LLA mapping with a multicast
+  NS(lookup) message addressed to the solicited note multicast address (SNMA)
+  associated with the destination address being resolved. The RECOMMENDED
+  operation in that case is for the 6LBR that has a mapping state to forward the
+  packet as a unicast MAC to the LLA that is stored for the IPv6 address as
+  expected by  <xref target="RFC6085"/>.
+</t>
+
+<figure anchor="figlkup1">
+          <name>Forwarding legacy NS (Lookup)</name>
+       <artwork align="center" name="" type="" alt="">
+       <![CDATA[
+
+     Local             Local                   Remote
+     Server            Leaf                    Server
+     +----+          +--------+                +----+
+     |    |          |        |                |    |
+      6LN             6LR/6LBR                  6LN
+       |                 |          . ..         |
+       |    Ethernet     |      . .. .  ..       |
+       |                 |      eVPN infra .     |
+       |    multicast    |       . .... ..       |
+       |    NS(lookup)   |           ...         |
+       |---------------->|                       |
+       |                 |    forward unicast    |
+       |                 |     NS(lookup)        |
+       |                 |---------------------->|
+       |                 |                       |
+       |                 |         NA(O)         |
+       |                 |<----------------------|
+       |      NA(O)      |                       |
+       |<----------------|                       |
+       |                 |                       |
+    ]]>
+       </artwork>
+</figure>
+
+
+  <t>
+  Section 3.1. of <xref target="RFC8929" format="default" sectionFormat="of"/>
+  adds the capability to insert IPv6 ND options in the EDAR and EDAC messages.
+  This enables the 6LBR to store the link-layer address associated with the
+  Registered Address and to serve as a mapping server as described in
+  <xref target="I-D.thubert-6lo-unicast-lookup"/>. The draft extends the EDAR
+  and EDAR ICMPv6 messages for address lookup  with the same ICMPv6 types but a
+  different Code Prefix.
+  </t>
+
+
+
+  <t>
+  In that model, the router adversises the subnet prefix as not on-link by
+  setting the L flag to 0 in the Prefix Information Option (PIO) (more in
+  section 4.6.2. of <xref target="RFC4861" format="default" sectionFormat="of"/>.
+  The expected behaviour is that the host that communicates with a peer in the
+  same subnet refrains from resolving the address mapping and passes the packets
+  directly to the router. <xref target="unilook1"/> illustrates the case where
+  the router is a virtual 6LR running in the server, in which case is can
+  resolve the address of the destination with a unicast lookup to the 6LBR.
+  </t>
+<figure anchor="unilook1">
+          <name>Unicast Lookup from the virtual Host</name>
+       <artwork align="center" name="" type="" alt="">
+       <![CDATA[
+
+           Local                 Local             Remote
+           Server                 Leaf             Server
+     +----------------+         +------+           +----+
+     |                |         |      |           |    |
+      6LN          6LR            6LBR              6LN
+       |            |              |                 |
+       |            |              |       . ..      |
+       | <vSwitch>  |  Ethernet    |   . .. .  ..    |
+       |            |              |   eVPN infra .  |
+       |            |              |    . .... ..    |
+       |  RA(PIO)   |              |        ...      |
+       | not onlink |              |                 |
+       |<-----------|              |                 |
+       |            |              |                 |
+       |  Packet    |              |                 |
+       |----------->|              |                 |
+       |            |              |                 |
+       |            | EDAR(lookup) |                 |
+       |            |------------->|                 |
+       |            |              |                 |
+       |            | EDAC(TLLAO)  |                 |
+       |            |<-------------|                 |
+       |            |              |                 |
+       |    NCE in STALE state     |                 |
+       |            |                                |
+       |            |            Packet              |
+       |            |------------------------------->|
+       |            |                                |
+       |    NCE in DELAY state     |                 |
+       |            |              |                 |
+    ]]>
+       </artwork>
+</figure>
+
+<t>
+  <xref target="I-D.thubert-6lo-unicast-lookup"/> provides the capability to
+  indicate that the mapping is not known. In a fully stateful subnet where all nodes register their address with <xref target="RFC8505"/>, this means that
+  the address is not present in the network, in which case the packet is dropped
+  and an ICMP error type 1 "Destination Unreachable" code 3 "Address unreachable" is returned as shown in <xref target="unilookfail"/>.
+</t>
+<figure anchor="unilookfail">
+          <name>Unicast Lookup failure</name>
+       <artwork align="center" name="" type="" alt="">
+       <![CDATA[
+
+           Local                 Local             Remote
+           Server                 Leaf             Server
+     +----------------+         +------+           +----+
+     |                |         |      |           |    |
+      6LN          6LR            6LBR              6LN
+       |            |              |                 |
+       |            |              |       . ..      |
+       | <vSwitch>  |  Ethernet    |   . .. .  ..    |
+       |            |              |   eVPN infra .  |
+       |            |              |    . .... ..    |
+       |  RA(PIO)   |              |        ...      |
+       | not onlink |              |                 |
+       |<-----------|              |                 |
+       |            |              |                 |
+       |  Packet    |              |                 |
+       |----------->|              |                 |
+       |            |              |                 |
+       |            | EDAR(lookup) |                 |
+       |            |------------->|                 |
+       |            |              |                 |
+       |            | EDAC(status= |                 |
+       |            |  Not Found ) |                 |
+       |            |<-------------|                 |
+       | ICMP error |              |                 |
+       |addr unreach|              |                 |
+       |<-----------|              |                 |
+       |            |              |                 |
+    ]]>
+       </artwork>
+</figure>
+
+<t>
+  In a mixed environment, a lookup miss may be caused by a legacy node that was
+  node discovered (aka a silent node). In that case, it is an administrative
+  decision for the 6LR to broadcast an NS(lookup) or to return an error as shown
+  in <xref target="unilookfail"/>.
+</t>
+
+</section> <!-- Unicast Address Lookup with the 6LBR -->
 
 </section> <!-- Extending 6LoWPAN ND -->
-
 
 </section> <!-- end section "6LoWPAN Neighbor Discovery" -->
 
 
-
-
-    <section anchor="earo" title="New ARO Status">
-    <t>
-    The Extended Address Registration Option (EARO) is defined in section 4.1
-    of <xref target="RFC8505"/>. It contains a Status field that is common with
-    with the EDAR and EDAC messages defined in section 4.2 of
-    <xref target="RFC8505"/>.
-    This specification defines a new Status "Not Found" as indicated in
-    <xref target="AROstatus"/>
-    </t>
-
-	<texttable anchor="AROstatus" title="EARO Status" >
-	  	<ttcol align="center">Value</ttcol>
-	  	<ttcol align="left">Description </ttcol>
-
-	<c> 0..10 </c>
-    <c>As defined in <xref target="RFC6775"/> and <xref target="RFC8505"/>.</c>
-	<c> 11 </c> <c>Not Found: The address is not present in the Address Registrar (value to be confirmed by IANA)</c>
-	</texttable> <!-- end table "EARO Status" -->
-
-    <t>
-    The Status of "Not Found" can be used in an NA(EARO) and in an AMC messages
-    as a response to an address lookup operation.
-    </t>
-
-    </section><!-- end section "New ARO Status"-->
 
 
 
@@ -770,7 +877,27 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
 
 
 <section anchor='iana-considerations'><name>IANA Considerations</name>
-<t>TBD</t>
+
+
+<section anchor='ianaearostat'><name>New EARO Status Value</name>
+
+    <t>
+    This specification extends the "Address Registration Option Status Values" subregistry i the "Internet Control Message Protocol version 6 (ICMPv6) Parameters" to add the following value:
+    </t>
+
+   <table anchor='IAROstatus'><name>Rejection values of the EARO Status </name>
+   <thead>
+      <tr><td>Value</td><td>Description</td><td>Reference</td></tr>
+   </thead><tbody>
+
+       <tr><td>11 (suggested)</td><td>Not Found: The address is not present in the Address Registrar</td>
+      <td>This document</td></tr>
+   </tbody>
+
+   </table>
+
+</section> <!-- New EARO Status Value -->
+
 
 </section>
 
@@ -787,13 +914,16 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
  <back>
 
       <displayreference   target="I-D.ietf-rift-rift"  to="RIFT"/>
+    <displayreference target="I-D.thubert-6lo-unicast-lookup" to="UNICAST-LOOKUP"/>
 
 
  <references><name>Normative References</name>
 	  <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.2119.xml'/>
 
+   <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4443.xml'/>
    <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4861.xml'/>
    <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6775.xml'/>
+   <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6085.xml'/>
    <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7400.xml'/>
    <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.7432.xml'/>
    <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8174.xml'/>
@@ -809,8 +939,9 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
  <references><name>Informative References</name>
    <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.4862.xml'/>
    <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8929.xml'/>
-   <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-mboned-ieee802-mcast-problems.xml'/>
+
    <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-rift-rift.xml'/>
+   <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.thubert-6lo-unicast-lookup.xml'/>
  </references>
 
 
