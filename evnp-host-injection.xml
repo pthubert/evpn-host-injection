@@ -439,24 +439,36 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
     where each side informs the other in case of new information concerning an
     IP to Link-Layer Address (LLA) mapping. Since this is an internal interface,
     this specification makes no assumption on whether the 6LBR stores its own
-    representation of the eVPN state state, which means that the eVPN support
+    representation of the full eVPN state, which means that the eVPN support
     informs the 6LBR in case of any change on the eVPN side (this is called
-    the push model, see <xref target="Figpull"/>), or if the 6LBR queries the
+    the push model, see <xref target="Figpush"/>), or if the 6LBR queries the
     eVPN support when it does not have a mapping to satisfy a request (pull
     model, see <xref target="Figpull"/>).
    </t>
    <t>
-    This specification augments the abstract data model of the 6LBR to store
-    the LLA associated with the registered address. Based on that additional
-    state, the 6LBR can communicate the mapping to the colocated eVPN function.
+    This specification leverages <xref target='RFC8929'/> that augments the
+    abstract data model of the 6LBR to store the LLA associated with the
+    registered address. Based on that additional state, the 6LBR can
+    communicate the mapping to the colocated eVPN function and respond to
+    unicast mapping lookups.
    </t>
    <t>
-    In an environment where the server is a classical host or hosts a collection
-    of virtual hosts interconnected by a virtual switch, the 6LR and the 6LBR
-    functions are also collapsed in the leaf. The 6LR to 6LBR interaction also
-    becomes an internal interface, and there is no need for EDAR/EDAC messages.
+    In an environment where the server ranges from a classical host to a more
+    complex platform that runs a collection of virtual hosts interconnected by
+    a virtual switch, but where the host-to-leaf interface remains at layer 2,
+    the 6LR and the 6LBR functions can be collapsed in the  leaf.
+    The 6LR to 6LBR interaction also becomes an internal interface, and
+    there is no need for EDAR/EDAC messages.
+   </t>
+   <t>
     In that case, the MAC address associated to the Registered Address is indicated in the Target Link-Layer Address Option (TLLAO) in the NS message
-    used for the registration, as shown in <xref target="Figdir"/>:
+    used for the registration, as shown in <xref target="Figdir"/>.
+    In the case of a pull model, if the 6LBR does not have a local state for
+    the mapping, it queries the eVPN support to obtain the eVPN state if any.
+    If a mapping is known then the 6LR/6LBR evaluates the registration for
+    address detection and other possible issues per <xref target='RFC8505'/>.
+    Else (this is for a new mapping), if the registration is accepted, then
+    the 6LBR notifies the eVPN support to inject a route type 2 in the fabric.
     </t>
 
 <figure anchor="Figdir">
@@ -469,11 +481,20 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
      |              |   |                   |
       6LN                6LR/6LBR       eVPN      . ..
        |                    |            |   . .. .  ..
-       |       Ethernet     | <call I/F> |   eVPN infra .
+       | <vSwitch> Ethernet | <call I/F> |   eVPN infra .
        |                    |            |    . .... ..
        |  NS(EARO)          |            |        ...
        |------------------->|            |
-       |                    |   call     |
+       |                    |            | ^
+       |                    |   query    | |
+       |                    |----------->| | if pull
+       |                    |  response  | | model
+       |                    |<-----------| |
+       |                                 | v
+       |            Evaluation (DAD)     |
+       |                                 |
+       |                    |new mapping |
+       |                    | indication |
        |                    |----------->|
        |                    |            | Inject/maintain
        |                    |            | eVPN route type 2
@@ -510,7 +531,16 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
        |----------->|              |            |
        |            |  EDAR(TLLAO) |            |
        |            |------------->|            |
-       |            |              |   call     |
+       |            |              |            | ^
+       |            |              |   query    | |
+       |            |              |----------->| | if pull
+       |            |              |  response  | | model
+       |            |              |<-----------| |
+       |            |                           | v
+       |            |    Evaluation (DAD)       |
+       |            |                           |
+       |            |              |new mapping |
+       |            |              | indication |
        |            |              |----------->|
        |            |              |            | Inject/maintain
        |            |              |            | eVPN route type 2
@@ -523,43 +553,6 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
     ]]>
        </artwork>
 </figure>
-<t>
-   Alternatively, the virtual router may proxy the registration as shown in
-   <xref target="Figprox"/>:
-</t>
-<figure anchor="Figprox">
-          <name>Proxy Registration</name>
-       <artwork align="center" name="" type="" alt="">
-       <![CDATA[
-
-           Server                       Leaf
-     +----------------+          +----------------+
-     |                |          |                |
-      6LN          6LR            6LBR        eVPN      . ..
-       |            |              |            |   . .. .  ..
-       | <vSwitch>  |  Ethernet    | <call I/F> |   eVPN infra .
-       |            |              |            |    . .... ..
-       |  NS(EARO)  |              |            |        ...
-       |----------->|              |            |
-       |            |    proxy     |            |
-       |            |   NS(EARO)   |            |
-       |            |------------->|            |
-       |            |              |   call     |
-       |            |              |----------->|
-       |            |              |            | Inject/maintain
-       |            |              |            | eVPN route type 2
-       |            |              |            | <----------------->
-       |            |    proxy     |            |
-       |            |   NA(EARO)   |            |
-       |            |<-------------|            |
-       |  NA(EARO)  |              |            |
-       |<-----------|              |            |
-       |            |              |            |
-    ]]>
-       </artwork>
-</figure>
-
-
 
 </section> <!-- Distributing the 6LBR -->
 
