@@ -156,6 +156,8 @@
     <dt>6LN:</dt><dd> 6LoWPAN Node (the Host) </dd>
     <dt>6LR:</dt><dd> 6LoWPAN router (the router) </dd>
     <dt>6LBR:</dt><dd> 6LoWPAN Border router (the reflector)</dd>
+    <dt>AMC:</dt><dd> Address Mapping Confirmation</dd>
+    <dt>AMR:</dt><dd> Address Mapping Request</dd>
     <dt>EARO:</dt><dd> Extended Address Registration Option </dd>
     <dt>DAD:</dt><dd> Duplicate Address Detection </dd>
     <dt>ICMPv6:</dt><dd> Internet Control Message Protocol for IPv6</dd>
@@ -169,7 +171,8 @@
     <dt>ROVR:</dt><dd> Registration Ownership Verifier </dd>
     <dt>TID:</dt><dd> Transaction ID (a sequence counter in the EARO) </dd>
     <dt>TIO:</dt><dd> Transit Information Option</dd>
-    <dt>TLLAO:</dt><dd>Target Link-Layer Address Option</dd>
+    <dt>SLLAO:</dt><dd> Source Link-Layer Address Option</dd>
+    <dt>TLLAO:</dt><dd> Target Link-Layer Address Option</dd>
 
 
     </dl>
@@ -448,9 +451,9 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
    <t>
     This specification leverages <xref target='RFC8929'/> that augments the
     abstract data model of the 6LBR to store the LLA associated with the
-    registered address. Based on that additional state, the 6LBR can
+    registered address. Based on that additional state, the 6LBR in a leaf can
     communicate the mapping to the colocated eVPN function and respond to
-    unicast mapping lookups.
+    unicast address mapping lookups from the server side.
    </t>
    <t>
     In an environment where the server ranges from a classical host to a more
@@ -466,7 +469,7 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
     In the case of a pull model, if the 6LBR does not have a local state for
     the mapping, it queries the eVPN support to obtain the eVPN state if any.
     If a mapping is known then the 6LR/6LBR evaluates the registration for
-    address detection and other possible issues per <xref target='RFC8505'/>.
+    address duplication and other possible issues per <xref target='RFC8505'/>.
     Else (this is for a new mapping), if the registration is accepted, then
     the 6LBR notifies the eVPN support to inject a route type 2 in the fabric.
     </t>
@@ -496,9 +499,9 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
        |                    |new mapping |
        |                    | indication |
        |                    |----------->|
-       |                    |            | Inject/maintain
-       |                    |            | eVPN route type 2
-       |                    |            | <----------------->
+       |                                 | Inject/maintain
+       |         store a mapping state   | eVPN route type 2
+       |                                 | <----------------->
        |       NA(EARO)     |            |
        |<-------------------|            |
        |                    |            |
@@ -510,9 +513,9 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
     whereas the 6LBR runs in the leaf node. To address that case, the EDAR/EDAC
     may be used to communicate as shown in figure 5 of <xref target="RFC8505"/>.
     This draft leverages the capability to insert IPv6 ND options in the EDAR
-    and EDAC messages introduced in <xref target="RFC9010"/> to place a TLLAO
+    and EDAC messages introduced in <xref target="RFC8929"/> to place a TLLAO
     that carries the MAC address associated to the Registered address in the
-    EDAR and EDAC messages, as shown in  <xref target="FigDAR"/>:
+    EDAR and EDAC messages as shown in <xref target="FigDAR"/>:
    </t>
 
 <figure anchor="FigDAR">
@@ -542,9 +545,9 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
        |            |              |new mapping |
        |            |              | indication |
        |            |              |----------->|
-       |            |              |            | Inject/maintain
-       |            |              |            | eVPN route type 2
-       |            |              |            | <----------------->
+       |            |                           | Inject/maintain
+       |            |   store a mapping state   | eVPN route type 2
+       |            |                           | <----------------->
        |            |  EDAC(TLLAO) |            |
        |            |<-------------|            |
        |  NA(EARO)  |              |            |
@@ -567,7 +570,9 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
   associated with the destination address being resolved. The RECOMMENDED
   operation in that case is for the 6LBR that has a mapping state to forward the
   packet as a unicast MAC to the LLA that is stored for the IPv6 address as
-  expected by  <xref target="RFC6085"/>.
+  expected by  <xref target="RFC6085"/>. The actual owner of the address can
+  then answer unicast with a NA message, setting the override (O) bit to 1,
+  as shown in <xref target="figlkup1"/>.
 </t>
 
 <figure anchor="figlkup1">
@@ -604,20 +609,25 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
   Section 3.1. of <xref target="RFC8929" format="default" sectionFormat="of"/>
   adds the capability to insert IPv6 ND options in the EDAR and EDAC messages.
   This enables the 6LBR to store the link-layer address associated with the
-  Registered Address and to serve as a mapping server as described in
-  <xref target="I-D.thubert-6lo-unicast-lookup"/>. The draft extends the EDAR
-  and EDAR messages for address lookup  with the same ICMPv6 types but with a
+  Registered Address and to serve as a mapping server.
+  <xref target="I-D.thubert-6lo-unicast-lookup"/> leverages that state to define a new unicast address lookup operation, extending the EDAR and EDAC
+  messages as the Address Mapping Request (AMR) and Confirmation (AMC) with a
   different Code Prefix <xref target='RFC8505'/>.
   </t>
   <t>
   In that model, the router advertises the subnet prefix as not on-link by
-  setting the L flag to 0 in the Prefix Information Option (PIO) (more in
+  setting the L flag to 0 in the Prefix Information Option (PIO), more in
   section 4.6.2. of <xref target="RFC4861" format="default" sectionFormat="of"/>.
   The expected behaviour is that the host that communicates with a peer in the
   same subnet refrains from resolving the address mapping and passes the packets
-  directly to the router. <xref target="unilook1"/> illustrates the case where
-  the router is a virtual 6LR running in the server, in which case is can
-  resolve the address of the destination with a unicast lookup to the 6LBR.
+  directly to the router.
+  </t>
+  <t>In the case where the router is a virtual 6LR running in the server, and the source and destination are in the same subnet served by eVPN, the router
+  then resolves the address mapping on behalf of the host. To that effect,
+  the router sends a unicast AMR message to the 6LBR.
+  The message contains the SLLAO of the router to which the 6LBR will reply.
+  If the binding is found, the 6LBR replies with an AMC message that contains
+  the TLLOA with the requested MAC address, as shown in <xref target="unilook1"/>.
   </t>
 <figure anchor="unilook1">
           <name>Unicast Lookup from the virtual Host</name>
@@ -641,10 +651,10 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
        |  Packet    |              |                 |
        |----------->|              |                 |
        |            |              |                 |
-       |            | EDAR(lookup) |                 |
+       |            | AMR (SLLAO)  |                 |
        |            |------------->|                 |
        |            |              |                 |
-       |            | EDAC(TLLAO)  |                 |
+       |            | AMC (TLLAO)  |                 |
        |            |<-------------|                 |
        |            |              |                 |
        |    NCE in STALE state     |                 |
@@ -659,10 +669,18 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
 </figure>
 
 <t>
+  If it is not found,
   <xref target="I-D.thubert-6lo-unicast-lookup"/> provides the capability to
-  indicate that the mapping is not known. In a fully stateful subnet where all nodes register their address with <xref target="RFC8505"/>, this means that
-  the address is not present in the network, in which case the packet is dropped
-  and an ICMP error type 1 "Destination Unreachable" code 3 "Address unreachable" <xref target='RFC4443'/> is returned as shown in <xref target="unilookfail"/>.
+  indicate immediately that the mapping is not known with a "not found" status
+  in the AMC, as opposed to waiting for an NS(lookup) and retries to time out
+  per <xref target='RFC4861'/>.
+ </t>
+ <t>
+  In a fully stateful subnet where all nodes register all their addresses with
+  <xref target="RFC8505"/>, this means that the looked up address is not
+  present in the network; in that case the packet is dropped and an ICMP error
+  type 1 "Destination Unreachable" code 3 "Address unreachable" <xref target=
+  'RFC4443'/> is returned as shown in <xref target="unilookfail"/>.
 </t>
 <figure anchor="unilookfail">
           <name>Unicast Lookup failure</name>
@@ -706,8 +724,8 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
   Note that the figures above make no assumption on the pull vs. push model.
   In the case of pull model, the 6LBR queries the eVPN support when it does not have the mapping information to satisfy a request.
   <xref target="Figpull"/> illustrates a successful pull model lookup flow,
-  when the route type 2 for the mapping was effectively received from the eVPN
-  side.
+  when the route type 2 for the mapping is already known on the eVPN side.
+
 </t>
 
 <figure anchor="Figpull">
@@ -753,8 +771,7 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
   In the case of push model, the eVPN support synchronizes its state upon a route type 2 with the 6LBR, and the 6LBR maintains an abstract data structure for all information known to eVPN. This way, the 6LBR already has the mapping information to satisfy any request for an existing mapping and
   it can answer right away.
   <xref target="Figpush"/> illustrates a successful push model lookup flow,
-  when the route type 2 for the mapping was effectively received from the eVPN
-  side.
+  when the 6LBR is already in possession of the mapping.
 </t>
 
 <figure anchor="Figpush">
@@ -801,10 +818,11 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
 </figure>
 
   <t>
-  In a mixed environment, a lookup miss may be caused by a legacy node that was
-  node discovered (aka a silent node). In that case, it is an administrative
-  decision for the 6LR to broadcast an NS(lookup) or to return an error as shown
-  in <xref target="unilookfail"/>.
+  In a mixed environment, a lookup failure (the mapping is not found though
+  the address is present in the network) may be caused by a legacy node that
+  was node discovered (aka a silent node).
+  In that case, it is an administrative decision for the 6LR to broadcast an
+  NS(lookup) or to return an error as shown in <xref target="unilookfail"/>.
   </t>
 
 </section> <!-- Unicast Address Lookup with the 6LBR -->
@@ -826,32 +844,50 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
 
  <section anchor='prereq6lp'><name>Support of 6LoWPAN ND</name>
 <t>
-   To obtain routing services from a router that implements this specification,
-   a Host needs to implement <xref target='RFC8505'/> and sets the "R" and "T"
-   flags in the EARO to 1 as discussed in <xref target='R8505ER'/> and
-   <xref target='R8505ETID'/>, respectively. This document specifies new
-   behaviors for the Host, e.g., when the R Flag set to 1 in a NS(EARO) is not
-   echoed in the NA(EARO), which indicates that the route injection failed.
+   A host sees a prefix as not on-link (e.g., it learned that prefix in a PIO
+   in a RA with the L flag not set) should not attempt to resolve an address
+   within that prefix using a multicast NS(lookup).
+   Instead, it must pass its packets to a router, preferably one that advertises that prefix in a PIO; it must register the address that it uses as source to that router to enable source address validation using
+   <xref target='RFC8505'/>.
+   It is recommended that the Host also implements <xref target='RFC8928'/> to
+   prove its ownership of its addresses.
 </t><t>
    The Host is expected to request routing services from a router only if that
    router originates RA messages with a 6CIO that has the L, P, and E flags all
    set to 1 as discussed in <xref target='R7400'/>, unless configured to do so.
-   It is suggested that the Host also implements
-   <xref target='RFC8928'/> to protect the ownership of its addresses.
+   To obtain routing services for one of its addresses, the host must register
+   the address to a router that advertises the prefix, setting the "R" and "T"
+   flags in the EARO to 1 as discussed in <xref target='R8505ER'/> and <xref target='R8505ETID'/>, respectively.
 </t><t>
-   A Host that may attach to multiple 6LRs is expected to prefer those that provide routing services.
-   The Host needs to register to all the 6LRs from which it desires routing services.
+   This document echoes the behavior specified in <xref target='RFC9010'/>
+   whereby, when the R Flag set to 1 in a NS(EARO) is not echoed in the NA(EARO), the host must understand that the route injection failed, and
+   if the R flag is reset later in an asynchronous NA(EARO), the host must
+   understand that routing service has failed.
+</t><t>
+   The host may attach to multiple 6LRs and is expected to prefer those that provide routing services. The abstract model for this is a P2MP interface
+   that wraps together as many P2P IP Links the host has adjacencies to 6LRs
+   over that interface. The IPv6 address and the subnet are associated to that
+   interface.
+   The interface may be virtual and it may bundle multiple physical Ethernet
+   interfaces that connect to the individual 6LRs over point to point wires,
+   possibly via a software switch.
+   It can also be associated to one physical interface to an external switch,
+   either way the PI Links can be assiciated to sub-interface of the interface.
+
 </t>
 <t>
-   Parallel Address Registrations to several 6LRs should be performed in a rapid sequence, using the same EARO for the same Address. Gaps between
-   the Address Registrations will invalidate some of the routes till the Address
-   Registration finally shows on those routes.
+   The Host needs to register to all the 6LRs from which it desires routing
+   services. The parallel Address Registrations to several 6LRs should be
+   performed in a rapid sequence, using the same EARO for the same Address.
+   Gaps between the Address Registrations will invalidate some of the routes
+   till the Address Registration finally shows on those routes.
+   The routers recognize the same (ROVR, TID) as the signal of a multihomed
+   address.
 </t>
 <t><xref target='RFC8505'/> introduces error Status values in the NA(EARO)
-   which can be received synchronously upon an NS(EARO) or asynchronously. The
-   Host needs to support both cases and refrain from using the address
+   which can be received synchronously upon an NS(EARO) or asynchronously.
+   The Host needs to support both cases and refrain from using the address
    when the Status value indicates a rejection.
-
 </t>
 
 </section> <!-- end section "Support of 6LoWPAN ND" -->
