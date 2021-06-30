@@ -158,7 +158,7 @@
     <dt>6LBR:</dt><dd> 6LoWPAN Border router (the reflector)</dd>
     <dt>EARO:</dt><dd> Extended Address Registration Option </dd>
     <dt>DAD:</dt><dd> Duplicate Address Detection </dd>
-    <dt>ICMPv6:</dt><dd> Internet Control Message Protocol for IPv6, see <xref target='RFC4443'/></dd>
+    <dt>ICMPv6:</dt><dd> Internet Control Message Protocol for IPv6</dd>
     <dt>EVPN:</dt><dd> Ethernet VPN </dd>
     <dt>LLA:</dt><dd> Link-Layer Address (the MAC address on Ethernet)</dd>
     <dt>NA:</dt><dd>  Neighbor Advertisement </dd>
@@ -386,6 +386,8 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
    whether the proposed route is new and legit, and reject it otherwise.
 </t>
 
+</section> <!-- end section "RFC 8505 Extended DAR/DAC" -->
+
 <section anchor='R7400'><name>RFC 7400 Capability Indication Option</name>
 
 <t>
@@ -424,8 +426,6 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
 
 </section> <!-- end section "RFC 7400 Capability Indication Option" -->
 
-</section> <!-- end section "RFC 8505 Extended DAR/DAC" -->
-
 
 <section anchor='ext8505'><name>Extending 6LoWPAN ND</name>
 
@@ -435,9 +435,17 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
    <t>
 	This specification enables to distribute the 6LBR at the edge of the eVPN
     network and collapse the 6LBR function with that of the eVPN support.
-    In that model, the eVPM to 6LBR interaction becomes an internal interface,
+    In that model, the eVPN to 6LBR interaction becomes an internal interface,
     where each side informs the other in case of new information concerning an
-    IP to Link-Layer Address (LLA) mapping.
+    IP to Link-Layer Address (LLA) mapping. Since this is an internal interface,
+    this specification makes no assumption on whether the 6LBR stores its own
+    representation of the eVPN state state, which means that the eVPN support
+    informs the 6LBR in case of any change on the eVPN side (this is called
+    the push model, see <xref target="Figpull"/>), or if the 6LBR queries the
+    eVPN support when it does not have a mapping to satisfy a request (pull
+    model, see <xref target="Figpull"/>).
+   </t>
+   <t>
     This specification augments the abstract data model of the 6LBR to store
     the LLA associated with the registered address. Based on that additional
     state, the 6LBR can communicate the mapping to the colocated eVPN function.
@@ -605,14 +613,11 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
   This enables the 6LBR to store the link-layer address associated with the
   Registered Address and to serve as a mapping server as described in
   <xref target="I-D.thubert-6lo-unicast-lookup"/>. The draft extends the EDAR
-  and EDAR ICMPv6 messages for address lookup  with the same ICMPv6 types but a
-  different Code Prefix.
+  and EDAR messages for address lookup  with the same ICMPv6 types but with a
+  different Code Prefix <xref target='RFC8505'/>.
   </t>
-
-
-
   <t>
-  In that model, the router adversises the subnet prefix as not on-link by
+  In that model, the router advertises the subnet prefix as not on-link by
   setting the L flag to 0 in the Prefix Information Option (PIO) (more in
   section 4.6.2. of <xref target="RFC4861" format="default" sectionFormat="of"/>.
   The expected behaviour is that the host that communicates with a peer in the
@@ -628,9 +633,9 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
 
            Local                 Local             Remote
            Server                 Leaf             Server
-     +----------------+         +------+           +----+
-     |                |         |      |           |    |
-      6LN          6LR            6LBR              6LN
+     +----------------+       +---------+          +----+
+     |                |       |         |          |    |
+      6LN          6LR         6LBR/eVPN            6LN
        |            |              |                 |
        |            |              |       . ..      |
        | <vSwitch>  |  Ethernet    |   . .. .  ..    |
@@ -664,50 +669,150 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
   <xref target="I-D.thubert-6lo-unicast-lookup"/> provides the capability to
   indicate that the mapping is not known. In a fully stateful subnet where all nodes register their address with <xref target="RFC8505"/>, this means that
   the address is not present in the network, in which case the packet is dropped
-  and an ICMP error type 1 "Destination Unreachable" code 3 "Address unreachable" is returned as shown in <xref target="unilookfail"/>.
+  and an ICMP error type 1 "Destination Unreachable" code 3 "Address unreachable" <xref target='RFC4443'/> is returned as shown in <xref target="unilookfail"/>.
 </t>
 <figure anchor="unilookfail">
           <name>Unicast Lookup failure</name>
        <artwork align="center" name="" type="" alt="">
        <![CDATA[
 
-           Local                 Local             Remote
-           Server                 Leaf             Server
-     +----------------+         +------+           +----+
-     |                |         |      |           |    |
-      6LN          6LR            6LBR              6LN
-       |            |              |                 |
-       |            |              |       . ..      |
-       | <vSwitch>  |  Ethernet    |   . .. .  ..    |
-       |            |              |   eVPN infra .  |
-       |            |              |    . .... ..    |
-       |  RA(PIO)   |              |        ...      |
-       | not onlink |              |                 |
-       |<-----------|              |                 |
-       |            |              |                 |
-       |  Packet    |              |                 |
-       |----------->|              |                 |
-       |            |              |                 |
-       |            | EDAR(lookup) |                 |
-       |            |------------->|                 |
-       |            |              |                 |
-       |            | EDAC(status= |                 |
-       |            |  Not Found ) |                 |
-       |            |<-------------|                 |
-       | ICMP error |              |                 |
-       |addr unreach|              |                 |
-       |<-----------|              |                 |
-       |            |              |                 |
+           Local                 Local
+           Server                 Leaf
+     +----------------+       +---------+
+     |                |       |         |
+      6LN          6LR         6LBR/eVPN
+       |            |              |
+       |            |              |       . ..
+       | <vSwitch>  |  Ethernet    |   . .. .  ..
+       |            |              |   eVPN infra .
+       |            |              |    . .... ..
+       |   RA(PIO   |              |        ...
+       |not on-link)|              |
+       |<-----------|              |
+       |            |              |
+       |  Packet    |              |
+       |----------->|              |
+       |            |              |
+       |            | EDAR(lookup) |
+       |            |------------->|
+       |            |              |
+       |            | EDAC(status= |
+       |            | "Not Found") |
+       |            |<-------------|
+       |ICMPv6 Error|              |
+       | "Address   |              |
+       |Unreachable"|              |
+       |<-----------|              |
+       |         Drop Packet       |
+       |            |              |
+    ]]>
+       </artwork>
+</figure>
+
+  <t>
+  Note that the figures above make no assumption on the pull vs. push model.
+  In the case of pull model, the 6LBR queries the eVPN support when it does not have the mapping information to satisfy a request.
+  <xref target="Figpull"/> illustrates a successful pull model lookup flow,
+  when the route type 2 for the mapping was effectively received from the eVPN
+  side.
+</t>
+
+<figure anchor="Figpull">
+          <name>Pull models</name>
+       <artwork align="center" name="" type="" alt="">
+       <![CDATA[
+           Server                       Leaf
+     +----------------+          +----------------+
+     |                |          |                |
+      6LN          6LR            6LBR        eVPN      . ..
+       |            |              |            |   . .. .  ..
+       | <vSwitch>  |  Ethernet    | <call I/F> |   eVPN infra .
+       |            |              |            |    . .... ..
+       |            |              |            |        ...
+       |            |              |            |
+       |            |              |            | Receive eVPN
+       |            |              |            | route type 2 for
+       |            |              |            | remote address R
+       |            |              |            |<-----------------
+       |            |              |     store a mapping state
+       |            |              |            |
+       |Packet for R|              |            |
+       |----------->|              |            |
+       |            |EDAR(lookup R)|            |
+       |            |------------->|            |
+       |            |              |Query addr R|
+       |            |              |----------->|
+       |            |              |            |
+       |            |              | return LLA |
+       |            |              |<-----------|
+       |            |              |            |
+       |            |EDAC(R's TLLA)|            |
+       |            |<-------------|            |
+       |            |              |            |
+       |            |            Packet for R
+       |            |----------------------------------->
+       |            |              |            |
     ]]>
        </artwork>
 </figure>
 
 <t>
+  In the case of push model, the eVPN support synchronizes its state upon a route type 2 with the 6LBR, and the 6LBR maintains an abstract data structure for all information known to eVPN. This way, the 6LBR already has the mapping information to satisfy any request for an existing mapping and
+  it can answer right away.
+  <xref target="Figpush"/> illustrates a successful push model lookup flow,
+  when the route type 2 for the mapping was effectively received from the eVPN
+  side.
+</t>
+
+<figure anchor="Figpush">
+          <name>Push model</name>
+       <artwork align="center" name="" type="" alt="">
+       <![CDATA[
+           Server                       Leaf
+     +----------------+          +----------------+
+     |                |          |                |
+      6LN          6LR            6LBR        eVPN      . ..
+       |            |              |            |   . .. .  ..
+       | <vSwitch>  |  Ethernet    | <call I/F> |   eVPN infra .
+       |            |              |            |    . .... ..
+       |            |              |            |        ...
+       |            |              |            |
+       |            |              |            | Receive eVPN
+       |            |              |            | route type 2 for
+       |            |              |            | remote address R
+       |            |              |            |<-----------------
+       |            |              |     store a mapping state
+       |            |              |            |
+       |            |              |indicate LLA|
+       |            |              |<-----------|
+       |            |    store a mapping state  |
+       |            |              |            |
+       |Packet for R|              |            |
+       |----------->|              |            |
+       |            |EDAR(lookup R)|            |
+       |            |------------->|            |
+       |            |              |Query addr R|
+       |            |              |----------->|
+       |            |              |            |
+       |            |              | return LLA |
+       |            |              |<-----------|
+       |            |              |            |
+       |            |EDAC(R's TLLA)|            |
+       |            |<-------------|            |
+       |            |              |            |
+       |            |            Packet for R
+       |            |----------------------------------->
+       |            |              |            |
+    ]]>
+       </artwork>
+</figure>
+
+  <t>
   In a mixed environment, a lookup miss may be caused by a legacy node that was
   node discovered (aka a silent node). In that case, it is an administrative
   decision for the 6LR to broadcast an NS(lookup) or to return an error as shown
   in <xref target="unilookfail"/>.
-</t>
+  </t>
 
 </section> <!-- Unicast Address Lookup with the 6LBR -->
 
@@ -877,7 +982,7 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
 
 
 <section anchor='iana-considerations'><name>IANA Considerations</name>
-
+<!--
 
 <section anchor='ianaearostat'><name>New EARO Status Value</name>
 
@@ -896,7 +1001,7 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
 
    </table>
 
-</section> <!-- New EARO Status Value -->
+</section>  New EARO Status Value -->
 
 
 </section>
