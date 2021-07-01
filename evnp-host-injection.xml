@@ -1054,26 +1054,27 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
  </figure>
  <figure anchor='fReg2' suppress-title='false'><name>Next Host Registration Flow</name>
  <artwork align="center"><![CDATA[
-    Local           Local               Route           Remote
-    Server          Leaf              Reflector         Leaf
-   +-------+       +---------+        +-------+        +---------+
-   |       |       |         |        |       |        |         |
-      6LN           6LBR/eVPN            BGP            eVPN/6LBR
-       |                |               . ..               |
-       |    Ethernet    |           . .. .  ..             |
-       |                |           eVPN infra .           |
-       |                |           . .... ..              |
-       |NS(EARO(TID+1)) |                ...               |
-       |--------------->|                 |                |
-       |                |                 |                |
-       |       renew lifetime locally     |                |
-       |                |                 |                |
-       |    NA(EARO     |                 |                |
-       |   status = 0)) |                 |                |
-       |<---------------|                 |                |
-       |                |                 |                |
-       |                |                 |                |
-       |                |                 |                |
+    Local                 Local                   Route
+    Server                Leaf                  Reflector
+   +-------+       +-----------------+          +-------+
+   |       |       |                 |          |       |
+      6LN           6LBR         eVPN              BGP
+       |              |            |              . ..
+       |   Ethernet   |            |          . .. .  ..
+       |              |            |          eVPN infra .
+       |              |            |          . .... ..
+       |  NS(EARO(    |            |               ...
+            TID+1))   |            |                |
+       |------------->|            |                |
+       |              |            |                |
+       |   renew lifetime locally  |                |
+       |              |            |                |
+       | NA(EARO      |            |                |
+       |  status = 0))|            |                |
+       |<-------------|            |                |
+       |              |            |                |
+       |              |            |                |
+       |              |            |                |
     ]]></artwork>
  </figure>
  <figure anchor='fRegcons' suppress-title='false'><name>Multihomed</name>
@@ -1127,7 +1128,7 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
        |        different ROVR            |                |
        |                |                 |                |
        |   NA(EARO(     |                 |                |
-       |   status = 1))                   |                |
+       |   status = 1)) |                 |                |
        |<---------------|                 |                |
        |                |                 |                |
        |                |                 |                |
@@ -1151,7 +1152,7 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
        |        same ROVR newer TID       |                |
        |                |                 |                |
        |   NA(EARO(     |                 |                |
-       |   status = 3))                   |                |
+       |   status = 3)) |                 |                |
        |<---------------|                 |                |
        |                |                 |                |
        |                |                 |                |
@@ -1193,31 +1194,27 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
 
  <figure anchor='fRegTO' suppress-title='false'><name>Lifetime Elapses</name>
  <artwork align="center"><![CDATA[
-
-    Local            Local              Route           Remote
-    Server           Leaf             Reflector         Leaf
-   +-------+       +---------+        +-------+        +---------+
-   |       |       |         |        |       |        |         |
-      6LN           6LBR/eVPN            BGP            eVPN/6LBR
-       |                |               . ..               |
-       |    Ethernet    |           . .. .  ..             |
-       |                |           eVPN infra .           |
-       |                |           . .... ..              |
-       |                |                ...               |
-       |        time out lifetime         |                |
-       |                |                 |                |
-       |                |-----kill------->|                |
-       |                |                 |                |
-       |                |                 |--------------->|
-       |                |                 |                |
-       |                |                 |                |
-       |                |                 |<---------------|
-       |                |                 |                |
-       |                |<----------------|                |
-       |                |                 |                |
-       |                |                 |                |
-       |                |                 |                |
-    ]]></artwork> </figure>
+          Local                     Route         Remote
+          Leaf                    Reflector       Leaf
+   +-----------------+           +---------+     +---------+
+   |                 |           |         |     |         |
+    6LBR         eVPN                BGP          eVPN/6LBR
+      | <call I/F> |                . ..              |
+      |            |            . .. .  ..            |
+      |            |            eVPN infra .          |
+      |            |            . .... ..             |
+      |            |                ...               |
+time out lifetime  |                 |                |
+      |            |                 |                |
+      |            |                 |                |
+      |----kill--->|                 |                |
+      |            |                 |                |
+      |            |-----kill------->|                |
+      |            |                 |                |
+      |            |                 |--------------->|
+      |            |                 |                |
+      |            |                 |                |
+]]></artwork> </figure>
 
 </section>
 
