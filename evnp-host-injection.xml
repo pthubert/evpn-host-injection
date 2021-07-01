@@ -359,7 +359,7 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
    Internet Control Message Protocol version 6 (ICMPv6) Parameters registry.
 </t>
 <t>
-  <xref target='RFC6775'/> and <xref target='RFC8505'/> defines the original
+  <xref target='RFC6775'/> and <xref target='RFC8505'/> defined the original
   values whereas <xref target='RFC9010'/> reduced range to 64 values and
   reformated the octet field to enable to transport an external error, e.g.,
   coming form a routing protocol.

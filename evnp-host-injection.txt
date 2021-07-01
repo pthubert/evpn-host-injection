@@ -359,7 +359,7 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
    the Internet Control Message Protocol version 6 (ICMPv6) Parameters
    registry.
 
-   [RFC6775] and [RFC8505] defines the original values whereas [RFC9010]
+   [RFC6775] and [RFC8505] defined the original values whereas [RFC9010]
    reduced range to 64 values and reformated the octet field to enable
    to transport an external error, e.g., coming form a routing protocol.
 
