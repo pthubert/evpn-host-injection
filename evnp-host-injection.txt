@@ -4,8 +4,8 @@
 
 BESS                                                          P. Thubert
 Internet-Draft                                             Cisco Systems
-Intended status: Standards Track                            30 June 2021
-Expires: 1 January 2022
+Intended status: Standards Track                             1 July 2021
+Expires: 2 January 2022
 
 
                          Routing for eVPN Hosts
@@ -34,7 +34,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 1 January 2022.
+   This Internet-Draft will expire on 2 January 2022.
 
 Copyright Notice
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Thubert                  Expires 1 January 2022                 [Page 1]
+Thubert                  Expires 2 January 2022                 [Page 1]
 
-Internet-Draft             eVPN Unaware Hosts                  June 2021
+Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 Table of Contents
@@ -109,9 +109,9 @@ Table of Contents
 
 
 
-Thubert                  Expires 1 January 2022                 [Page 2]
+Thubert                  Expires 2 January 2022                 [Page 2]
 
-Internet-Draft             eVPN Unaware Hosts                  June 2021
+Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
    [RFC8505] specifies a unicast address registration mechanism that
@@ -165,9 +165,9 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert                  Expires 1 January 2022                 [Page 3]
+Thubert                  Expires 2 January 2022                 [Page 3]
 
-Internet-Draft             eVPN Unaware Hosts                  June 2021
+Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
    EARO:  Extended Address Registration Option
@@ -221,9 +221,9 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert                  Expires 1 January 2022                 [Page 4]
+Thubert                  Expires 2 January 2022                 [Page 4]
 
-Internet-Draft             eVPN Unaware Hosts                  June 2021
+Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
    eVPN:  "BGP MPLS-Based Ethernet VPN" [RFC7432] and "Network
@@ -277,9 +277,9 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert                  Expires 1 January 2022                 [Page 5]
+Thubert                  Expires 2 January 2022                 [Page 5]
 
-Internet-Draft             eVPN Unaware Hosts                  June 2021
+Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 3.2.  RFC 8505 Extended Address Registration
@@ -333,9 +333,9 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert                  Expires 1 January 2022                 [Page 6]
+Thubert                  Expires 2 January 2022                 [Page 6]
 
-Internet-Draft             eVPN Unaware Hosts                  June 2021
+Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 3.2.2.  TID, "I" Field and Opaque Fields
@@ -389,9 +389,9 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert                  Expires 1 January 2022                 [Page 7]
+Thubert                  Expires 2 January 2022                 [Page 7]
 
-Internet-Draft             eVPN Unaware Hosts                  June 2021
+Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 3.4.  RFC 7400 Capability Indication Option
@@ -445,9 +445,9 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert                  Expires 1 January 2022                 [Page 8]
+Thubert                  Expires 2 January 2022                 [Page 8]
 
-Internet-Draft             eVPN Unaware Hosts                  June 2021
+Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
    This specification leverages [RFC8929] that augments the abstract
@@ -501,9 +501,9 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert                  Expires 1 January 2022                 [Page 9]
+Thubert                  Expires 2 January 2022                 [Page 9]
 
-Internet-Draft             eVPN Unaware Hosts                  June 2021
+Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
                  Server              Leaf
@@ -557,9 +557,9 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert                  Expires 1 January 2022                [Page 10]
+Thubert                  Expires 2 January 2022                [Page 10]
 
-Internet-Draft             eVPN Unaware Hosts                  June 2021
+Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
               Server                       Leaf
@@ -613,9 +613,9 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert                  Expires 1 January 2022                [Page 11]
+Thubert                  Expires 2 January 2022                [Page 11]
 
-Internet-Draft             eVPN Unaware Hosts                  June 2021
+Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
                 Local             Local                   Remote
@@ -669,9 +669,9 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert                  Expires 1 January 2022                [Page 12]
+Thubert                  Expires 2 January 2022                [Page 12]
 
-Internet-Draft             eVPN Unaware Hosts                  June 2021
+Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
                     Local                 Local             Remote
@@ -725,9 +725,9 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert                  Expires 1 January 2022                [Page 13]
+Thubert                  Expires 2 January 2022                [Page 13]
 
-Internet-Draft             eVPN Unaware Hosts                  June 2021
+Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
                        Local                 Local
@@ -781,9 +781,9 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert                  Expires 1 January 2022                [Page 14]
+Thubert                  Expires 2 January 2022                [Page 14]
 
-Internet-Draft             eVPN Unaware Hosts                  June 2021
+Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
                Server                       Leaf
@@ -837,9 +837,9 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert                  Expires 1 January 2022                [Page 15]
+Thubert                  Expires 2 January 2022                [Page 15]
 
-Internet-Draft             eVPN Unaware Hosts                  June 2021
+Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
                Server                       Leaf
@@ -893,9 +893,9 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert                  Expires 1 January 2022                [Page 16]
+Thubert                  Expires 2 January 2022                [Page 16]
 
-Internet-Draft             eVPN Unaware Hosts                  June 2021
+Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 4.  Requirements on the eVPN-Unaware Host
@@ -949,9 +949,9 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert                  Expires 1 January 2022                [Page 17]
+Thubert                  Expires 2 January 2022                [Page 17]
 
-Internet-Draft             eVPN Unaware Hosts                  June 2021
+Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
    The Host needs to register to all the 6LRs from which it desires
@@ -1005,9 +1005,9 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert                  Expires 1 January 2022                [Page 18]
+Thubert                  Expires 2 January 2022                [Page 18]
 
-Internet-Draft             eVPN Unaware Hosts                  June 2021
+Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
           6LN/Host            6LR         Reflector             6LR
@@ -1061,9 +1061,9 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert                  Expires 1 January 2022                [Page 19]
+Thubert                  Expires 2 January 2022                [Page 19]
 
-Internet-Draft             eVPN Unaware Hosts                  June 2021
+Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
    [RFC4861]  Narten, T., Nordmark, E., Simpson, W., and H. Soliman,
@@ -1117,15 +1117,22 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
 
 
 
-Thubert                  Expires 1 January 2022                [Page 20]
+Thubert                  Expires 2 January 2022                [Page 20]
 
-Internet-Draft             eVPN Unaware Hosts                  June 2021
+Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
    [RFC9010]  Thubert, P., Ed. and M. Richardson, "Routing for RPL
               (Routing Protocol for Low-Power and Lossy Networks)
               Leaves", RFC 9010, DOI 10.17487/RFC9010, April 2021,
               <https://www.rfc-editor.org/info/rfc9010>.
+
+   [UNICAST-LOOKUP]
+              Thubert, P. and E. Levy-Abegnoli, "IPv6 Neighbor Discovery
+              Unicast Lookup", Work in Progress, Internet-Draft, draft-
+              thubert-6lo-unicast-lookup-00, 25 January 2019,
+              <https://tools.ietf.org/html/draft-thubert-6lo-unicast-
+              lookup-00>.
 
 12.  Informative References
 
@@ -1143,13 +1150,6 @@ Internet-Draft             eVPN Unaware Hosts                  June 2021
               Progress, Internet-Draft, draft-ietf-rift-rift-12, 26 May
               2020,
               <https://tools.ietf.org/html/draft-ietf-rift-rift-12>.
-
-   [UNICAST-LOOKUP]
-              Thubert, P. and E. Levy-Abegnoli, "IPv6 Neighbor Discovery
-              Unicast Lookup", Work in Progress, Internet-Draft, draft-
-              thubert-6lo-unicast-lookup-00, 25 January 2019,
-              <https://tools.ietf.org/html/draft-thubert-6lo-unicast-
-              lookup-00>.
 
 Author's Address
 
@@ -1173,4 +1173,4 @@ Author's Address
 
 
 
-Thubert                  Expires 1 January 2022                [Page 21]
+Thubert                  Expires 2 January 2022                [Page 21]
