@@ -973,88 +973,84 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
  </t>
  <figure anchor='fReg1' suppress-title='false'><name>First Host Registration Flow</name>
  <artwork align="center"><![CDATA[
-
-
-
-    Local           Local                   Route          Remote
-    Server          Leaf                  Reflector        Leaf
-   +-------+      +---------+             +-------+       +---------+
-   |       |      |         |             |       |       |         |
-    6LN/6LR        6LBR/eVPN                 BGP           6LBR/eVPN
-       |               |                    . ..              |
-       |   Ethernet    |                . .. .  ..            |
-       |               |                eVPN infra .          |
-       |               |                . .... ..             |
-       |   NS(EARO)    |                     ...              |
-       |-------------->|                                      |
-       |               |                      |               |
-       |               |--------------------->|               |
-       |   NA(EARO)    |                      |               |
-       |<--------------|                      |               |
-       |               |                      |               |
-       |               |                      |               |
-       |               |                      |-------------->|
-       |               |                      |               |
-       |               |                      |               |
-       |               |                      |<--------------|
-       |               |                      |               |
-       |               |<---------------------|               |
-       |               |                      |               |
-       |               |                      |               |
+    Local            Local              Route           Remote
+    Server           Leaf             Reflector         Leaf
+   +-------+       +---------+        +-------+        +---------+
+   |       |       |         |        |       |        |         |
+    6LN/6LR         6LBR/eVPN            BGP            6LBR/eVPN
+       |                |               . ..               |
+       |    Ethernet    |           . .. .  ..             |
+       |                |           eVPN infra .           |
+       |                |           . .... ..              |
+       |   NS(EARO)     |                ...               |
+       |--------------->|                                  |
+       |                |                 |                |
+       |                |---------------->|                |
+       |   NA(EARO)     |                 |                |
+       |<---------------|                 |                |
+       |                |                 |                |
+       |                |                 |                |
+       |                |                 |--------------->|
+       |                |                 |                |
+       |                |                 |                |
+       |                |                 |<---------------|
+       |                |                 |                |
+       |                |<----------------|                |
+       |                |                 |                |
+       |                |                 |                |
 
     ]]></artwork>
  </figure>
  <figure anchor='fReg2' suppress-title='false'><name>Next Host Registration Flow</name>
  <artwork align="center"><![CDATA[
-    Local           Local                   Route          Remote
-    Server          Leaf                  Reflector        Leaf
-   +-------+      +---------+             +-------+       +---------+
-   |       |      |         |             |       |       |         |
-    6LN/6LR          6LBR                   BGP           6LBR/eVPN
-       |               |                    . ..              |
-       |   Ethernet    |                . .. .  ..            |
-       |               |                eVPN infra .          |
-       |               |                . .... ..             |
-       |   NS(EARO)    |                     ...              |
-       |-------------->|                      |               |
-       |               |                      |               |
-       |          renew lifetime              |               |
-       |               |                      |               |
-       |   NA(EARO)    |                      |               |
-       |<--------------|                      |               |
-       |               |                      |               |
-       |               |                      |               |
-       |               |                      |               |
+    Local           Local               Route           Remote
+    Server          Leaf              Reflector         Leaf
+   +-------+       +---------+        +-------+        +---------+
+   |       |       |         |        |       |        |         |
+    6LN/6LR           6LBR               BGP            6LBR/eVPN
+       |                |               . ..               |
+       |    Ethernet    |           . .. .  ..             |
+       |                |           eVPN infra .           |
+       |                |           . .... ..              |
+       |   NS(EARO)     |                ...               |
+       |--------------->|                 |                |
+       |                |                 |                |
+       |           renew lifetime         |                |
+       |                |                 |                |
+       |    NA(EARO)    |                 |                |
+       |<---------------|                 |                |
+       |                |                 |                |
+       |                |                 |                |
+       |                |                 |                |
     ]]></artwork>
  </figure>
  <figure anchor='fReg3' suppress-title='false'><name>Lifetime Elapses</name>
  <artwork align="center"><![CDATA[
 
-    Local           Local                   Route          Remote
-    Server          Leaf                  Reflector        Leaf
-   +-------+      +---------+             +-------+       +---------+
-   |       |      |         |             |       |       |         |
-    6LN/6LR        6LBR/eVPN                 BGP           6LBR/eVPN
-       |               |                    . ..              |
-       |   Ethernet    |                . .. .  ..            |
-       |               |                eVPN infra .          |
-       |               |                . .... ..             |
-       |               |                     ...              |
-       |       time out lifetime              |               |
-       |               |                      |               |
-       |               |--------------------->|               |
-       |               |                      |               |
-       |               |                      |-------------->|
-       |               |                      |               |
-       |               |                      |               |
-       |               |                      |<--------------|
-       |               |                      |               |
-       |               |<---------------------|               |
-       |               |                      |               |
-       |               |                      |               |
-       |               |                      |               |
-    ]]></artwork>
- </figure>
+    Local            Local              Route           Remote
+    Server           Leaf             Reflector         Leaf
+   +-------+       +---------+        +-------+        +---------+
+   |       |       |         |        |       |        |         |
+    6LN/6LR         6LBR/eVPN            BGP            6LBR/eVPN
+       |                |               . ..               |
+       |    Ethernet    |           . .. .  ..             |
+       |                |           eVPN infra .           |
+       |                |           . .... ..              |
+       |                |                ...               |
+       |        time out lifetime         |                |
+       |                |                 |                |
+       |                |---------------->|                |
+       |                |                 |                |
+       |                |                 |--------------->|
+       |                |                 |                |
+       |                |                 |                |
+       |                |                 |<---------------|
+       |                |                 |                |
+       |                |<----------------|                |
+       |                |                 |                |
+       |                |                 |                |
+       |                |                 |                |
+    ]]></artwork> </figure>
 
 </section>
 
