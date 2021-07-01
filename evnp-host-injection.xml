@@ -350,6 +350,26 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
 </t>
 
 </section> <!-- end section "TID, I Field and Opaque Fields" -->
+<section anchor='R8505stat'><name>Status</name>
+
+<t>
+   The values of the EARO status are maintained by IANA in the
+   Address Registration Option Status Values subregistry
+   <xref target="IANA-EARO-STATUS"/> of the
+   Internet Control Message Protocol version 6 (ICMPv6) Parameters registry.
+</t>
+<t>
+  <xref target='RFC6775'/> and <xref target='RFC8505'/> defines the original
+  values whereas <xref target='RFC9010'/> reduced range to 64 values and
+  reformated the octet field to enable to transport an external error, e.g.,
+  coming form a routing protocol.
+</t>
+<t>
+  This specification uses the  format expressed in <xref target='RFC9010'/>.
+  The value of 0 denotes an unqualified success, 1 indicates an address duplication, 3 a TID value that is outdated, and 4 is used in an asynchronous
+  NA to indicate that 6LN should remove that address and possibly form new ones.
+</t>
+</section> <!-- end section "Status" -->
 <section anchor='R8505EROVR'><name>Route Ownership Verifier</name>
 <t>
    Section 5.3 of <xref target='RFC8505'/> introduces the Registration
@@ -1016,7 +1036,7 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
        |   NS(EARO)     |                ...               |
        |--------------->|                                  |
        |                |                 |                |
-       |       create local state         |                |
+       |      install local state         |                |
        |                |                 |                |
        |                |-----install---->|                |
        |   NA(EARO)     |                 |                |
@@ -1043,12 +1063,13 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
        |    Ethernet    |           . .. .  ..             |
        |                |           eVPN infra .           |
        |                |           . .... ..              |
-       |   NS(EARO)     |                ...               |
+       |NS(EARO(TID+1)) |                ...               |
        |--------------->|                 |                |
        |                |                 |                |
-       |           renew lifetime         |                |
+       |       renew lifetime locally     |                |
        |                |                 |                |
-       |    NA(EARO)    |                 |                |
+       |    NA(EARO     |                 |                |
+       |   status = 0)) |                 |                |
        |<---------------|                 |                |
        |                |                 |                |
        |                |                 |                |
@@ -1274,6 +1295,18 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
    <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8929.xml'/>
 
    <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml3/reference.I-D.ietf-rift-rift.xml'/>
+
+
+
+    <reference anchor="IANA-EARO-STATUS" target="https://www.iana.org/assignments/icmpv6-parameters/icmpv6-parameters.xhtml#address-registration">
+      <front>
+        <title>Address Registration Option Status Values</title>
+        <author>
+          <organization>IANA</organization>
+        </author>
+        <date/>
+      </front>
+    </reference>
 
  </references>
 
