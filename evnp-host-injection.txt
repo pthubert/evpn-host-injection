@@ -74,20 +74,20 @@ Table of Contents
      3.3.  RFC 8505 Extended DAR/DAC . . . . . . . . . . . . . . . .   7
      3.4.  RFC 7400 Capability Indication Option . . . . . . . . . .   8
      3.5.  Extending 6LoWPAN ND  . . . . . . . . . . . . . . . . . .   8
-       3.5.1.  Distributing the 6LBR . . . . . . . . . . . . . . . .   8
-       3.5.2.  Unicast Address Lookup with the 6LBR  . . . . . . . .  11
-   4.  Requirements on the eVPN-Unaware Host . . . . . . . . . . . .  17
+       3.5.1.  Use of the R flag in NA . . . . . . . . . . . . . . .   8
+       3.5.2.  Distributing the 6LBR . . . . . . . . . . . . . . . .   9
+       3.5.3.  Unicast Address Lookup with the 6LBR  . . . . . . . .  11
+   4.  Requirements on the eVPN-Unaware Host . . . . . . . . . . . .  16
      4.1.  Support of 6LoWPAN ND . . . . . . . . . . . . . . . . . .  17
    5.  Enhancements to eVPN  . . . . . . . . . . . . . . . . . . . .  18
-     5.1.  New NLRIs . . . . . . . . . . . . . . . . . . . . . . . .  18
-   6.  Enhancements to RFC8928 and RFC8505 . . . . . . . . . . . . .  18
-   7.  Protocol Operations . . . . . . . . . . . . . . . . . . . . .  18
-   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  20
-   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  20
-   10. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  20
-   11. Normative References  . . . . . . . . . . . . . . . . . . . .  20
-   12. Informative References  . . . . . . . . . . . . . . . . . . .  22
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  22
+     5.1.  New NLRIs . . . . . . . . . . . . . . . . . . . . . . . .  19
+   6.  Protocol Operations . . . . . . . . . . . . . . . . . . . . .  19
+   7.  Security Considerations . . . . . . . . . . . . . . . . . . .  24
+   8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  24
+   9.  Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  24
+   10. Normative References  . . . . . . . . . . . . . . . . . . . .  24
+   11. Informative References  . . . . . . . . . . . . . . . . . . .  26
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  26
 
 1.  Introduction
 
@@ -426,7 +426,31 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 3.5.  Extending 6LoWPAN ND
 
-3.5.1.  Distributing the 6LBR
+3.5.1.  Use of the R flag in NA
+
+   This document extends [RFC8928] and [RFC8505] as follows
+
+   This document also updates the behavior of a 6LR acting as eVPN
+   router and of a 6LN acting as Host in the 6LoWPAN ND Address
+   Registration as follows:
+
+   *  The use of the R Flag is extended to the NA(EARO) to confirm
+      whether the route was installed.
+
+
+
+
+
+
+
+
+
+Thubert                  Expires 2 January 2022                 [Page 8]
+
+Internet-Draft             eVPN Unaware Hosts                  July 2021
+
+
+3.5.2.  Distributing the 6LBR
 
    This specification enables to distribute the 6LBR at the edge of the
    eVPN network and collapse the 6LBR function with that of the eVPN
@@ -440,15 +464,6 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
    model, see Figure 9), or if the 6LBR queries the eVPN support when it
    does not have a mapping to satisfy a request (pull model, see
    Figure 8).
-
-
-
-
-
-Thubert                  Expires 2 January 2022                 [Page 8]
-
-Internet-Draft             eVPN Unaware Hosts                  July 2021
-
 
    This specification leverages [RFC8929] that augments the abstract
    data model of the 6LBR to store the LLA associated with the
@@ -473,21 +488,6 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
    Else (this is for a new mapping), if the registration is accepted,
    then the 6LBR notifies the eVPN support to inject a route type 2 in
    the fabric.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -596,7 +596,7 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
                          Figure 4: leveraging EDAR
 
-3.5.2.  Unicast Address Lookup with the 6LBR
+3.5.3.  Unicast Address Lookup with the 6LBR
 
    A classical IPv6 ND stack in the server that treats the subnet prefix
    as on-link (more in section 4.6.2. of [RFC4861]), will resolve an
@@ -865,11 +865,6 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
            |----------->|              |            |
            |            |EDAR(lookup R)|            |
            |            |------------->|            |
-           |            |              |Query addr R|
-           |            |              |----------->|
-           |            |              |            |
-           |            |              | return LLA |
-           |            |              |<-----------|
            |            |              |            |
            |            |EDAC(R's TLLA)|            |
            |            |<-------------|            |
@@ -887,7 +882,12 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
    case, it is an administrative decision for the 6LR to broadcast an
    NS(lookup) or to return an error as shown in Figure 7.
 
+4.  Requirements on the eVPN-Unaware Host
 
+   This document describes how eVPN routing can be extended to reach a
+   Host.  This section specifies the minimal eVPN-independent
+   functionality that the Host needs to implement to obtain routing
+   services for its addresses.
 
 
 
@@ -897,13 +897,6 @@ Thubert                  Expires 2 January 2022                [Page 16]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
-
-4.  Requirements on the eVPN-Unaware Host
-
-   This document describes how eVPN routing can be extended to reach a
-   Host.  This section specifies the minimal eVPN-independent
-   functionality that the Host needs to implement to obtain routing
-   services for its addresses.
 
 4.1.  Support of 6LoWPAN ND
 
@@ -941,6 +934,13 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
    interface to an external switch, either way the PI Links can be
    assiciated to sub-interface of the interface.
 
+   The Host needs to register to all the 6LRs from which it desires
+   routing services.  The multiple Address Registrations to several 6LRs
+   should be performed in a rapid sequence, using the same EARO for the
+   same Address.  Gaps between the Address Registrations will invalidate
+   some of the routes till the Address Registration finally shows on
+   those routes.  The routers recognize the same (ROVR, TID) as the
+   signal of a multihomed address and maintain all the routes.
 
 
 
@@ -954,13 +954,40 @@ Thubert                  Expires 2 January 2022                [Page 17]
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
-   The Host needs to register to all the 6LRs from which it desires
-   routing services.  The parallel Address Registrations to several 6LRs
-   should be performed in a rapid sequence, using the same EARO for the
-   same Address.  Gaps between the Address Registrations will invalidate
-   some of the routes till the Address Registration finally shows on
-   those routes.  The routers recognize the same (ROVR, TID) as the
-   signal of a multihomed address.
+          Local            Local          Local
+          Server           Leaf 1         Leaf 2          Reflector
+         +-------+       +---------+    +---------+      +---------+
+         |       |       |         |    |         |      |         |
+            6LN           6LBR/eVPN      6LBR/eVPN           BGP
+             |                |              |               . ..
+             |    Ethernet    |              |           . .. .  ..
+             |                |              |           eVPN infra .
+             |                |              |           . .... ..
+             |   NS(EARO)     |              |                ...
+             |--------------->|              |                |
+             |      install local state      |                |
+             |                |                               |
+             |                |------------install----------->|
+             |   NA(EARO)     |              |                |
+             |<---------------|              |                |
+             |                |              |                |
+             |                |              |<------ RT2-----|
+             |                |    install remote state       |
+             |                |              |                |
+             |             NS(same EARO)     |                |
+             |------------------------------>|                |
+             |                |    install local state        |
+             |                |              |                |
+             |                |              |----install---->|
+             |             NA(same EARO)     |                |
+             |<------------------------------|                |
+             |                |              |                |
+             |                |<------------ RT2--------------|
+             |     install remote state      |                |
+             |                |              |                |
+
+
+                  Figure 10: First Host Registration Flow
 
    [RFC8505] introduces error Status values in the NA(EARO) which can be
    received synchronously upon an NS(EARO) or asynchronously.  The Host
@@ -970,36 +997,9 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 5.  Enhancements to eVPN
 
    This document specifies a new behavior whereby a 6LR injects BGP
-   advertisements for unicast addresses (see Section 7) on behalf of
+   advertisements for unicast addresses (see Section 6) on behalf of
    Hosts that are not aware of eVPN.  This document also synchronizes
    the liveness monitoring at the Address Registration period.
-
-5.1.  New NLRIs
-
-      0                   1                   2                   3
-      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
-                            Figure 10: New NLRI
-
-   New fields:
-
-   :
-
-6.  Enhancements to RFC8928 and RFC8505
-
-   This document extends [RFC8928] and [RFC8505] as follows
-
-   This document also updates the behavior of a 6LR acting as eVPN
-   router and of a 6LN acting as Host in the 6LoWPAN ND Address
-   Registration as follows:
-
-   *  The use of the R Flag is extended to the NA(EARO) to confirm
-      whether the route was installed.
-
-7.  Protocol Operations
-
 
 
 
@@ -1010,11 +1010,27 @@ Thubert                  Expires 2 January 2022                [Page 18]
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
+5.1.  New NLRIs
+
+      0                   1                   2                   3
+      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+                            Figure 11: New NLRI
+
+   New fields:
+
+   :
+
+6.  Protocol Operations
+
+
         Local            Local              Route           Remote
         Server           Leaf             Reflector         Leaf
        +-------+       +---------+        +-------+        +---------+
        |       |       |         |        |       |        |         |
-        6LN/6LR         6LBR/eVPN            BGP            6LBR/eVPN
+          6LN           6LBR/eVPN            BGP            eVPN/6LBR
            |                |               . ..               |
            |    Ethernet    |           . .. .  ..             |
            |                |           eVPN infra .           |
@@ -1022,10 +1038,11 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
            |   NS(EARO)     |                ...               |
            |--------------->|                                  |
            |                |                 |                |
-           |                |---------------->|                |
+           |       create local state         |                |
+           |                |                 |                |
+           |                |-----install---->|                |
            |   NA(EARO)     |                 |                |
            |<---------------|                 |                |
-           |                |                 |                |
            |                |                 |                |
            |                |                 |--------------->|
            |                |                 |                |
@@ -1034,16 +1051,26 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
            |                |                 |                |
            |                |<----------------|                |
            |                |                 |                |
-           |                |                 |                |
 
 
-                  Figure 11: First Host Registration Flow
+                  Figure 12: First Host Registration Flow
+
+
+
+
+
+
+
+Thubert                  Expires 2 January 2022                [Page 19]
+
+Internet-Draft             eVPN Unaware Hosts                  July 2021
+
 
         Local           Local               Route           Remote
         Server          Leaf              Reflector         Leaf
        +-------+       +---------+        +-------+        +---------+
        |       |       |         |        |       |        |         |
-        6LN/6LR           6LBR               BGP            6LBR/eVPN
+          6LN           6LBR/eVPN            BGP            eVPN/6LBR
            |                |               . ..               |
            |    Ethernet    |           . .. .  ..             |
            |                |           eVPN infra .           |
@@ -1059,57 +1086,30 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
            |                |                 |                |
            |                |                 |                |
 
+                   Figure 13: Next Host Registration Flow
 
 
-Thubert                  Expires 2 January 2022                [Page 19]
-
-Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
-                   Figure 12: Next Host Registration Flow
 
-        Local            Local              Route           Remote
-        Server           Leaf             Reflector         Leaf
-       +-------+       +---------+        +-------+        +---------+
-       |       |       |         |        |       |        |         |
-        6LN/6LR         6LBR/eVPN            BGP            6LBR/eVPN
-           |                |               . ..               |
-           |    Ethernet    |           . .. .  ..             |
-           |                |           eVPN infra .           |
-           |                |           . .... ..              |
-           |                |                ...               |
-           |        time out lifetime         |                |
-           |                |                 |                |
-           |                |---------------->|                |
-           |                |                 |                |
-           |                |                 |--------------->|
-           |                |                 |                |
-           |                |                 |                |
-           |                |                 |<---------------|
-           |                |                 |                |
-           |                |<----------------|                |
-           |                |                 |                |
-           |                |                 |                |
-           |                |                 |                |
 
-                        Figure 13: Lifetime Elapses
 
-8.  Security Considerations
 
-   TBD
 
-9.  IANA Considerations
 
-10.  Acknowledgments
 
-   The authors wish to thank you for reading that far.
 
-11.  Normative References
 
-   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
-              Requirement Levels", BCP 14, RFC 2119,
-              DOI 10.17487/RFC2119, March 1997,
-              <https://www.rfc-editor.org/info/rfc2119>.
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1122,11 +1122,229 @@ Thubert                  Expires 2 January 2022                [Page 20]
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
+        Local            Local              Route           Remote
+        Server           Leaf             Reflector         Leaf
+       +-------+       +---------+        +-------+        +---------+
+       |       |       |         |        |       |        |         |
+          6LN           6LBR/eVPN            BGP            eVPN/6LBR
+           |                |               . ..               |
+           |    Ethernet    |           . .. .  ..             |
+           |                |           eVPN infra .           |
+           |                |           . .... ..              |
+           |   NS(EARO)     |                ...               |
+           |--------------->|                                  |
+           |                |                 |                |
+           |       remote state with          |                |
+           |       same ROVR same TID         |                |
+           |                |                 |                |
+           |                |-----install---->|                |
+           |   NA(EARO      |                 |                |
+           |   status = 0)) |                 |                |
+           |<---------------|                 |                |
+           |                |                 |                |
+           |                |                 |                |
+           |                |                 |--------------->|
+           |                |                 |                |
+           |                |                 |                |
+           |                |                 |<---------------|
+           |                |                 |                |
+           |                |<----------------|                |
+           |                |                 |                |
+           |                |                 |                |
+
+                           Figure 14: Multihomed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Thubert                  Expires 2 January 2022                [Page 21]
+
+Internet-Draft             eVPN Unaware Hosts                  July 2021
+
+
+        Local            Local              Route           Remote
+        Server           Leaf             Reflector         Leaf
+       +-------+       +---------+        +-------+        +---------+
+       |       |       |         |        |       |        |         |
+          6LN           6LBR/eVPN            BGP            eVPN/6LBR
+           |                |               . ..               |
+           |    Ethernet    |           . .. .  ..             |
+           |                |           eVPN infra .           |
+           |                |           . .... ..              |
+           |   NS(EARO)     |                ...               |
+           |--------------->|                                  |
+           |                |                 |                |
+           |          state with              |                |
+           |        different ROVR            |                |
+           |                |                 |                |
+           |   NA(EARO(     |                 |                |
+           |   status = 1))                   |                |
+           |<---------------|                 |                |
+           |                |                 |                |
+           |                |                 |                |
+
+                        Figure 15: Duplicate Address
+
+        Local            Local              Route           Remote
+        Server           Leaf             Reflector         Leaf
+       +-------+       +---------+        +-------+        +---------+
+       |       |       |         |        |       |        |         |
+          6LN           6LBR/eVPN            BGP            eVPN/6LBR
+           |                |               . ..               |
+           |    Ethernet    |           . .. .  ..             |
+           |                |           eVPN infra .           |
+           |                |           . .... ..              |
+           |   NS(EARO)     |                ...               |
+           |--------------->|                                  |
+           |                |                 |                |
+           |           state with             |                |
+           |        same ROVR newer TID       |                |
+           |                |                 |                |
+           |   NA(EARO(     |                 |                |
+           |   status = 3))                   |                |
+           |<---------------|                 |                |
+           |                |                 |                |
+           |                |                 |                |
+
+                          Figure 16: Moved Address
+
+
+
+
+
+
+Thubert                  Expires 2 January 2022                [Page 22]
+
+Internet-Draft             eVPN Unaware Hosts                  July 2021
+
+
+         Local            Local              Route          Remote
+         Server           Leaf             Reflector        Leaf
+        +-------+       +---------+        +-------+       +---------+
+        |       |       |         |        |       |       |         |
+           6LN           6LBR/eVPN            BGP           eVPN/6LBR
+            |                |               . ..               |
+            |    Ethernet    |           . .. .  ..             |
+            |                |           eVPN infra .           |
+            |                |           . .... ..              |
+            |                |                ...               |
+            |                |                 |                |
+            |                |          Route Type 2            |
+            |                |                 |<---------------|
+            |                |<----------------|                |
+            |                |                 |                |
+            |        local state with          |                |
+            |       same ROVR older TID        |                |
+            |                |                 |                |
+            |                |-----kill------->|                |
+            |                |                 |                |
+            |   NA(EARO      |                 |--------------->|
+            |   status = 4)) |                 |                |
+            |<---------------|                 |                |
+            |                |                 |<---------------|
+            |       remove local state         |                |
+            |                |                 |                |
+            |                |<----------------|                |
+            |                |                 |                |
+            |                |                 |                |
+
+                              Figure 17: Moved
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Thubert                  Expires 2 January 2022                [Page 23]
+
+Internet-Draft             eVPN Unaware Hosts                  July 2021
+
+
+        Local            Local              Route           Remote
+        Server           Leaf             Reflector         Leaf
+       +-------+       +---------+        +-------+        +---------+
+       |       |       |         |        |       |        |         |
+          6LN           6LBR/eVPN            BGP            eVPN/6LBR
+           |                |               . ..               |
+           |    Ethernet    |           . .. .  ..             |
+           |                |           eVPN infra .           |
+           |                |           . .... ..              |
+           |                |                ...               |
+           |        time out lifetime         |                |
+           |                |                 |                |
+           |                |-----kill------->|                |
+           |                |                 |                |
+           |                |                 |--------------->|
+           |                |                 |                |
+           |                |                 |                |
+           |                |                 |<---------------|
+           |                |                 |                |
+           |                |<----------------|                |
+           |                |                 |                |
+           |                |                 |                |
+           |                |                 |                |
+
+                        Figure 18: Lifetime Elapses
+
+7.  Security Considerations
+
+   TBD
+
+8.  IANA Considerations
+
+9.  Acknowledgments
+
+   The authors wish to thank you for reading that far.
+
+10.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://www.rfc-editor.org/info/rfc2119>.
+
    [RFC4443]  Conta, A., Deering, S., and M. Gupta, Ed., "Internet
               Control Message Protocol (ICMPv6) for the Internet
               Protocol Version 6 (IPv6) Specification", STD 89,
               RFC 4443, DOI 10.17487/RFC4443, March 2006,
               <https://www.rfc-editor.org/info/rfc4443>.
+
+
+
+Thubert                  Expires 2 January 2022                [Page 24]
+
+Internet-Draft             eVPN Unaware Hosts                  July 2021
+
 
    [RFC4861]  Narten, T., Nordmark, E., Simpson, W., and H. Soliman,
               "Neighbor Discovery for IP version 6 (IPv6)", RFC 4861,
@@ -1170,18 +1388,19 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
               DOI 10.17487/RFC8365, March 2018,
               <https://www.rfc-editor.org/info/rfc8365>.
 
-
-
-
-Thubert                  Expires 2 January 2022                [Page 21]
-
-Internet-Draft             eVPN Unaware Hosts                  July 2021
-
-
    [RFC8928]  Thubert, P., Ed., Sarikaya, B., Sethi, M., and R. Struik,
               "Address-Protected Neighbor Discovery for Low-Power and
               Lossy Networks", RFC 8928, DOI 10.17487/RFC8928, November
               2020, <https://www.rfc-editor.org/info/rfc8928>.
+
+
+
+
+
+Thubert                  Expires 2 January 2022                [Page 25]
+
+Internet-Draft             eVPN Unaware Hosts                  July 2021
+
 
    [RFC9010]  Thubert, P., Ed. and M. Richardson, "Routing for RPL
               (Routing Protocol for Low-Power and Lossy Networks)
@@ -1195,7 +1414,7 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
               <https://tools.ietf.org/html/draft-thubert-6lo-unicast-
               lookup-00>.
 
-12.  Informative References
+11.  Informative References
 
    [RFC4862]  Thomson, S., Narten, T., and T. Jinmei, "IPv6 Stateless
               Address Autoconfiguration", RFC 4862,
@@ -1229,4 +1448,9 @@ Author's Address
 
 
 
-Thubert                  Expires 2 January 2022                [Page 22]
+
+
+
+
+
+Thubert                  Expires 2 January 2022                [Page 26]

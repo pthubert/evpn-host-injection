@@ -432,6 +432,24 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
 
 <section anchor='ext8505'><name>Extending 6LoWPAN ND</name>
 
+
+
+<section anchor='upd2'><name>Use of the R flag in NA</name>
+
+<t>
+   This document extends <xref target='RFC8928'/> and <xref target='RFC8505'/> as follows
+
+   </t><t>
+   This document also updates the behavior of a 6LR acting as eVPN router and of a 6LN acting as Host in the 6LoWPAN ND Address Registration  as follows:
+   </t>
+   <ul>
+   <li>
+   The use of the R Flag is extended to the NA(EARO) to confirm whether the route was installed.
+ </li>
+   </ul>
+
+</section> <!-- end section "Enhancements to RFC8928 and RFC8505" -->
+
 <section anchor='dist'><name>Distributing the 6LBR</name>
 
 
@@ -801,11 +819,6 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
        |----------->|              |            |
        |            |EDAR(lookup R)|            |
        |            |------------->|            |
-       |            |              |Query addr R|
-       |            |              |----------->|
-       |            |              |            |
-       |            |              | return LLA |
-       |            |              |<-----------|
        |            |              |            |
        |            |EDAC(R's TLLA)|            |
        |            |<-------------|            |
@@ -877,13 +890,49 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
 </t>
 <t>
    The Host needs to register to all the 6LRs from which it desires routing
-   services. The parallel Address Registrations to several 6LRs should be
+   services. The multiple Address Registrations to several 6LRs should be
    performed in a rapid sequence, using the same EARO for the same Address.
    Gaps between the Address Registrations will invalidate some of the routes
    till the Address Registration finally shows on those routes.
    The routers recognize the same (ROVR, TID) as the signal of a multihomed
-   address.
+   address and maintain all the routes.
 </t>
+ <figure anchor='fRegmul' suppress-title='false'><name>First Host Registration Flow</name>
+ <artwork align="center"><![CDATA[
+    Local            Local          Local
+    Server           Leaf 1         Leaf 2          Reflector
+   +-------+       +---------+    +---------+      +---------+
+   |       |       |         |    |         |      |         |
+      6LN           6LBR/eVPN      6LBR/eVPN           BGP
+       |                |              |               . ..
+       |    Ethernet    |              |           . .. .  ..
+       |                |              |           eVPN infra .
+       |                |              |           . .... ..
+       |   NS(EARO)     |              |                ...
+       |--------------->|              |                |
+       |      install local state      |                |
+       |                |                               |
+       |                |------------install----------->|
+       |   NA(EARO)     |              |                |
+       |<---------------|              |                |
+       |                |              |                |
+       |                |              |<------ RT2-----|
+       |                |    install remote state       |
+       |                |              |                |
+       |             NS(same EARO)     |                |
+       |------------------------------>|                |
+       |                |    install local state        |
+       |                |              |                |
+       |                |              |----install---->|
+       |             NA(same EARO)     |                |
+       |<------------------------------|                |
+       |                |              |                |
+       |                |<------------ RT2--------------|
+       |     install remote state      |                |
+       |                |              |                |
+
+    ]]></artwork>
+ </figure>
 <t><xref target='RFC8505'/> introduces error Status values in the NA(EARO)
    which can be received synchronously upon an NS(EARO) or asynchronously.
    The Host needs to support both cases and refrain from using the address
@@ -946,24 +995,6 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
 
 
 
-<section anchor='upd2'><name>Enhancements to RFC8928 and RFC8505</name>
-
-<t>
-   This document extends <xref target='RFC8928'/> and <xref target='RFC8505'/> as follows
-
-   </t><t>
-   This document also updates the behavior of a 6LR acting as eVPN router and of a 6LN acting as Host in the 6LoWPAN ND Address Registration  as follows:
-   </t>
-   <ul>
-   <li>
-   The use of the R Flag is extended to the NA(EARO) to confirm whether the route was installed.
- </li>
-   </ul>
-
-</section> <!-- end section "Enhancements to RFC8928 and RFC8505" -->
-
-
-
 
 
 <section anchor='op'><name>Protocol Operations </name>
@@ -977,7 +1008,7 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
     Server           Leaf             Reflector         Leaf
    +-------+       +---------+        +-------+        +---------+
    |       |       |         |        |       |        |         |
-    6LN/6LR         6LBR/eVPN            BGP            6LBR/eVPN
+      6LN           6LBR/eVPN            BGP            eVPN/6LBR
        |                |               . ..               |
        |    Ethernet    |           . .. .  ..             |
        |                |           eVPN infra .           |
@@ -985,10 +1016,11 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
        |   NS(EARO)     |                ...               |
        |--------------->|                                  |
        |                |                 |                |
-       |                |---------------->|                |
+       |       create local state         |                |
+       |                |                 |                |
+       |                |-----install---->|                |
        |   NA(EARO)     |                 |                |
        |<---------------|                 |                |
-       |                |                 |                |
        |                |                 |                |
        |                |                 |--------------->|
        |                |                 |                |
@@ -996,7 +1028,6 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
        |                |                 |<---------------|
        |                |                 |                |
        |                |<----------------|                |
-       |                |                 |                |
        |                |                 |                |
 
     ]]></artwork>
@@ -1007,7 +1038,7 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
     Server          Leaf              Reflector         Leaf
    +-------+       +---------+        +-------+        +---------+
    |       |       |         |        |       |        |         |
-    6LN/6LR           6LBR               BGP            6LBR/eVPN
+      6LN           6LBR/eVPN            BGP            eVPN/6LBR
        |                |               . ..               |
        |    Ethernet    |           . .. .  ..             |
        |                |           eVPN infra .           |
@@ -1024,14 +1055,129 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
        |                |                 |                |
     ]]></artwork>
  </figure>
- <figure anchor='fReg3' suppress-title='false'><name>Lifetime Elapses</name>
+ <figure anchor='fRegcons' suppress-title='false'><name>Multihomed</name>
+ <artwork align="center"><![CDATA[
+    Local            Local              Route           Remote
+    Server           Leaf             Reflector         Leaf
+   +-------+       +---------+        +-------+        +---------+
+   |       |       |         |        |       |        |         |
+      6LN           6LBR/eVPN            BGP            eVPN/6LBR
+       |                |               . ..               |
+       |    Ethernet    |           . .. .  ..             |
+       |                |           eVPN infra .           |
+       |                |           . .... ..              |
+       |   NS(EARO)     |                ...               |
+       |--------------->|                                  |
+       |                |                 |                |
+       |       remote state with          |                |
+       |       same ROVR same TID         |                |
+       |                |                 |                |
+       |                |-----install---->|                |
+       |   NA(EARO      |                 |                |
+       |   status = 0)) |                 |                |
+       |<---------------|                 |                |
+       |                |                 |                |
+       |                |                 |                |
+       |                |                 |--------------->|
+       |                |                 |                |
+       |                |                 |                |
+       |                |                 |<---------------|
+       |                |                 |                |
+       |                |<----------------|                |
+       |                |                 |                |
+       |                |                 |                |
+    ]]></artwork> </figure>
+
+ <figure anchor='fRegdup' suppress-title='false'><name>Duplicate Address</name>
+ <artwork align="center"><![CDATA[
+    Local            Local              Route           Remote
+    Server           Leaf             Reflector         Leaf
+   +-------+       +---------+        +-------+        +---------+
+   |       |       |         |        |       |        |         |
+      6LN           6LBR/eVPN            BGP            eVPN/6LBR
+       |                |               . ..               |
+       |    Ethernet    |           . .. .  ..             |
+       |                |           eVPN infra .           |
+       |                |           . .... ..              |
+       |   NS(EARO)     |                ...               |
+       |--------------->|                                  |
+       |                |                 |                |
+       |          state with              |                |
+       |        different ROVR            |                |
+       |                |                 |                |
+       |   NA(EARO(     |                 |                |
+       |   status = 1))                   |                |
+       |<---------------|                 |                |
+       |                |                 |                |
+       |                |                 |                |
+    ]]></artwork> </figure>
+
+ <figure anchor='fRegold' suppress-title='false'><name>Moved Address</name>
+ <artwork align="center"><![CDATA[
+    Local            Local              Route           Remote
+    Server           Leaf             Reflector         Leaf
+   +-------+       +---------+        +-------+        +---------+
+   |       |       |         |        |       |        |         |
+      6LN           6LBR/eVPN            BGP            eVPN/6LBR
+       |                |               . ..               |
+       |    Ethernet    |           . .. .  ..             |
+       |                |           eVPN infra .           |
+       |                |           . .... ..              |
+       |   NS(EARO)     |                ...               |
+       |--------------->|                                  |
+       |                |                 |                |
+       |           state with             |                |
+       |        same ROVR newer TID       |                |
+       |                |                 |                |
+       |   NA(EARO(     |                 |                |
+       |   status = 3))                   |                |
+       |<---------------|                 |                |
+       |                |                 |                |
+       |                |                 |                |
+    ]]></artwork> </figure>
+
+ <figure anchor='fRegmov' suppress-title='false'><name>Moved</name>
+ <artwork align="center"><![CDATA[
+    Local            Local              Route          Remote
+    Server           Leaf             Reflector        Leaf
+   +-------+       +---------+        +-------+       +---------+
+   |       |       |         |        |       |       |         |
+      6LN           6LBR/eVPN            BGP           eVPN/6LBR
+       |                |               . ..               |
+       |    Ethernet    |           . .. .  ..             |
+       |                |           eVPN infra .           |
+       |                |           . .... ..              |
+       |                |                ...               |
+       |                |                 |                |
+       |                |          Route Type 2            |
+       |                |                 |<---------------|
+       |                |<----------------|                |
+       |                |                 |                |
+       |        local state with          |                |
+       |       same ROVR older TID        |                |
+       |                |                 |                |
+       |                |-----kill------->|                |
+       |                |                 |                |
+       |   NA(EARO      |                 |--------------->|
+       |   status = 4)) |                 |                |
+       |<---------------|                 |                |
+       |                |                 |<---------------|
+       |       remove local state         |                |
+       |                |                 |                |
+       |                |<----------------|                |
+       |                |                 |                |
+       |                |                 |                |
+    ]]></artwork> </figure>
+
+
+ <figure anchor='fRegTO' suppress-title='false'><name>Lifetime Elapses</name>
  <artwork align="center"><![CDATA[
 
     Local            Local              Route           Remote
     Server           Leaf             Reflector         Leaf
    +-------+       +---------+        +-------+        +---------+
    |       |       |         |        |       |        |         |
-    6LN/6LR         6LBR/eVPN            BGP            6LBR/eVPN
+      6LN           6LBR/eVPN            BGP            eVPN/6LBR
        |                |               . ..               |
        |    Ethernet    |           . .. .  ..             |
        |                |           eVPN infra .           |
@@ -1039,7 +1185,7 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
        |                |                ...               |
        |        time out lifetime         |                |
        |                |                 |                |
-       |                |---------------->|                |
+       |                |-----kill------->|                |
        |                |                 |                |
        |                |                 |--------------->|
        |                |                 |                |
