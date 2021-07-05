@@ -36,6 +36,25 @@
       </address>
    </author>
 
+    <author fullname="Tony Przygienda" initials="A." surname="Przygienda" role="editor">
+        <organization>Juniper Networks</organization>
+        <address>
+            <postal>
+                <street>1137 Innovation Way
+                </street>
+                <city>Sunnyvale</city>
+                <region>CA
+                </region>
+                <code/>
+                <country>USA
+                </country>
+            </postal>
+            <phone/>
+            <email>prz@juniper.net
+            </email>
+            <uri/>
+        </address>
+    </author>
 <!--
    <author initials='S' surname='Litkowski' fullname='Stephane Litkowski' >
       <organization abbrev='Cisco Systems'>Cisco Systems, Inc</organization>
@@ -47,8 +66,6 @@
          <email>slitkows@cisco.com</email>
       </address>
    </author>
-
-
 
    <author initials='A' surname='Sajassi' fullname='Ali Sajassi' >
       <organization abbrev='Cisco Systems'>Cisco Systems, Inc</organization>
@@ -174,6 +191,10 @@
     <dt>SLLAO:</dt><dd> Source Link-Layer Address Option</dd>
     <dt>TLLAO:</dt><dd> Target Link-Layer Address Option</dd>
 
+        <dt>ROVR MAC:</dt><dd> MAC obtained from a host meeting requirements in <xref target="prereq"/> </dd>
+        <dt>Validated ROVR MAC:</dt><dd> ROVR MAC validated by procedures specified in <xref target='RFC8928'/></dd>
+        <dt>ROVR Node:</dt><dd> EVPN node capable of advertising ROVR MACs </dd>
+        <dt>non-ROVR Node:</dt><dd> EVPN node not supporting extensions defined in this document.</dd>
 
     </dl>
 
@@ -336,8 +357,7 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
 
 <t>
    When the T Flag is set to 1, the EARO includes a sequence counter called
-   Transaction ID (TID), that is needed to fill the Path Sequence Field in the
-   eVPN Transit Option.
+   Transaction ID (TID), that is needed to format the MAC Mobility Extended Community.
    This is the reason why the support of <xref target='RFC8505'/>
    by the Host, as opposed to only <xref target='RFC6775'/>, is a prerequisite for
    this specification); this requirement is fully explained in
@@ -513,18 +533,18 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
     </t>
 
 <figure anchor="Figdir">
-          <name>direct Registration</name>
+          <name>Direct Registration</name>
        <artwork align="center" name="" type="" alt="">
        <![CDATA[
 
            Server              Leaf
      +--------------+   +-------------------+
      |              |   |                   |
-      6LN                6LR/6LBR       eVPN      . ..
-       |                    |            |   . .. .  ..
-       | <vSwitch> Ethernet | <call I/F> |   eVPN infra .
-       |                    |            |    . .... ..
-       |  NS(EARO)          |            |        ...
+      6LN                6LR/6LBR       eVPN
+       |                    |            |
+       | <vSwitch> Ethernet | <call I/F> |
+       |                    |            |
+       |  NS(EARO)          |            |
        |------------------->|            |
        |                    |            | ^
        |                    |   query    | |
@@ -539,8 +559,8 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
        |                    |----------->|
        |                                 | Inject/maintain
        |         store a mapping state   | eVPN route type 2
-       |                                 | <----------------->
-       |       NA(EARO)     |            |
+       |                                 | ------------------>
+       |       NA(EARO)     |            | [via BGP Signalling]
        |<-------------------|            |
        |                    |            |
     ]]>
@@ -564,11 +584,11 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
            Server                       Leaf
      +----------------+          +----------------+
      |                |          |                |
-      6LN          6LR            6LBR        eVPN      . ..
-       |            |              |            |   . .. .  ..
-       | <vSwitch>  |  Ethernet    | <call I/F> |   eVPN infra .
-       |            |              |            |    . .... ..
-       |  NS(EARO)  |              |            |        ...
+      6LN          6LR            6LBR        eVPN
+       |            |              |            |
+       | <vSwitch>  |  Ethernet    | <call I/F> |
+       |            |              |            |
+       |  NS(EARO)  |              |            |
        |----------->|              |            |
        |            |  EDAR(TLLAO) |            |
        |            |------------->|            |
@@ -585,8 +605,8 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
        |            |              |----------->|
        |            |                           | Inject/maintain
        |            |   store a mapping state   | eVPN route type 2
-       |            |                           | <----------------->
-       |            |  EDAC(TLLAO) |            |
+       |            |                           | ------------------>
+       |            |  EDAC(TLLAO) |            | [via BGP Signalling]
        |            |<-------------|            |
        |  NA(EARO)  |              |            |
        |<-----------|              |            |
@@ -604,7 +624,7 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
 <t>
   A classical IPv6 ND stack in the server that treats the subnet prefix as
   on-link (more in section 4.6.2. of <xref target="RFC4861" format="default" sectionFormat="of"/>), will resolve an unknown LLA mapping with a multicast
-  NS(lookup) message addressed to the solicited note multicast address (SNMA)
+  NS(lookup) message addressed to the solicited node multicast address (SNMA)
   associated with the destination address being resolved. The RECOMMENDED
   operation in that case is for the 6LBR that has a mapping state to forward the
   packet as a unicast MAC to the LLA that is stored for the IPv6 address as
@@ -623,11 +643,11 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
      +----+          +--------+                +----+
      |    |          |        |                |    |
       6LN             6LR/6LBR                  6LN
-       |                 |          . ..         |
-       |    Ethernet     |      . .. .  ..       |
-       |                 |      eVPN infra .     |
-       |    multicast    |       . .... ..       |
-       |    NS(lookup)   |           ...         |
+       |                 |                       |
+       |    Ethernet     |                       |
+       |                 |     [via EVPN    ]    |
+       |    multicast    |     [Data Tunnels]    |
+       |    NS(lookup)   |                       |
        |---------------->|                       |
        |                 |    forward unicast    |
        |                 |     NS(lookup)        |
@@ -678,11 +698,11 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
      |                |       |         |          |    |
       6LN          6LR         6LBR/eVPN            6LN
        |            |              |                 |
-       |            |              |       . ..      |
-       | <vSwitch>  |  Ethernet    |   . .. .  ..    |
-       |            |              |   eVPN infra .  |
-       |            |              |    . .... ..    |
-       |  RA(PIO)   |              |        ...      |
+       |            |              |  [via EVPN    ] |
+       | <vSwitch>  |  Ethernet    |  [Data Tunnels] |
+       |            |              |                 |
+       |            |              |                 |
+       |  RA(PIO)   |              |                 |
        | not onlink |              |                 |
        |<-----------|              |                 |
        |            |              |                 |
@@ -731,11 +751,11 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
      |                |       |         |
       6LN          6LR         6LBR/eVPN
        |            |              |
-       |            |              |       . ..
-       | <vSwitch>  |  Ethernet    |   . .. .  ..
-       |            |              |   eVPN infra .
-       |            |              |    . .... ..
-       |   RA(PIO   |              |        ...
+       |            |              |
+       | <vSwitch>  |  Ethernet    |
+       |            |              |
+       |            |              |
+       |   RA(PIO   |              |
        |not on-link)|              |
        |<-----------|              |
        |            |              |
@@ -773,32 +793,34 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
            Server                       Leaf
      +----------------+          +----------------+
      |                |          |                |
-      6LN          6LR            6LBR        eVPN      . ..
-       |            |              |            |   . .. .  ..
-       | <vSwitch>  |  Ethernet    | <call I/F> |   eVPN infra .
-       |            |              |            |    . .... ..
-       |            |              |            |        ...
+      6LN          6LR            6LBR        eVPN
+       |            |              |            |
+       | <vSwitch>  |  Ethernet    | <call I/F> |
+       |            |              |            |
        |            |              |            |
        |            |              |            | Receive eVPN
        |            |              |            | route type 2 for
-       |            |              |            | remote address R
+       |            |              |            | remote address A'
+       |            |              |            | [via BGP Signalling]
        |            |              |            |<-----------------
        |            |              |     store a mapping state
        |            |              |            |
-       |Packet for R|              |            |
+       |Packet for A'              |            |
        |----------->|              |            |
-       |            |EDAR(lookup R)|            |
+       |            |EDAR(lookup A')            |
        |            |------------->|            |
-       |            |              |Query addr R|
+       |            |              |Query addr A'
        |            |              |----------->|
        |            |              |            |
        |            |              | return LLA |
        |            |              |<-----------|
        |            |              |            |
-       |            |EDAC(R's TLLA)|            |
+       |            |EDAC(A''s TLLA)            |
        |            |<-------------|            |
        |            |              |            |
-       |            |            Packet for R
+       |            |            Packet for A'  |
+       |            |            [via EVPN    ] |
+       |            |            [Data Tunnels] |
        |            |----------------------------------->
        |            |              |            |
     ]]>
@@ -819,15 +841,16 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
            Server                       Leaf
      +----------------+          +----------------+
      |                |          |                |
-      6LN          6LR            6LBR        eVPN      . ..
-       |            |              |            |   . .. .  ..
-       | <vSwitch>  |  Ethernet    | <call I/F> |   eVPN infra .
-       |            |              |            |    . .... ..
-       |            |              |            |        ...
+      6LN          6LR            6LBR        eVPN
+       |            |              |            |
+       | <vSwitch>  |  Ethernet    | <call I/F> |
+       |            |              |            |
+       |            |              |            |
        |            |              |            |
        |            |              |            | Receive eVPN
        |            |              |            | route type 2 for
-       |            |              |            | remote address R
+       |            |              |            | remote address A'
+       |            |              |            | [via BGP Signalling]
        |            |              |            |<-----------------
        |            |              |     store a mapping state
        |            |              |            |
@@ -835,15 +858,17 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
        |            |              |<-----------|
        |            |    store a mapping state  |
        |            |              |            |
-       |Packet for R|              |            |
+       |Packet for A'              |            |
        |----------->|              |            |
-       |            |EDAR(lookup R)|            |
+       |            |EDAR(lookup A')            |
        |            |------------->|            |
        |            |              |            |
        |            |EDAC(R's TLLA)|            |
        |            |<-------------|            |
        |            |              |            |
-       |            |            Packet for R
+       |            |            Packet for A'  |
+       |            |            [via EVPN    ] |
+       |            |            [Data Tunnels] |
        |            |----------------------------------->
        |            |              |            |
     ]]>
@@ -905,7 +930,7 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
    interfaces that connect to the individual 6LRs over point to point wires,
    possibly via a software switch.
    It can also be associated to one physical interface to an external switch,
-   either way the PI Links can be assiciated to sub-interface of the interface.
+   either way the PI Links can be associated to sub-interface of the interface.
 
 </t>
 <t>
@@ -920,36 +945,36 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
  <figure anchor='fRegmul' suppress-title='false'><name>First Host Registration Flow</name>
  <artwork align="center"><![CDATA[
     Local            Local          Local
-    Server           Leaf 1         Leaf 2          Reflector
-   +-------+       +---------+    +---------+      +---------+
-   |       |       |         |    |         |      |         |
-      6LN           6LBR/eVPN      6LBR/eVPN           BGP
-       |                |              |               . ..
-       |    Ethernet    |              |           . .. .  ..
-       |                |              |           eVPN infra .
-       |                |              |           . .... ..
-       |   NS(EARO)     |              |                ...
-       |--------------->|              |                |
-       |      install local state      |                |
-       |                |                               |
-       |                |------------install----------->|
-       |   NA(EARO)     |              |                |
-       |<---------------|              |                |
-       |                |              |                |
-       |                |              |<------ RT2-----|
-       |                |    install remote state       |
-       |                |              |                |
-       |             NS(same EARO)     |                |
-       |------------------------------>|                |
-       |                |    install local state        |
-       |                |              |                |
-       |                |              |----install---->|
-       |             NA(same EARO)     |                |
-       |<------------------------------|                |
-       |                |              |                |
-       |                |<------------ RT2--------------|
-       |     install remote state      |                |
-       |                |              |                |
+    Server           Leaf 1         Leaf 2           Reflector
+   +-------+       +---------+    +---------+       +---------+
+   |       |       |         |    |         |       |         |
+      6LN           6LBR/eVPN      6LBR/eVPN             |
+       |                |              |                 |
+       |    Ethernet    |              |                 |
+       |                |              |       [via BGP Signalling]
+       |                |              |                 |
+       |   NS(EARO)     |              |                 |
+       |--------------->|              |                 |
+       |      install local state      |                 |
+       |                |                                |
+       |                |----------install RT A'-------->|
+       |   NA(EARO)     |              |                 |
+       |<---------------|              |                 |
+       |                |              |                 |
+       |                |              |<------ RT  A'---|
+       |                |    install remote state        |
+       |                |              |                 |
+       |             NS(same EARO)     |                 |
+       |------------------------------>|                 |
+       |                |    install local state         |
+       |                |              |                 |
+       |                |              |-install RT A''->|
+       |             NA(same EARO)     |                 |          
+       |<------------------------------|                 |
+       |                |              |                 |
+       |                |<------------ RT A''------------|
+       |     install remote state      |                 |
+       |                |              |                 |
 
     ]]></artwork>
  </figure>
@@ -980,32 +1005,149 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
 
 
 <section anchor='upd'><name>Enhancements to eVPN</name>
-<t>
-   This document specifies a new behavior whereby a 6LR injects BGP advertisements
-   for unicast addresses (see <xref target='op'/>) on behalf of Hosts that are not aware of eVPN.
-   This document also synchronizes the liveness monitoring at the Address Registration period.
-</t>
+    <t>This section addresses the necessary changes to EVPN formats and behavior to support
+        address registration security per <xref target='RFC8928'/> and mobility per <xref target='RFC8505'/>
+        while retaining interoperability with traditional nodes.
+        With 6LR injecting not only MACs via packet sources and TTLAO options but also ROVR into mobility
+        extended community
+        their semantics will be somewhat extended. Specifically following issues have to be addressed:</t>
+    <ul>
+        <li>
+            ROVR extends the semantics of the type-2 MAC advertisement via changes in MAC
+            Mobility Extended Community in the sense that the MAC
+            must be aligned with the ROVR and under normal circumstances
+            only the validity of ROVR guarantees that the type-2
+            MAC can be allocated to the requester. A MAC validated by ROVR should take precedence
+            over MAC addresses allocated without using it given it presents a much more trustworthy
+            topological information (it will be called ROVR MAC in further
+            text). EVPN nodes not supporting extensions introduced by this document
+            will need to be led to believe that a MAC ROVR is to be preferred over any advertisement
+            they see as long a ROVR MAC is present. Nevertheless, primary key of NRLI is still
+            the MAC address as defined in <xref target='RFC7432'/>, Section 7.2 and 7.7. This implies
+            that the same MAC (and consequently ROVR MAC) can be assigned multiple IP addresses and
+            those represent independent NLRIs.
+        </li>
+        <li>
+            TID field in EARO is smaller than mobility sequence number in <xref target='RFC7432'/>.
+            To allow an ROVR MAC mobility to "win" over normal MACs signalling must be introduced to
+            distinguish TID generated sequence numbers from normal sequence numbers.
+        </li>
+        <li>
+            EVPN needs to deal with lifetime monitoring of the Address Registration period.
+        </li>
+    </ul>
+    <t>
+        EVPN Signalling is not used to carry ROVR since without challenge per  <xref target="RFC8928"/>
+        they do not represent any difference over using the IP/MAC combination.
+        Additionally,
+        backwards compatibility could not be preserved given comparing routes based on ROVR would
+        present a change in primary key of NLRIs which non-ROVR routes could not follow. An indication
+        from a ROVR node that a MAC has been validated by proof of ownership is enough to convey the
+        necessary information.
+        Only a small hash of the ROVR is carried to allow to distinguish between MAC moves and MAC
+        duplicate in MAC ROVR case.
 
-<section anchor='tgt'><name>New NLRIs</name>
+    </t>
+
+<section anchor='tgt'><name>ROVR MAC Mobility Extended Community</name>
+
+    <t>
+        Extending MAC Mobility Extended Community allows to design a solution that,
+        while backwards compatible, allows to introduce MAC ROVR as "more trusted"
+        entities. <xref target="feVPNtgt"/> presents the according extensions that
+        will however necessitate some further explanation.
+    </t>
+
+    <t>
+        To introduce a "precedence" of ROVR MACs over normal EVPN MACs ROVR MACs are advertised
+        to look like "sticky" MACs for non-ROVR nodes.
+        As defined in the glossary, for simplicity reasons such nodes will be called non-ROVR nodes vs. ROVR nodes.
+        The "sticky" bit will force non-ROVR nodes to disregard the sequence number and
+        accept any NLRI route provided.
+    </t>
+
+    <t>ROVR nodes MUST set the "R" flag in Mobility Extended Community to indicate that
+    the advertisement is a ROVR MAC in case the host followed the according procedures.
+        ROVR MACs use (instead of increasing the normal sequence
+    number) the TID in the high bits of the sequence number field to "override" any normal MAC
+    advertisement (further considerations will be provided in <xref target="evpnproc"/>). </t>
+
+    <t>ROVR nodes MUST set the "V" flag if the address assignment passed proof of ownership per
+        <xref target="RFC8928"/>. Such addresses will be preferred by ROVR nodes over non
+    validated ROVR MACs. </t>
+
+    <t>In case a ROVR node configures the address as "sticky" (since the sticky bit semantics
+    have been changed to the point a ROVR cannot tell whether address is really sticky unless
+    advertised as such by non-ROVR node) a new "X" flag called "super sticky" is introduced.</t>
 
  <figure anchor='feVPNtgt' suppress-title='false'><name>New NLRI</name>
  <artwork>
-   0                   1                   2                   3
-   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     | Type=0x06     | Sub-Type=0x00 |       |X|V|R|S| Reserved=0    |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |       TID     |                 ROVR Hash                     |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 </artwork>
  </figure>
- <t> New fields:
-	</t>
+ <t>Flags:</t>
 
     <dl  spacing='normal'>
 
-	<dt>:</dt><dd>  </dd>
-
+	<dt>S:</dt><dd>Sticky as defined in <xref target='RFC7432'/>.</dd>
+    <dt>R:</dt><dd>ROVR Capable indicates that the advertisement is originated
+            after processing signalling from host meeting the requirements in <xref target="prereq"/>.
+            This indicates a ROVR MAC.</dd>
+        <dt>V:</dt><dd>ROVR Validated indicates that the MAC passed proof of ownership per
+            <xref target="RFC8928"/>. Presence of this bit implies the "R" bit being set irregardless of
+    its value.</dd>
+        <dt>X:</dt><dd>Super Sticky indicates that the MAC ROVR is sticky and should follow
+                procedures of sticky per <xref target='RFC7432'/>. </dd>
 	</dl>
 
+    <t>
+        Sequence Number Field:
+    </t>
+    <dl  spacing='normal'>
+
+        <dt>TID:</dt><dd>contains the MAC ROVR TID per <xref target="RFC8505"/>. This MUST NOT be
+    zero, i.e. a ROVR </dd>
+        <dt>ROVR Hash:</dt><dd>Hash of ROVR used to generate the according MAC ROVR. Hash is built
+            by XOR'ing ROVR bytes in network order into the least significant byte and rotating
+            the three bytes after every byte by one bit to the left.</dd>
+    </dl>
+
 </section> <!-- end section "Updated eVPN Target Option" -->
+
+    <section anchor='evpnproc'><name>Extended ROVR MAC Procedures</name>
+        <t>In case a non-ROVR node advertises a sticky MAC by setting the "S" bit and a ROVR node
+            sees an ROVR address registration for the same MAC it MUST follow procedures per <xref target='RFC7432'/>.</t>
+        <t>In case a non-ROVR node advertises a sequence number larger than the one generated by TID on a ROVR
+            node, the ROVR node SHOULD advertise a Sequence Number consisting of all bits being set to force a "roll-over" on all nodes and
+        then fall back to advertising the TID generated sequence number again. In case a non-ROVR node persists in
+        increasing the sequence number after that it is indication of violation of  <xref target='RFC7432'/> on its part.</t>
+        <t>
+            A ROVR node advertising a ROVR MAC that has not been validated and receiving same type-2 NLRI that has been
+            validated MUST immediately withdraw its advertisement.
+        </t>
+        <t>
+            A ROVR node advertising a ROVR MAC and receiving an equivalent ROVR MAC from other node with a higher TID
+            MUST immediately withdraw its advertisement. This will allow the non-ROVR nodes to correctly interpret
+            the sequence as MAC move despite ignoring the sequence number due to presence of "S" bit.
+        </t>
+        <t>
+            A ROVR node that receives a ROVR MAC with "super sticky" indication and seeing the MAC locally MUST
+            follow analogous procedures to  <xref target='RFC7432'/>.
+        </t>
+        <t>
+            Multi-homing a MAC on mix of ROVR and non-ROVR nodes will lead to operational notifications since
+            per <xref target='RFC7432'/> the non-ROVR node will interpret the situation as a sticky MAC that
+            has shown up on its local interface unless an implementation is somewhat clever and understands that
+            the presence of the same ESI on all the routes indicates that this situation does not represent a
+            sticky MAC being moved.
+        </t>
+
+    </section>
 
 
 </section> <!-- Enhancements to  eVPN -->
@@ -1020,113 +1162,112 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
 <section anchor='op'><name>Protocol Operations </name>
 
 <t>
-
+Following section illustrates several situations and resulting signalling in EVPN from the point of view
+    of a ROVR node.
  </t>
- <figure anchor='fReg1' suppress-title='false'><name>First Host Registration Flow</name>
+
+ <figure anchor='fReg1' suppress-title='false'><name>Host Registration</name>
  <artwork align="center"><![CDATA[
     Local            Local              Route           Remote
     Server           Leaf             Reflector         Leaf
    +-------+       +---------+        +-------+        +---------+
    |       |       |         |        |       |        |         |
       6LN           6LBR/eVPN            BGP            eVPN/6LBR
-       |                |               . ..               |
-       |    Ethernet    |           . .. .  ..             |
-       |                |           eVPN infra .           |
-       |                |           . .... ..              |
-       |   NS(EARO)     |                ...               |
-       |--------------->|                                  |
+       |                |                 |                |
+       |    Ethernet    |      [via BGP Signalling]        |
+       |                |                 |                |
+       |                |                 |                |
+       |   NS(EARO)     |                 |                |
+       |--------------->|                 |                |
        |                |                 |                |
        |      install local state         |                |
        |                |                 |                |
-       |                |-----install---->|                |
+       |                |  MAC ROVR Route A'               |
+       |                |---------------->|                |
        |   NA(EARO)     |                 |                |
        |<---------------|                 |                |
-       |                |                 |                |
+       |                |                 | MAC ROVR Route A'
        |                |                 |--------------->|
        |                |                 |                |
-       |                |                 |                |
-       |                |                 |<---------------|
-       |                |                 |                |
-       |                |<----------------|                |
-       |                |                 |                |
+       |                |                 |    install local state
 
     ]]></artwork>
  </figure>
- <figure anchor='fReg2' suppress-title='false'><name>Next Host Registration Flow</name>
+ <figure anchor='fReg2' suppress-title='false'><name>Host Registration Renewal</name>
  <artwork align="center"><![CDATA[
     Local                 Local                   Route
     Server                Leaf                  Reflector
    +-------+       +-----------------+          +-------+
    |       |       |                 |          |       |
       6LN           6LBR         eVPN              BGP
-       |              |            |              . ..
-       |   Ethernet   |            |          . .. .  ..
-       |              |            |          eVPN infra .
-       |              |            |          . .... ..
-       |  NS(EARO(    |            |               ...
-            TID+1))   |            |                |
+       |              |            |                |
+       |   Ethernet   |            |                |
+       |              |            |         [via BGP Signalling]
+       |              |            |                |
+       |  NS(EARO(    |            |                |
+       |    TID+1))   |            |                |
        |------------->|            |                |
        |              |            |                |
        |   renew lifetime locally  |                |
-       |              |            |                |
+       |              |            | MAC ROVR Route A' (TID+1)
+       |              |            |--------------->|
        | NA(EARO      |            |                |
        |  status = 0))|            |                |
        |<-------------|            |                |
        |              |            |                |
-       |              |            |                |
-       |              |            |                |
     ]]></artwork>
  </figure>
- <figure anchor='fRegcons' suppress-title='false'><name>Multihomed</name>
+ <figure anchor='fRegcons' suppress-title='false'><name>Multihoming</name>
  <artwork align="center"><![CDATA[
     Local            Local              Route           Remote
     Server           Leaf             Reflector         Leaf
    +-------+       +---------+        +-------+        +---------+
    |       |       |         |        |       |        |         |
       6LN           6LBR/eVPN            BGP            eVPN/6LBR
-       |                |               . ..               |
-       |    Ethernet    |           . .. .  ..             |
-       |                |           eVPN infra .           |
-       |                |           . .... ..              |
-       |   NS(EARO)     |                ...               |
-       |--------------->|                                  |
        |                |                 |                |
-       |       remote state with          |                |
-       |       same ROVR same TID         |                |
+       |    Ethernet    |                 |                |
+       |                |        [via BGP Signalling]      |
        |                |                 |                |
-       |                |-----install---->|                |
-       |   NA(EARO      |                 |                |
-       |   status = 0)) |                 |                |
-       |<---------------|                 |                |
+       |   NS(EARO)     |                 |                |
+       |--------------->|                 |                |
        |                |                 |                |
-       |                |                 |                |
+       |                |  MAC ROVR Route A'               |
+       |                |---------------->|                |
+       |                |                 |  MAC ROVR Route A'
        |                |                 |--------------->|
-       |                |                 |                |
-       |                |                 |                |
-       |                |                 |<---------------|
-       |                |                 |                |
-       |                |<----------------|                |
-       |                |                 |                |
+       |   NA(EARO      |                 |                |
+       |   status = 0)) |                remote state with |
+       |<---------------|                same A', TID, ESI, Flags,
+       |                |                ROVR Hash
        |                |                 |                |
     ]]></artwork> </figure>
 
- <figure anchor='fRegdup' suppress-title='false'><name>Duplicate Address</name>
+ <figure anchor='fRegdup' suppress-title='false'><name>Duplicate Addresses</name>
  <artwork align="center"><![CDATA[
     Local            Local              Route           Remote
     Server           Leaf             Reflector         Leaf
    +-------+       +---------+        +-------+        +---------+
    |       |       |         |        |       |        |         |
       6LN           6LBR/eVPN            BGP            eVPN/6LBR
-       |                |               . ..               |
-       |    Ethernet    |           . .. .  ..             |
-       |                |           eVPN infra .           |
-       |                |           . .... ..              |
-       |   NS(EARO)     |                ...               |
-       |--------------->|                                  |
        |                |                 |                |
-       |          state with              |                |
-       |        different ROVR            |                |
+       |    Ethernet    |                 |                |
+       |                |        [via BGP Signalling]      |
        |                |                 |                |
+       |   NS(EARO)     |                 |                |
+       |--------------->|                 |                |
+       |                |                 |                |
+       |                |  MAC ROVR Route A'               |
+       |                |  ESI X, TID Z   |                |
+       |                |  ROVR Hash F    |                |
+       |                |---------------->|                |
+       |                |                 |         Local A' Present
+       |                |                 |         with ESI X', 
+       |                |                 |         ROVR Hash G
+       |                |                 |                |
+       |                |                 |  MAC ROVR Route A'
+       |                |                 |  ESI X', ROVR Hash G'
+       |                |                 |<---------------|
+       |                |<----------------|                |
        |   NA(EARO(     |                 |                |
        |   status = 1)) |                 |                |
        |<---------------|                 |                |
@@ -1134,91 +1275,89 @@ The full normative text is to be found in <xref target='RFC6775'/>, <xref target
        |                |                 |                |
     ]]></artwork> </figure>
 
- <figure anchor='fRegold' suppress-title='false'><name>Moved Address</name>
+ <figure anchor='fRegold' suppress-title='false'><name>Address Move on Registration</name>
  <artwork align="center"><![CDATA[
     Local            Local              Route           Remote
     Server           Leaf             Reflector         Leaf
    +-------+       +---------+        +-------+        +---------+
    |       |       |         |        |       |        |         |
       6LN           6LBR/eVPN            BGP            eVPN/6LBR
-       |                |               . ..               |
-       |    Ethernet    |           . .. .  ..             |
-       |                |           eVPN infra .           |
-       |                |           . .... ..              |
-       |   NS(EARO)     |                ...               |
-       |--------------->|                                  |
        |                |                 |                |
-       |           state with             |                |
-       |        same ROVR newer TID       |                |
+       |    Ethernet    |                 |                |
+       |                |        [via BGP Signalling]      |
        |                |                 |                |
-       |   NA(EARO(     |                 |                |
+       |   NS(EARO)     |                 |                |
+       |--------------->|                 |                |
+       |                |                 |                |
+       |                |  MAC ROVR Route A'               |
+       |                |  ESI X, TID Z   |                |
+       |                |  ROVR Hash F    |                |
+       |                |---------------->|                |
+       |                |                 |         Local A' Present
+       |                |                 |         with ESI X',
+       |                |                 |         ROVR Hash F, TID Z+1
+       |                |                 |                |
+       |                |                 |  MAC ROVR Route A'
+       |                |                 |  ESI X', ROVR Hash F, TID Z+1
+       |                |                 |<---------------|
+       |   NA(EARO(     |<----------------|                |
        |   status = 3)) |                 |                |
        |<---------------|                 |                |
        |                |                 |                |
        |                |                 |                |
     ]]></artwork> </figure>
 
- <figure anchor='fRegmov' suppress-title='false'><name>Moved</name>
+ <figure anchor='fRegmov' suppress-title='false'><name>Address Move</name>
  <artwork align="center"><![CDATA[
-    Local            Local              Route          Remote
-    Server           Leaf             Reflector        Leaf
-   +-------+       +---------+        +-------+       +---------+
-   |       |       |         |        |       |       |         |
-      6LN           6LBR/eVPN            BGP           eVPN/6LBR
-       |                |               . ..               |
-       |    Ethernet    |           . .. .  ..             |
-       |                |           eVPN infra .           |
-       |                |           . .... ..              |
-       |                |                ...               |
+    Local            Local              Route           Remote
+    Server           Leaf             Reflector         Leaf
+   +-------+       +---------+        +-------+        +---------+
+   |       |       |         |        |       |        |         |
+      6LN           6LBR/eVPN            BGP            eVPN/6LBR
        |                |                 |                |
-       |                |          Route Type 2            |
+       |    Ethernet    |                 |                |
+       |                |        [via BGP Signalling]      |
+       |                |                 |                |
+       |   NS(EARO)     |                 |                |
+       |--------------->|                 |                |
+       |                |                 |                |
+       |           Local State:           |                |
+       |           MAC ROVR Route A'      |                |
+       |           ESI X, TID Z           |                |
+       |           ROVR Hash F            |                |
+       |                |                 |        Local A' Present
+       |                |                 |        with ESI X',
+       |                |                 |        ROVR Hash F, TID Z+1
+       |                |                 |                |
+       |                |                 |  MAC ROVR Route A'
+       |                |                 |  ESI X', Hash F, TID Z+1
        |                |                 |<---------------|
-       |                |<----------------|                |
-       |                |                 |                |
-       |        local state with          |                |
-       |       same ROVR older TID        |                |
-       |                |                 |                |
-       |                |-----kill------->|                |
-       |                |                 |                |
-       |   NA(EARO      |                 |--------------->|
+       |   NA(EARO(     |<----------------|                |
        |   status = 4)) |                 |                |
        |<---------------|                 |                |
-       |                |                 |<---------------|
-       |       remove local state         |                |
-       |                |                 |                |
-       |                |<----------------|                |
-       |                |                 |                |
-       |                |                 |                |
+       |                | Withdraw MAC ROVR Route A'       |
+       |                |---------------->|                |
+       |                |                 |--------------->|
     ]]></artwork> </figure>
 
-
- <figure anchor='fRegTO' suppress-title='false'><name>Lifetime Elapses</name>
+ <figure anchor='fRegTO' suppress-title='false'><name>Lifetime Elapse</name>
  <artwork align="center"><![CDATA[
-          Local                     Route         Remote
-          Leaf                    Reflector       Leaf
-   +-----------------+           +---------+     +---------+
-   |                 |           |         |     |         |
-    6LBR         eVPN                BGP          eVPN/6LBR
-      | <call I/F> |                . ..              |
-      |            |            . .. .  ..            |
-      |            |            eVPN infra .          |
-      |            |            . .... ..             |
-      |            |                ...               |
-time out lifetime  |                 |                |
-      |            |                 |                |
-      |            |                 |                |
-      |----kill--->|                 |                |
-      |            |                 |                |
-      |            |-----kill------->|                |
-      |            |                 |                |
-      |            |                 |--------------->|
-      |            |                 |                |
-      |            |                 |                |
+     Local            Local              Route           Remote
+    Server           Leaf             Reflector         Leaf
+   +-------+       +---------+        +-------+        +---------+
+   |       |       |         |        |       |        |         |
+      6LN           6LBR/eVPN            BGP            eVPN/6LBR
+       |                |                 |                |
+       |    Ethernet    |                 |                |
+       |                |        [via BGP Signalling]      |
+       |                |                 |                |
+   Lifetime Expired     |                 |                |
+       |                | Withdraw MAC ROVR Route A'       |
+       |                |---------------->|                |
+       |                |                 |--------------->|
 ]]></artwork> </figure>
 
 </section>
-
-
 
 <section anchor='security-considerations'><name>Security Considerations</name>
  <t>TBD
