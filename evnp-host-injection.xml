@@ -1292,23 +1292,23 @@ expect other functionality such as 6LoWPAN Header Compression:
       | NS(same address, ES and EARO) |                 |
       |------------------------------>|                 |
       |                |              |                 |
-      |                |        Same ES check ROVR      |
+      |                |        Same ES and ROVR Hash   |
       |                |   EDAR       |                 |
       |                |<-------------|                 |
       |                |              |                 |
-      |            confirm match      |                 |
-      |                |   EDAC       |                 |
-      |                |------------->|                 |
+      |       ROVR match, TID OK      |                 |
       |                |              |                 |
+      |                |EDAC(status=0)|                 |
+      |                |------------->|                 |
       |                |    install local state         |
       |                |              |                 |
-      |                |              |-install RT A'-->|
+      |                |       ROVR MAC Route A'        |
+      |                |              |---------------->|
+      |                |<-------------------------------|
+      |        install remote state   |                 |
       |                |              |                 |
       |     NA(EARO(status = 0))      |                 |
       |<------------------------------|                 |
-      |                |              |                 |
-      |                |<----- ROVR MAC Route A' -------|
-      |     install remote state      |                 |
       |                |              |                 |
 ]]></artwork>
  </figure>
@@ -1500,9 +1500,6 @@ Same ES (multihomed):
       |                |                 |--------------->|
       |     remove local state           |                |
       |                |                 |                |
-
-
-
 ]]></artwork> </figure>
 
  <figure anchor='fRegArmov' suppress-title='false'><name>Address Removal</name>

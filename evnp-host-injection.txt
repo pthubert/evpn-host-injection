@@ -1368,23 +1368,23 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
           | NS(same address, ES and EARO) |                 |
           |------------------------------>|                 |
           |                |              |                 |
-          |                |        Same ES check ROVR      |
+          |                |        Same ES and ROVR Hash   |
           |                |   EDAR       |                 |
           |                |<-------------|                 |
           |                |              |                 |
-          |            confirm match      |                 |
-          |                |   EDAC       |                 |
-          |                |------------->|                 |
+          |       ROVR match, TID OK      |                 |
           |                |              |                 |
+          |                |EDAC(status=0)|                 |
+          |                |------------->|                 |
           |                |    install local state         |
           |                |              |                 |
-          |                |              |-install RT A'-->|
+          |                |       ROVR MAC Route A'        |
+          |                |              |---------------->|
+          |                |<-------------------------------|
+          |        install remote state   |                 |
           |                |              |                 |
           |     NA(EARO(status = 0))      |                 |
           |<------------------------------|                 |
-          |                |              |                 |
-          |                |<----- ROVR MAC Route A' -------|
-          |     install remote state      |                 |
           |                |              |                 |
 
                            Figure 13: Multihoming
