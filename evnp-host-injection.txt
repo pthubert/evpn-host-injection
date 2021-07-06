@@ -81,15 +81,15 @@ Table of Contents
    5.  Requirements on the eVPN-Unaware Host . . . . . . . . . . . .  18
      5.1.  Support of 6LoWPAN ND . . . . . . . . . . . . . . . . . .  18
    6.  Enhancements to eVPN  . . . . . . . . . . . . . . . . . . . .  20
-     6.1.  ROVR MAC Mobility Extended Community  . . . . . . . . . .  21
+     6.1.  ROVR MAC Mobility Extended Community  . . . . . . . . . .  20
      6.2.  Extended ROVR MAC Procedures  . . . . . . . . . . . . . .  22
-   7.  Protocol Operations . . . . . . . . . . . . . . . . . . . . .  23
-   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  28
-   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  28
-   10. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  28
-   11. Normative References  . . . . . . . . . . . . . . . . . . . .  28
-   12. Informative References  . . . . . . . . . . . . . . . . . . .  29
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  30
+   7.  Protocol Operations . . . . . . . . . . . . . . . . . . . . .  22
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  29
+   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  29
+   10. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  29
+   11. Normative References  . . . . . . . . . . . . . . . . . . . .  29
+   12. Informative References  . . . . . . . . . . . . . . . . . . .  30
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  31
 
 1.  Introduction
 
@@ -877,7 +877,7 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
         |            |              |            |
 
 
-                           Figure 8: Pull models
+                            Figure 8: Pull model
 
    In the case of push model, the eVPN support synchronizes its state
    upon a route type 2 with the 6LBR, and the 6LBR maintains an abstract
@@ -1076,7 +1076,7 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
    community their semantics will be somewhat extended.  Specifically
    following issues have to be addressed:
 
-   *  ROVR extends the semantics of the type-2 MAC advertisement via
+   *  The ROVR extends the semantics of the type-2 MAC advertisement via
       changes in MAC Mobility Extended Community in the sense that the
       MAC must be aligned with the ROVR and under normal circumstances
       only the validity of ROVR guarantees that the type-2 MAC can be
@@ -1092,13 +1092,11 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
       consequently ROVR MAC) can be assigned multiple IP addresses and
       those represent independent NLRIs.
 
-   *  TID field in EARO is smaller than mobility sequence number in
-      [RFC7432].  To allow an ROVR MAC mobility to "win" over normal
-      MACs signalling must be introduced to distinguish TID generated
-      sequence numbers from normal sequence numbers.
-
-   *  EVPN needs to deal with lifetime monitoring of the Address
-      Registration period.
+   *  The TID field in the EARO is smaller than the mobility sequence
+      number in [RFC7432].  To allow a ROVR MAC mobility to "win" over
+      legacy MACs, signalling must be introduced that enables to
+      distinguish a TID-generated sequence number from a legacy sequence
+      number.
 
    EVPN Signalling is not used to carry ROVR since without challenge per
    [RFC8928] they do not represent any difference over using the IP/MAC
@@ -1110,10 +1108,12 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
    small hash of the ROVR is carried to allow to distinguish between MAC
    moves and MAC duplicate in MAC ROVR case.
 
+6.1.  ROVR MAC Mobility Extended Community
 
-
-
-
+   Extending MAC Mobility Extended Community allows to design a solution
+   that, while backwards compatible, allows to introduce MAC ROVR as
+   "more trusted" entities.  Figure 11 presents the according extensions
+   that will however necessitate some further explanation.
 
 
 
@@ -1121,13 +1121,6 @@ Thubert & Przygienda     Expires 7 January 2022                [Page 20]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
-
-6.1.  ROVR MAC Mobility Extended Community
-
-   Extending MAC Mobility Extended Community allows to design a solution
-   that, while backwards compatible, allows to introduce MAC ROVR as
-   "more trusted" entities.  Figure 11 presents the according extensions
-   that will however necessitate some further explanation.
 
    To introduce a "precedence" of ROVR MACs over normal EVPN MACs ROVR
    MACs are advertised to look like "sticky" MACs for non-ROVR nodes.
@@ -1170,14 +1163,6 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
       Section 5.  This indicates a ROVR MAC.
 
    V:  ROVR Validated indicates that the MAC passed proof of ownership
-
-
-
-Thubert & Przygienda     Expires 7 January 2022                [Page 21]
-
-Internet-Draft             eVPN Unaware Hosts                  July 2021
-
-
       per [RFC8928].  Presence of this bit implies the "R" bit being set
       irregardless of its value.
 
@@ -1185,6 +1170,13 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
       follow procedures of sticky per [RFC7432].
 
    Sequence Number Field:
+
+
+
+Thubert & Przygienda     Expires 7 January 2022                [Page 21]
+
+Internet-Draft             eVPN Unaware Hosts                  July 2021
+
 
    TID:  contains the MAC ROVR TID per [RFC8505].  This MUST NOT be
       zero, i.e. a ROVR
@@ -1226,14 +1218,6 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
    operational notifications since per [RFC7432] the non-ROVR node will
    interpret the situation as a sticky MAC that has shown up on its
    local interface unless an implementation is somewhat clever and
-
-
-
-Thubert & Przygienda     Expires 7 January 2022                [Page 22]
-
-Internet-Draft             eVPN Unaware Hosts                  July 2021
-
-
    understands that the presence of the same ESI on all the routes
    indicates that this situation does not represent a sticky MAC being
    moved.
@@ -1242,6 +1226,13 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
    Following section illustrates several situations and resulting
    signalling in EVPN from the point of view of a ROVR node.
+
+
+
+Thubert & Przygienda     Expires 7 January 2022                [Page 22]
+
+Internet-Draft             eVPN Unaware Hosts                  July 2021
+
 
         Local            Local              Route           Remote
         Server           Leaf             Reflector         Leaf
@@ -1270,26 +1261,6 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
                         Figure 12: Host Registration
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Thubert & Przygienda     Expires 7 January 2022                [Page 23]
-
-Internet-Draft             eVPN Unaware Hosts                  July 2021
-
-
         Local                 Local                   Route
         Server                Leaf                  Reflector
        +-------+       +-----------------+          +-------+
@@ -1310,6 +1281,14 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
            |  status = 0))|            |                |
            |<-------------|            |                |
            |              |            |                |
+
+
+
+
+Thubert & Przygienda     Expires 7 January 2022                [Page 23]
+
+Internet-Draft             eVPN Unaware Hosts                  July 2021
+
 
                     Figure 13: Host Registration Renewal
 
@@ -1336,6 +1315,27 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
            |                |                 |                |
 
                            Figure 14: Multihoming
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1492,19 +1492,19 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
                           Figure 17: Address Move
 
-         Local            Local              Route           Remote
-        Server           Leaf             Reflector         Leaf
-       +-------+       +---------+        +-------+        +---------+
-       |       |       |         |        |       |        |         |
-          6LN           6LBR/eVPN            BGP            eVPN/6LBR
-           |                |                 |                |
-           |    Ethernet    |                 |                |
-           |                |        [via BGP Signalling]      |
-           |                |                 |                |
-       Lifetime Expired     |                 |                |
-           |                | Withdraw MAC ROVR Route A'       |
-           |                |---------------->|                |
-           |                |                 |--------------->|
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1514,7 +1514,61 @@ Thubert & Przygienda     Expires 7 January 2022                [Page 27]
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
-                         Figure 18: Lifetime Elapse
+        Local            Local              Route           Remote
+        Server           Leaf             Reflector         Leaf
+       +-------+       +---------+        +-------+        +---------+
+       |       |       |         |        |       |        |         |
+          6LN           6LBR/eVPN            BGP            eVPN/6LBR
+           |                |                 |                |
+           |    Ethernet    |                 |                |
+           |                |        [via BGP Signalling]      |
+           |                |                 |                |
+           | NS(EARO,       |                 |                |
+           |    lifetime=0) |                 |                |
+           |--------------->|                 |                |
+           |                |                 |                |
+           |                | Withdraw MAC ROVR Route A'       |
+           |                |---------------->|                |
+           |                |                 |--------------->|
+           |                |                 |                |
+           |   NA(EARO(     |                 |                |
+           |   status = 5)) |                 |                |
+           |<---------------|                 |                |
+           |                |                 |                |
+           |     remove local state           |                |
+           |                |                 |                |
+
+                         Figure 18: Address Removal
+
+         Local            Local              Route           Remote
+        Server           Leaf             Reflector         Leaf
+       +-------+       +---------+        +-------+        +---------+
+       |       |       |         |        |       |        |         |
+          6LN           6LBR/eVPN            BGP            eVPN/6LBR
+           |                |                 |                |
+           |    Ethernet    |                 |                |
+           |                |        [via BGP Signalling]      |
+           |                |                 |                |
+           |     lifetime Expired             |                |
+           |                |                 |                |
+           |                | Withdraw MAC ROVR Route A'       |
+           |                |---------------->|                |
+           |                |                 |--------------->|
+           |   NA(EARO(     |                 |                |
+           |   status = 5)) |                 |                |
+           |<---------------|                 |                |
+           |                |                 |                |
+           |     remove local state           |                |
+           |                |                 |                |
+
+                         Figure 19: Lifetime Elapse
+
+
+
+Thubert & Przygienda     Expires 7 January 2022                [Page 28]
+
+Internet-Draft             eVPN Unaware Hosts                  July 2021
+
 
 8.  Security Considerations
 
@@ -1560,20 +1614,17 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
               RFC 6085, DOI 10.17487/RFC6085, January 2011,
               <https://www.rfc-editor.org/info/rfc6085>.
 
-
-
-
-
-
-Thubert & Przygienda     Expires 7 January 2022                [Page 28]
-
-Internet-Draft             eVPN Unaware Hosts                  July 2021
-
-
    [RFC7400]  Bormann, C., "6LoWPAN-GHC: Generic Header Compression for
               IPv6 over Low-Power Wireless Personal Area Networks
               (6LoWPANs)", RFC 7400, DOI 10.17487/RFC7400, November
               2014, <https://www.rfc-editor.org/info/rfc7400>.
+
+
+
+Thubert & Przygienda     Expires 7 January 2022                [Page 29]
+
+Internet-Draft             eVPN Unaware Hosts                  July 2021
+
 
    [RFC7432]  Sajassi, A., Ed., Aggarwal, R., Bitar, N., Isaac, A.,
               Uttaro, J., Drake, J., and W. Henderickx, "BGP MPLS-Based
@@ -1621,7 +1672,12 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 7 January 2022                [Page 29]
+
+
+
+
+
+Thubert & Przygienda     Expires 7 January 2022                [Page 30]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
@@ -1677,4 +1733,4 @@ Authors' Addresses
 
 
 
-Thubert & Przygienda     Expires 7 January 2022                [Page 30]
+Thubert & Przygienda     Expires 7 January 2022                [Page 31]

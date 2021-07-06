@@ -819,7 +819,7 @@ expect other functionality such as 6LoWPAN Header Compression:
 </t>
 
 <figure anchor="Figpull">
-          <name>Pull models</name>
+          <name>Pull model</name>
        <artwork align="center" name="" type="" alt="">
        <![CDATA[
         Server                       Leaf
@@ -1037,7 +1037,7 @@ expect other functionality such as 6LoWPAN Header Compression:
         their semantics will be somewhat extended. Specifically following issues have to be addressed:</t>
     <ul>
         <li>
-            ROVR extends the semantics of the type-2 MAC advertisement via changes in MAC
+            The ROVR extends the semantics of the type-2 MAC advertisement via changes in MAC
             Mobility Extended Community in the sense that the MAC
             must be aligned with the ROVR and under normal circumstances
             only the validity of ROVR guarantees that the type-2
@@ -1052,12 +1052,9 @@ expect other functionality such as 6LoWPAN Header Compression:
             those represent independent NLRIs.
         </li>
         <li>
-            TID field in EARO is smaller than mobility sequence number in <xref target='RFC7432'/>.
-            To allow an ROVR MAC mobility to "win" over normal MACs signalling must be introduced to
-            distinguish TID generated sequence numbers from normal sequence numbers.
-        </li>
-        <li>
-            EVPN needs to deal with lifetime monitoring of the Address Registration period.
+           The TID field in the EARO is smaller than the mobility sequence number in <xref target='RFC7432'/>.
+           To allow a ROVR MAC mobility to "win" over legacy MACs, signalling must be introduced that enables to
+           distinguish a TID-generated sequence number from a legacy sequence number.
         </li>
     </ul>
     <t>
@@ -1368,6 +1365,33 @@ Following section illustrates several situations and resulting signalling in EVP
       |                |                 |--------------->|
 ]]></artwork> </figure>
 
+ <figure anchor='fRegrmov' suppress-title='false'><name>Address Removal</name>
+ <artwork align="center"><![CDATA[
+   Local            Local              Route           Remote
+   Server           Leaf             Reflector         Leaf
+  +-------+       +---------+        +-------+        +---------+
+  |       |       |         |        |       |        |         |
+     6LN           6LBR/eVPN            BGP            eVPN/6LBR
+      |                |                 |                |
+      |    Ethernet    |                 |                |
+      |                |        [via BGP Signalling]      |
+      |                |                 |                |
+      | NS(EARO,       |                 |                |
+      |    lifetime=0) |                 |                |
+      |--------------->|                 |                |
+      |                |                 |                |
+      |                | Withdraw MAC ROVR Route A'       |
+      |                |---------------->|                |
+      |                |                 |--------------->|
+      |                |                 |                |
+      |   NA(EARO(     |                 |                |
+      |   status = 5)) |                 |                |
+      |<---------------|                 |                |
+      |                |                 |                |
+      |     remove local state           |                |
+      |                |                 |                |
+]]></artwork> </figure>
+
  <figure anchor='fRegTO' suppress-title='false'><name>Lifetime Elapse</name>
  <artwork align="center"><![CDATA[
     Local            Local              Route           Remote
@@ -1379,10 +1403,17 @@ Following section illustrates several situations and resulting signalling in EVP
       |    Ethernet    |                 |                |
       |                |        [via BGP Signalling]      |
       |                |                 |                |
-  Lifetime Expired     |                 |                |
+      |     lifetime Expired             |                |
+      |                |                 |                |
       |                | Withdraw MAC ROVR Route A'       |
       |                |---------------->|                |
       |                |                 |--------------->|
+      |   NA(EARO(     |                 |                |
+      |   status = 5)) |                 |                |
+      |<---------------|                 |                |
+      |                |                 |                |
+      |     remove local state           |                |
+      |                |                 |                |
 ]]></artwork> </figure>
 
 </section>
