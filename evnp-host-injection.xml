@@ -453,10 +453,14 @@ expect other functionality such as 6LoWPAN Header Compression:
 <section anchor='R8505D'><name>RFC 8505 Extended DAR/DAC</name>
 <t>
    <xref target='RFC8505'/> updates the DAR/DAC messages into the Extended
-   DAR/DAC to carry the ROVR field. The EDAR/EDAC exchange is not needed in this
-   specification as the BGP fabric as a whole is synchronized to the same state
-   via BGP and the reflector. Based on its local state, the router can check
-   whether the proposed route is new and legit, and reject it otherwise.
+   DAR/DAC to carry the ROVR field. With this specification, the abstract 6LBR
+   is distributed in all the Leaf nodes and synchronized with eVPN.
+   The EDAR/EDAC exchange is either local between a virtual router in the server
+   and the leaf, or internal to the Leaf between a collasped 6LR and 6LBR.
+   Based on its local state, the 6LBR in the Leaf checks whether the proposed
+   address/route is new and legit, and can reject it otherwise. It results that
+   duplicate addresses and address impersonation attacks can be filtered at the
+   level of IPv6 ND by the 6LBR before the information reaches eVPN.
 </t>
 
 </section> <!-- end section "RFC 8505 Extended DAR/DAC" -->
@@ -568,34 +572,33 @@ expect other functionality such as 6LoWPAN Header Compression:
           <name>Direct Registration</name>
        <artwork align="center" name="" type="" alt="">
        <![CDATA[
-
-           Server              Leaf
-     +--------------+   +-------------------+
-     |              |   |                   |
-      6LN                6LR/6LBR       eVPN
-       |                    |            |
-       | <vSwitch> Ethernet | <call I/F> |
-       |                    |            |
-       |  NS(EARO)          |            |
-       |------------------->|            |
-       |                    |            | ^
-       |                    |   query    | |
-       |                    |----------->| | if pull
-       |                    |  response  | | model
-       |                    |<-----------| |
-       |                                 | v
-       |            Evaluation (DAD)     |
-       |                                 |
-       |                    |new mapping |
-       |                    | indication |
-       |                    |----------->|
-       |                                 | Inject/maintain
-       |         store a mapping state   | eVPN route type 2
-       |                                 | ------------------>
-       |       NA(EARO)     |            | [via BGP Signalling]
-       |<-------------------|            |
-       |                    |            |
-    ]]>
+        Server              Leaf
+  +--------------+   +-------------------+
+  |              |   |                   |
+   6LN                6LR/6LBR       eVPN
+    |                    |            |
+    | <vSwitch> Ethernet | <call I/F> |
+    |                    |            |
+    |  NS(EARO)          |            |
+    |------------------->|            |
+    |                    |            | ^
+    |                    |   query    | |
+    |                    |----------->| | if pull
+    |                    |  response  | | model
+    |                    |<-----------| |
+    |                                 | v
+    |            Evaluation (DAD)     |
+    |                                 |
+    |                    |new mapping |
+    |                    | indication |
+    |                    |----------->|
+    |                                 | Inject/maintain
+    |         store a mapping state   | eVPN route type 2
+    |                                 | ------------------>
+    |       NA(EARO)     |            | [via BGP Signalling]
+    |<-------------------|            |
+    |                    |            |
+]]>
        </artwork>
 </figure>
    <t>
@@ -612,38 +615,37 @@ expect other functionality such as 6LoWPAN Header Compression:
           <name>leveraging EDAR</name>
        <artwork align="center" name="" type="" alt="">
        <![CDATA[
-
-           Server                       Leaf
-     +----------------+          +----------------+
-     |                |          |                |
-      6LN          6LR            6LBR        eVPN
-       |            |              |            |
-       | <vSwitch>  |  Ethernet    | <call I/F> |
-       |            |              |            |
-       |  NS(EARO)  |              |            |
-       |----------->|              |            |
-       |            |  EDAR(TLLAO) |            |
-       |            |------------->|            |
-       |            |              |            | ^
-       |            |              |   query    | |
-       |            |              |----------->| | if pull
-       |            |              |  response  | | model
-       |            |              |<-----------| |
-       |            |                           | v
-       |            |    Evaluation (DAD)       |
-       |            |                           |
-       |            |              |new mapping |
-       |            |              | indication |
-       |            |              |----------->|
-       |            |                           | Inject/maintain
-       |            |   store a mapping state   | eVPN route type 2
-       |            |                           | ------------------>
-       |            |  EDAC(TLLAO) |            | [via BGP Signalling]
-       |            |<-------------|            |
-       |  NA(EARO)  |              |            |
-       |<-----------|              |            |
-       |            |              |            |
-    ]]>
+        Server                       Leaf
+  +----------------+          +----------------+
+  |                |          |                |
+   6LN          6LR            6LBR        eVPN
+    |            |              |            |
+    | <vSwitch>  |  Ethernet    | <call I/F> |
+    |            |              |            |
+    |  NS(EARO)  |              |            |
+    |----------->|              |            |
+    |            |  EDAR(TLLAO) |            |
+    |            |------------->|            |
+    |            |              |            | ^
+    |            |              |   query    | |
+    |            |              |----------->| | if pull
+    |            |              |  response  | | model
+    |            |              |<-----------| |
+    |            |                           | v
+    |            |    Evaluation (DAD)       |
+    |            |                           |
+    |            |              |new mapping |
+    |            |              | indication |
+    |            |              |----------->|
+    |            |                           | Inject/maintain
+    |            |   store a mapping state   | eVPN route type 2
+    |            |                           | ------------------>
+    |            |  EDAC(TLLAO) |            | [via BGP Signalling]
+    |            |<-------------|            |
+    |  NA(EARO)  |              |            |
+    |<-----------|              |            |
+    |            |              |            |
+]]>
        </artwork>
 </figure>
 
@@ -669,28 +671,27 @@ expect other functionality such as 6LoWPAN Header Compression:
           <name>Forwarding legacy NS (Lookup)</name>
        <artwork align="center" name="" type="" alt="">
        <![CDATA[
-
-     Local             Local                   Remote
-     Server            Leaf                    Server
-     +----+          +--------+                +----+
-     |    |          |        |                |    |
-      6LN             6LR/6LBR                  6LN
-       |                 |                       |
-       |    Ethernet     |                       |
-       |                 |     [via EVPN    ]    |
-       |    multicast    |     [Data Tunnels]    |
-       |    NS(lookup)   |                       |
-       |---------------->|                       |
-       |                 |    forward unicast    |
-       |                 |     NS(lookup)        |
-       |                 |---------------------->|
-       |                 |                       |
-       |                 |         NA(O)         |
-       |                 |<----------------------|
-       |      NA(O)      |                       |
-       |<----------------|                       |
-       |                 |                       |
-    ]]>
+  Local             Local                   Remote
+  Server            Leaf                    Server
+  +----+          +--------+                +----+
+  |    |          |        |                |    |
+   6LN             6LR/6LBR                  6LN
+    |                 |                       |
+    |    Ethernet     |                       |
+    |                 |     [via EVPN    ]    |
+    |    multicast    |     [Data Tunnels]    |
+    |    NS(lookup)   |                       |
+    |---------------->|                       |
+    |                 |    forward unicast    |
+    |                 |     NS(lookup)        |
+    |                 |---------------------->|
+    |                 |                       |
+    |                 |         NA(O)         |
+    |                 |<----------------------|
+    |      NA(O)      |                       |
+    |<----------------|                       |
+    |                 |                       |
+]]>
        </artwork>
 </figure>
 
@@ -723,38 +724,37 @@ expect other functionality such as 6LoWPAN Header Compression:
           <name>Unicast Lookup from the virtual Host</name>
        <artwork align="center" name="" type="" alt="">
        <![CDATA[
-
-           Local                 Local             Remote
-           Server                 Leaf             Server
-     +----------------+       +---------+          +----+
-     |                |       |         |          |    |
-      6LN          6LR         6LBR/eVPN            6LN
-       |            |              |                 |
-       |            |              |  [via EVPN    ] |
-       | <vSwitch>  |  Ethernet    |  [Data Tunnels] |
-       |            |              |                 |
-       |            |              |                 |
-       |  RA(PIO)   |              |                 |
-       | not onlink |              |                 |
-       |<-----------|              |                 |
-       |            |              |                 |
-       |  Packet    |              |                 |
-       |----------->|              |                 |
-       |            |              |                 |
-       |            | AMR (SLLAO)  |                 |
-       |            |------------->|                 |
-       |            |              |                 |
-       |            | AMC (TLLAO)  |                 |
-       |            |<-------------|                 |
-       |            |              |                 |
-       |    NCE in STALE state     |                 |
-       |            |                                |
-       |            |            Packet              |
-       |            |------------------------------->|
-       |            |                                |
-       |    NCE in DELAY state     |                 |
-       |            |              |                 |
-    ]]>
+        Local                 Local             Remote
+        Server                 Leaf             Server
+  +----------------+       +---------+          +----+
+  |                |       |         |          |    |
+   6LN          6LR         6LBR/eVPN            6LN
+    |            |              |                 |
+    |            |              |  [via EVPN    ] |
+    | <vSwitch>  |  Ethernet    |  [Data Tunnels] |
+    |            |              |                 |
+    |            |              |                 |
+    |  RA(PIO)   |              |                 |
+    | not onlink |              |                 |
+    |<-----------|              |                 |
+    |            |              |                 |
+    |  Packet    |              |                 |
+    |----------->|              |                 |
+    |            |              |                 |
+    |            | AMR (SLLAO)  |                 |
+    |            |------------->|                 |
+    |            |              |                 |
+    |            | AMC (TLLAO)  |                 |
+    |            |<-------------|                 |
+    |            |              |                 |
+    |    NCE in STALE state     |                 |
+    |            |                                |
+    |            |            Packet              |
+    |            |------------------------------->|
+    |            |                                |
+    |    NCE in DELAY state     |                 |
+    |            |              |                 |
+]]>
        </artwork>
 </figure>
 
@@ -794,10 +794,10 @@ expect other functionality such as 6LoWPAN Header Compression:
        |  Packet    |              |
        |----------->|              |
        |            |              |
-       |            | EDAR(lookup) |
+       |            | AMR (SLLAO)  |
        |            |------------->|
        |            |              |
-       |            | EDAC(status= |
+       |            | AMC(status=  |
        |            | "Not Found") |
        |            |<-------------|
        |ICMPv6 Error|              |
@@ -822,40 +822,40 @@ expect other functionality such as 6LoWPAN Header Compression:
           <name>Pull models</name>
        <artwork align="center" name="" type="" alt="">
        <![CDATA[
-           Server                       Leaf
-     +----------------+          +----------------+
-     |                |          |                |
-      6LN          6LR            6LBR        eVPN
-       |            |              |            |
-       | <vSwitch>  |  Ethernet    | <call I/F> |
-       |            |              |            |
-       |            |              |            |
-       |            |              |            | Receive eVPN
-       |            |              |            | route type 2 for
-       |            |              |            | remote address A'
-       |            |              |            | [via BGP Signalling]
-       |            |              |            |<-----------------
-       |            |              |     store a mapping state
-       |            |              |            |
-       |Packet for A'              |            |
-       |----------->|              |            |
-       |            |EDAR(lookup A')            |
-       |            |------------->|            |
-       |            |              |Query addr A'
-       |            |              |----------->|
-       |            |              |            |
-       |            |              | return LLA |
-       |            |              |<-----------|
-       |            |              |            |
-       |            |EDAC(A''s TLLA)            |
-       |            |<-------------|            |
-       |            |              |            |
-       |            |            Packet for A'  |
-       |            |            [via EVPN    ] |
-       |            |            [Data Tunnels] |
-       |            |----------------------------------->
-       |            |              |            |
-    ]]>
+        Server                       Leaf
+  +----------------+          +----------------+
+  |                |          |                |
+   6LN          6LR            6LBR        eVPN
+    |            |              |            |
+    | <vSwitch>  |  Ethernet    | <call I/F> |
+    |            |              |            |
+    |            |              |            |
+    |            |              |            | Receive eVPN
+    |            |              |            | route type 2 for
+    |            |              |            | remote address A'
+    |            |              |            | [via BGP Signalling]
+    |            |              |            |<-----------------
+    |            |              |     store a mapping state
+    |            |              |            |
+    |Packet for A'              |            |
+    |----------->|              |            |
+    |            |AMR(lookup A')|            |
+    |            |------------->|            |
+    |            |              |Query addr A'
+    |            |              |----------->|
+    |            |              |            |
+    |            |              | return LLA |
+    |            |              |<-----------|
+    |            |              |            |
+    |            |AMC(A''s TLLA)|            |
+    |            |<-------------|            |
+    |            |              |            |
+    |            |            Packet for A'  |
+    |            |            [via EVPN    ] |
+    |            |            [Data Tunnels] |
+    |            |----------------------------------->
+    |            |              |            |
+]]>
        </artwork>
 </figure>
 
@@ -870,40 +870,40 @@ expect other functionality such as 6LoWPAN Header Compression:
           <name>Push model</name>
        <artwork align="center" name="" type="" alt="">
        <![CDATA[
-           Server                       Leaf
-     +----------------+          +----------------+
-     |                |          |                |
-      6LN          6LR            6LBR        eVPN
-       |            |              |            |
-       | <vSwitch>  |  Ethernet    | <call I/F> |
-       |            |              |            |
-       |            |              |            |
-       |            |              |            |
-       |            |              |            | Receive eVPN
-       |            |              |            | route type 2 for
-       |            |              |            | remote address A'
-       |            |              |            | [via BGP Signalling]
-       |            |              |            |<-----------------
-       |            |              |     store a mapping state
-       |            |              |            |
-       |            |              |indicate LLA|
-       |            |              |<-----------|
-       |            |    store a mapping state  |
-       |            |              |            |
-       |Packet for A'              |            |
-       |----------->|              |            |
-       |            |EDAR(lookup A')            |
-       |            |------------->|            |
-       |            |              |            |
-       |            |EDAC(R's TLLA)|            |
-       |            |<-------------|            |
-       |            |              |            |
-       |            |            Packet for A'  |
-       |            |            [via EVPN    ] |
-       |            |            [Data Tunnels] |
-       |            |----------------------------------->
-       |            |              |            |
-    ]]>
+        Server                       Leaf
+  +----------------+          +----------------+
+  |                |          |                |
+   6LN          6LR            6LBR        eVPN
+    |            |              |            |
+    | <vSwitch>  |  Ethernet    | <call I/F> |
+    |            |              |            |
+    |            |              |            |
+    |            |              |            |
+    |            |              |            | Receive eVPN
+    |            |              |            | route type 2 for
+    |            |              |            | remote address A'
+    |            |              |            | [via BGP Signalling]
+    |            |              |            |<-----------------
+    |            |              |     store a mapping state
+    |            |              |            |
+    |            |              |indicate LLA|
+    |            |              |<-----------|
+    |            |    store a mapping state  |
+    |            |              |            |
+    |Packet to A'|              |            |
+    |----------->|              |            |
+    |            |AMR(lookup A')|            |
+    |            |------------->|            |
+    |            |              |            |
+    |            |AMC(A's TLLA) |            |
+    |            |<-------------|            |
+    |            |              |            |
+    |            |            Packet to A'   |
+    |            |            [via EVPN    ] |
+    |            |            [Data Tunnels] |
+    |            |----------------------------------->
+    |            |              |            |
+]]>
        </artwork>
 </figure>
 
@@ -976,37 +976,37 @@ expect other functionality such as 6LoWPAN Header Compression:
  <artwork align="center"><![CDATA[
     Local            Local          Local
     Server           Leaf 1         Leaf 2           Reflector
-   +-------+       +---------+    +---------+       +---------+
-   |       |       |         |    |         |       |         |
-      6LN           6LBR/eVPN      6LBR/eVPN             |
-       |                |              |                 |
-       |    Ethernet    |              |                 |
-       |                |              |       [via BGP Signalling]
-       |                |              |                 |
-       |   NS(EARO)     |              |                 |
-       |--------------->|              |                 |
-       |      install local state      |                 |
-       |                |                                |
-       |                |----------install RT A'-------->|
-       |   NA(EARO)     |              |                 |
-       |<---------------|              |                 |
-       |                |              |                 |
-       |                |              |<------ RT  A'---|
-       |                |    install remote state        |
-       |                |              |                 |
-       |             NS(same EARO)     |                 |
-       |------------------------------>|                 |
-       |                |    install local state         |
-       |                |              |                 |
-       |                |              |-install RT A''->|
-       |             NA(same EARO)     |                 |          
-       |<------------------------------|                 |
-       |                |              |                 |
-       |                |<------------ RT A''------------|
-       |     install remote state      |                 |
-       |                |              |                 |
-
-    ]]></artwork>
+  +-------+       +---------+    +---------+       +---------+
+  |       |       |         |    |         |       |         |
+     6LN           6LBR/eVPN      6LBR/eVPN             |
+      |                |              |                 |
+      |    Ethernet    |              |                 |
+      |                |              |       [via BGP Signalling]
+      |                |              |                 |
+      |   NS(EARO)     |              |                 |
+      |--------------->|              |                 |
+      |      install local state      |                 |
+      |                |                                |
+      |                |--------- install RT A' ------->|
+      |   NA(EARO)     |              |                 |
+      |<---------------|              |                 |
+      |                |              |                 |
+      |                |              |<----- RT A' ----|
+      |                |    install remote state        |
+      |                |              |                 |
+      |   NS(same address and EARO)   |                 |
+      |------------------------------>|                 |
+      |                |    install local state         |
+      |                |              |                 |
+      |                |              |-install RT A'-->|
+      |                |              |                 |
+      |     NA(same address and EARO) |                 |
+      |<------------------------------|                 |
+      |                |              |                 |
+      |                |<------------ RT A' ------------|
+      |     install remote state      |                 |
+      |                |              |                 |
+]]></artwork>
  </figure>
 <t><xref target='RFC8505'/> introduces error Status values in the NA(EARO)
    which can be received synchronously upon an NS(EARO) or asynchronously.
@@ -1019,12 +1019,6 @@ expect other functionality such as 6LoWPAN Header Compression:
 
 
 </section> <!-- "Requirements to be an eVPN-Unaware Host" -->
-
-
-
-
-
-
 
 
 
@@ -1112,12 +1106,12 @@ expect other functionality such as 6LoWPAN Header Compression:
 
  <figure anchor='feVPNtgt' suppress-title='false'><name>New NLRI</name>
  <artwork>
-     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-     | Type=0x06     | Sub-Type=0x00 |       |X|V|R|S| Reserved=0    |
-     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-     |       TID     |                 ROVR Hash                     |
-     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ | Type=0x06     | Sub-Type=0x00 |       |X|V|R|S| Reserved=0    |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+ |       TID     |                 ROVR Hash                     |
+ +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 </artwork>
  </figure>
  <t>Flags:</t>
@@ -1198,193 +1192,197 @@ Following section illustrates several situations and resulting signalling in EVP
 
  <figure anchor='fReg1' suppress-title='false'><name>Host Registration</name>
  <artwork align="center"><![CDATA[
-    Local            Local              Route           Remote
-    Server           Leaf             Reflector         Leaf
-   +-------+       +---------+        +-------+        +---------+
-   |       |       |         |        |       |        |         |
-      6LN           6LBR/eVPN            BGP            eVPN/6LBR
-       |                |                 |                |
-       |    Ethernet    |      [via BGP Signalling]        |
-       |                |                 |                |
-       |                |                 |                |
-       |   NS(EARO)     |                 |                |
-       |--------------->|                 |                |
-       |                |                 |                |
-       |      install local state         |                |
-       |                |                 |                |
-       |                |  MAC ROVR Route A'               |
-       |                |---------------->|                |
-       |   NA(EARO)     |                 |                |
-       |<---------------|                 |                |
-       |                |                 | MAC ROVR Route A'
-       |                |                 |--------------->|
-       |                |                 |                |
-       |                |                 |    install local state
+   Local            Local              Route           Remote
+   Server           Leaf             Reflector         Leaf
+  +-------+       +---------+        +-------+        +---------+
+  |       |       |         |        |       |        |         |
+     6LN           6LBR/eVPN            BGP            eVPN/6LBR
+      |                |                 |                |
+      |    Ethernet    |      [via BGP Signalling]        |
+      |                |                 |                |
+      |                |                 |                |
+      |   NS(EARO)     |                 |                |
+      |--------------->|                 |                |
+      |                |                 |                |
+      |      install local state         |                |
+      |                |                 |                |
+      |                |  MAC ROVR Route A'               |
+      |                |---------------->|                |
+      |   NA(EARO)     |                 |                |
+      |<---------------|                 |                |
+      |                |                 | MAC ROVR Route A'
+      |                |                 |--------------->|
+      |                |                 |                |
+      |                |                 |    install local state
+      |                |                 |                |
 
     ]]></artwork>
  </figure>
  <figure anchor='fReg2' suppress-title='false'><name>Host Registration Renewal</name>
  <artwork align="center"><![CDATA[
-    Local                 Local                   Route
-    Server                Leaf                  Reflector
-   +-------+       +-----------------+          +-------+
-   |       |       |                 |          |       |
-      6LN           6LBR         eVPN              BGP
-       |              |            |                |
-       |   Ethernet   |            |                |
-       |              |            |         [via BGP Signalling]
-       |              |            |                |
-       |  NS(EARO(    |            |                |
-       |    TID+1))   |            |                |
-       |------------->|            |                |
-       |              |            |                |
-       |   renew lifetime locally  |                |
-       |              |            | MAC ROVR Route A' (TID+1)
-       |              |            |--------------->|
-       | NA(EARO      |            |                |
-       |  status = 0))|            |                |
-       |<-------------|            |                |
-       |              |            |                |
-    ]]></artwork>
- </figure>
- <figure anchor='fRegcons' suppress-title='false'><name>Multihoming</name>
- <artwork align="center"><![CDATA[
-    Local            Local              Route           Remote
-    Server           Leaf             Reflector         Leaf
-   +-------+       +---------+        +-------+        +---------+
-   |       |       |         |        |       |        |         |
-      6LN           6LBR/eVPN            BGP            eVPN/6LBR
-       |                |                 |                |
-       |    Ethernet    |                 |                |
-       |                |        [via BGP Signalling]      |
-       |                |                 |                |
-       |   NS(EARO)     |                 |                |
-       |--------------->|                 |                |
-       |                |                 |                |
-       |                |  MAC ROVR Route A'               |
-       |                |---------------->|                |
-       |                |                 |  MAC ROVR Route A'
-       |                |                 |--------------->|
-       |   NA(EARO      |                 |                |
-       |   status = 0)) |                remote state with |
-       |<---------------|                same A', TID, ESI, Flags,
-       |                |                ROVR Hash
-       |                |                 |                |
+   Local                 Local                   Route
+   Server                Leaf                  Reflector
+  +-------+       +-----------------+          +-------+
+  |       |       |                 |          |       |
+     6LN           6LBR         eVPN              BGP
+      |              |            |                |
+      |   Ethernet   |            |                |
+      |              |            |         [via BGP Signalling]
+      |              |            |                |
+      |  NS(EARO(    |            |                |
+      |    TID+1))   |            |                |
+      |------------->|            |                |
+      |              |            |                |
+      |   renew lifetime locally  |                |
+      |              |            | MAC ROVR Route A' (TID+1)
+      |              |            |--------------->|
+      | NA(EARO      |            |                |
+      |  status = 0))|            |                |
+      |<-------------|            |                |
+      |              |            |                |
+]]></artwork>
+</figure>
+<figure anchor='fRegcons' suppress-title='false'><name>Multihoming</name>
+<artwork align="center"><![CDATA[
+   Local            Local              Route           Remote
+   Server           Leaf             Reflector         Leaf
+  +-------+       +---------+        +-------+        +---------+
+  |       |       |         |        |       |        |         |
+     6LN           6LBR/eVPN            BGP            eVPN/6LBR
+      |                |                 |                |
+      |    Ethernet    |                 |                |
+      |                |        [via BGP Signalling]      |
+      |                |                 |                |
+      |   NS(EARO)     |                 |                |
+      |--------------->|                 |                |
+      |                |                 |                |
+      |                |  MAC ROVR Route A'               |
+      |                |---------------->|                |
+      |                |                 |  MAC ROVR Route A'
+      |                |                 |--------------->|
+      |   NA(EARO      |                 |                |
+      |   status = 0)) |                remote state with |
+      |<---------------|                same A', TID, ESI, Flags,
+      |                |                ROVR Hash
+      |                |                 |                |
     ]]></artwork> </figure>
 
  <figure anchor='fRegdup' suppress-title='false'><name>Duplicate Addresses</name>
  <artwork align="center"><![CDATA[
-    Local            Local              Route           Remote
-    Server           Leaf             Reflector         Leaf
-   +-------+       +---------+        +-------+        +---------+
-   |       |       |         |        |       |        |         |
-      6LN           6LBR/eVPN            BGP            eVPN/6LBR
-       |                |                 |                |
-       |    Ethernet    |                 |                |
-       |                |        [via BGP Signalling]      |
-       |                |                 |                |
-       |   NS(EARO)     |                 |                |
-       |--------------->|                 |                |
-       |                |                 |                |
-       |                |  MAC ROVR Route A'               |
-       |                |  ESI X, TID Z   |                |
-       |                |  ROVR Hash F    |                |
-       |                |---------------->|                |
-       |                |                 |         Local A' Present
-       |                |                 |         with ESI X', 
-       |                |                 |         ROVR Hash G
-       |                |                 |                |
-       |                |                 |  MAC ROVR Route A'
-       |                |                 |  ESI X', ROVR Hash G'
-       |                |                 |<---------------|
-       |                |<----------------|                |
-       |   NA(EARO(     |                 |                |
-       |   status = 1)) |                 |                |
-       |<---------------|                 |                |
-       |                |                 |                |
-       |                |                 |                |
-    ]]></artwork> </figure>
+   Local            Local              Route           Remote
+   Server           Leaf             Reflector         Leaf
+  +-------+       +---------+        +-------+        +---------+
+  |       |       |         |        |       |        |         |
+     6LN           6LBR/eVPN            BGP            eVPN/6LBR
+      |                |                 |                |
+      |    Ethernet    |                 |                |
+      |                |        [via BGP Signalling]      |
+      |                |                 |                |
+      |   NS(EARO)     |                 |                |
+      |--------------->|                 |                |
+      |                |                 |                |
+      |                |  MAC ROVR Route A'               |
+      |                |  ESI X, TID Z   |                |
+      |                |  ROVR Hash F    |                |
+      |                |---------------->|                |
+      |                |                 |         Local A' Present
+      |                |                 |         with ESI X',
+      |                |                 |         ROVR Hash G
+      |                |                 |                |
+      |                |                 |  MAC ROVR Route A'
+      |                |                 |  ESI X', ROVR Hash G'
+      |                |                 |<---------------|
+      |                |<----------------|                |
+      |   NA(EARO(     |                 |                |
+      |   status = 1)) |                 |                |
+      |<---------------|                 |                |
+      |                |                 |                |
+      |                |                 |                |
+]]></artwork> </figure>
 
  <figure anchor='fRegold' suppress-title='false'><name>Address Move on Registration</name>
  <artwork align="center"><![CDATA[
-    Local            Local              Route           Remote
-    Server           Leaf             Reflector         Leaf
-   +-------+       +---------+        +-------+        +---------+
-   |       |       |         |        |       |        |         |
-      6LN           6LBR/eVPN            BGP            eVPN/6LBR
-       |                |                 |                |
-       |    Ethernet    |                 |                |
-       |                |        [via BGP Signalling]      |
-       |                |                 |                |
-       |   NS(EARO)     |                 |                |
-       |--------------->|                 |                |
-       |                |                 |                |
-       |                |  MAC ROVR Route A'               |
-       |                |  ESI X, TID Z   |                |
-       |                |  ROVR Hash F    |                |
-       |                |---------------->|                |
-       |                |                 |         Local A' Present
-       |                |                 |         with ESI X',
-       |                |                 |         ROVR Hash F, TID Z+1
-       |                |                 |                |
-       |                |                 |  MAC ROVR Route A'
-       |                |                 |  ESI X', ROVR Hash F, TID Z+1
-       |                |                 |<---------------|
-       |   NA(EARO(     |<----------------|                |
-       |   status = 3)) |                 |                |
-       |<---------------|                 |                |
-       |                |                 |                |
-       |                |                 |                |
-    ]]></artwork> </figure>
-
+   Local            Local              Route           Remote
+   Server           Leaf             Reflector         Leaf
+  +-------+       +---------+        +-------+        +---------+
+  |       |       |         |        |       |        |         |
+     6LN           6LBR/eVPN            BGP            eVPN/6LBR
+      |                |                 |                |
+      |    Ethernet    |                 |                |
+      |                |        [via BGP Signalling]      |
+      |                |                 |                |
+      |   NS(EARO)     |                 |                |
+      |--------------->|                 |                |
+      |                |                 |                |
+      |                |  MAC ROVR Route A'               |
+      |                |  ESI X, TID Z   |                |
+      |                |  ROVR Hash F    |                |
+      |                |---------------->|                |
+      |                |                 |         Local A' Present
+      |                |                 |         with ESI X',
+      |                |                 |         ROVR Hash F,
+      |                |                 |         TID Z+1
+      |                |                 |                |
+      |                |                 |  MAC ROVR Route A'
+      |                |                 |  ESI X', ROVR Hash F,
+      |                |                 |  TID Z+1       |
+      |                |                 |<---------------|
+      |   NA(EARO(     |<----------------|                |
+      |   status = 3)) |                 |                |
+      |<---------------|                 |                |
+      |                |                 |                |
+      |                |                 |                |
+]]></artwork> </figure>
  <figure anchor='fRegmov' suppress-title='false'><name>Address Move</name>
  <artwork align="center"><![CDATA[
-    Local            Local              Route           Remote
-    Server           Leaf             Reflector         Leaf
-   +-------+       +---------+        +-------+        +---------+
-   |       |       |         |        |       |        |         |
-      6LN           6LBR/eVPN            BGP            eVPN/6LBR
-       |                |                 |                |
-       |    Ethernet    |                 |                |
-       |                |        [via BGP Signalling]      |
-       |                |                 |                |
-       |   NS(EARO)     |                 |                |
-       |--------------->|                 |                |
-       |                |                 |                |
-       |           Local State:           |                |
-       |           MAC ROVR Route A'      |                |
-       |           ESI X, TID Z           |                |
-       |           ROVR Hash F            |                |
-       |                |                 |        Local A' Present
-       |                |                 |        with ESI X',
-       |                |                 |        ROVR Hash F, TID Z+1
-       |                |                 |                |
-       |                |                 |  MAC ROVR Route A'
-       |                |                 |  ESI X', Hash F, TID Z+1
-       |                |                 |<---------------|
-       |   NA(EARO(     |<----------------|                |
-       |   status = 4)) |                 |                |
-       |<---------------|                 |                |
-       |                | Withdraw MAC ROVR Route A'       |
-       |                |---------------->|                |
-       |                |                 |--------------->|
-    ]]></artwork> </figure>
+   Local            Local              Route           Remote
+   Server           Leaf             Reflector         Leaf
+  +-------+       +---------+        +-------+        +---------+
+  |       |       |         |        |       |        |         |
+     6LN           6LBR/eVPN            BGP            eVPN/6LBR
+      |                |                 |                |
+      |    Ethernet    |                 |                |
+      |                |        [via BGP Signalling]      |
+      |                |                 |                |
+      |   NS(EARO)     |                 |                |
+      |--------------->|                 |                |
+      |                |                 |                |
+      |           Local State:           |                |
+      |           MAC ROVR Route A'      |                |
+      |           ESI X, TID Z           |                |
+      |           ROVR Hash F            |                |
+      |                |                 |        Local A' Present
+      |                |                 |        with ESI X',
+      |                |                 |        ROVR Hash F,
+      |                |                 |        TID Z+1
+      |                |                 |                |
+      |                |                 |  MAC ROVR Route A'
+      |                |                 |  ESI X', Hash F,
+      |                |                 |  TID Z+1       |
+      |                |                 |<---------------|
+      |   NA(EARO(     |<----------------|                |
+      |   status = 4)) |                 |                |
+      |<---------------|                 |                |
+      |                | Withdraw MAC ROVR Route A'       |
+      |                |---------------->|                |
+      |                |                 |--------------->|
+]]></artwork> </figure>
 
  <figure anchor='fRegTO' suppress-title='false'><name>Lifetime Elapse</name>
  <artwork align="center"><![CDATA[
-     Local            Local              Route           Remote
-    Server           Leaf             Reflector         Leaf
-   +-------+       +---------+        +-------+        +---------+
-   |       |       |         |        |       |        |         |
-      6LN           6LBR/eVPN            BGP            eVPN/6LBR
-       |                |                 |                |
-       |    Ethernet    |                 |                |
-       |                |        [via BGP Signalling]      |
-       |                |                 |                |
-   Lifetime Expired     |                 |                |
-       |                | Withdraw MAC ROVR Route A'       |
-       |                |---------------->|                |
-       |                |                 |--------------->|
+    Local            Local              Route           Remote
+   Server           Leaf             Reflector         Leaf
+  +-------+       +---------+        +-------+        +---------+
+  |       |       |         |        |       |        |         |
+     6LN           6LBR/eVPN            BGP            eVPN/6LBR
+      |                |                 |                |
+      |    Ethernet    |                 |                |
+      |                |        [via BGP Signalling]      |
+      |                |                 |                |
+  Lifetime Expired     |                 |                |
+      |                | Withdraw MAC ROVR Route A'       |
+      |                |---------------->|                |
+      |                |                 |--------------->|
 ]]></artwork> </figure>
 
 </section>

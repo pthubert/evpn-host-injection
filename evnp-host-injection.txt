@@ -5,8 +5,8 @@
 BESS                                                          P. Thubert
 Internet-Draft                                             Cisco Systems
 Intended status: Standards Track                           A. Przygienda
-Expires: 6 January 2022                                 Juniper Networks
-                                                             5 July 2021
+Expires: 7 January 2022                                 Juniper Networks
+                                                             6 July 2021
 
 
                          Routing for eVPN Hosts
@@ -35,7 +35,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 6 January 2022.
+   This Internet-Draft will expire on 7 January 2022.
 
 Copyright Notice
 
@@ -53,7 +53,7 @@ Copyright Notice
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                 [Page 1]
+Thubert & Przygienda     Expires 7 January 2022                 [Page 1]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
@@ -109,7 +109,7 @@ Table of Contents
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                 [Page 2]
+Thubert & Przygienda     Expires 7 January 2022                 [Page 2]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
@@ -165,7 +165,7 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                 [Page 3]
+Thubert & Przygienda     Expires 7 January 2022                 [Page 3]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
@@ -221,7 +221,7 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                 [Page 4]
+Thubert & Przygienda     Expires 7 January 2022                 [Page 4]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
@@ -277,7 +277,7 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                 [Page 5]
+Thubert & Przygienda     Expires 7 January 2022                 [Page 5]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
@@ -333,7 +333,7 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                 [Page 6]
+Thubert & Przygienda     Expires 7 January 2022                 [Page 6]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
@@ -389,7 +389,7 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                 [Page 7]
+Thubert & Przygienda     Expires 7 January 2022                 [Page 7]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
@@ -425,11 +425,15 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 3.3.  RFC 8505 Extended DAR/DAC
 
    [RFC8505] updates the DAR/DAC messages into the Extended DAR/DAC to
-   carry the ROVR field.  The EDAR/EDAC exchange is not needed in this
-   specification as the BGP fabric as a whole is synchronized to the
-   same state via BGP and the reflector.  Based on its local state, the
-   router can check whether the proposed route is new and legit, and
-   reject it otherwise.
+   carry the ROVR field.  With this specification, the abstract 6LBR is
+   distributed in all the Leaf nodes and synchronized with eVPN.  The
+   EDAR/EDAC exchange is either local between a virtual router in the
+   server and the leaf, or internal to the Leaf between a collasped 6LR
+   and 6LBR.  Based on its local state, the 6LBR in the Leaf checks
+   whether the proposed address/route is new and legit, and can reject
+   it otherwise.  It results that duplicate addresses and address
+   impersonation attacks can be filtered at the level of IPv6 ND by the
+   6LBR before the information reaches eVPN.
 
 3.4.  RFC 7400 Capability Indication Option
 
@@ -438,18 +442,18 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
    6LoWPAN Capability Indication Option (6CIO) that enables a node to
    expose its capabilities in router Advertisement (RA) messages.
 
-   [RFC8505] defines a number of bits in the 6CIO, in particular:
-
-   L:  Node is a 6LR.
-   E:  Node is an IPv6 ND Registrar -- i.e., it supports registrations
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                 [Page 8]
+Thubert & Przygienda     Expires 7 January 2022                 [Page 8]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
+   [RFC8505] defines a number of bits in the 6CIO, in particular:
+
+   L:  Node is a 6LR.
+   E:  Node is an IPv6 ND Registrar -- i.e., it supports registrations
       based on EARO.
    P:  Node is a Routing Registrar, -- i.e., an IPv6 ND Registrar that
       also provides reachability services for the Registered Address.
@@ -494,17 +498,16 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
    full eVPN state, which means that the eVPN support informs the 6LBR
    in case of any change on the eVPN side (this is called the push
    model, see Figure 9), or if the 6LBR queries the eVPN support when it
-   does not have a mapping to satisfy a request (pull model, see
-   Figure 8).
 
 
 
-
-
-Thubert & Przygienda     Expires 6 January 2022                 [Page 9]
+Thubert & Przygienda     Expires 7 January 2022                 [Page 9]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
+
+   does not have a mapping to satisfy a request (pull model, see
+   Figure 8).
 
    This specification leverages [RFC8929] that augments the abstract
    data model of the 6LBR to store the LLA associated with the
@@ -554,40 +557,37 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-
-
-
-Thubert & Przygienda     Expires 6 January 2022                [Page 10]
+Thubert & Przygienda     Expires 7 January 2022                [Page 10]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
-                 Server              Leaf
-           +--------------+   +-------------------+
-           |              |   |                   |
-            6LN                6LR/6LBR       eVPN
-             |                    |            |
-             | <vSwitch> Ethernet | <call I/F> |
-             |                    |            |
-             |  NS(EARO)          |            |
-             |------------------->|            |
-             |                    |            | ^
-             |                    |   query    | |
-             |                    |----------->| | if pull
-             |                    |  response  | | model
-             |                    |<-----------| |
-             |                                 | v
-             |            Evaluation (DAD)     |
-             |                                 |
-             |                    |new mapping |
-             |                    | indication |
-             |                    |----------->|
-             |                                 | Inject/maintain
-             |         store a mapping state   | eVPN route type 2
-             |                                 | ------------------>
-             |       NA(EARO)     |            | [via BGP Signalling]
-             |<-------------------|            |
-             |                    |            |
+               Server              Leaf
+         +--------------+   +-------------------+
+         |              |   |                   |
+          6LN                6LR/6LBR       eVPN
+           |                    |            |
+           | <vSwitch> Ethernet | <call I/F> |
+           |                    |            |
+           |  NS(EARO)          |            |
+           |------------------->|            |
+           |                    |            | ^
+           |                    |   query    | |
+           |                    |----------->| | if pull
+           |                    |  response  | | model
+           |                    |<-----------| |
+           |                                 | v
+           |            Evaluation (DAD)     |
+           |                                 |
+           |                    |new mapping |
+           |                    | indication |
+           |                    |----------->|
+           |                                 | Inject/maintain
+           |         store a mapping state   | eVPN route type 2
+           |                                 | ------------------>
+           |       NA(EARO)     |            | [via BGP Signalling]
+           |<-------------------|            |
+           |                    |            |
 
 
                        Figure 3: Direct Registration
@@ -613,44 +613,44 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                [Page 11]
+Thubert & Przygienda     Expires 7 January 2022                [Page 11]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
-             Server                       Leaf
-       +----------------+          +----------------+
-       |                |          |                |
-        6LN          6LR            6LBR        eVPN
-         |            |              |            |
-         | <vSwitch>  |  Ethernet    | <call I/F> |
-         |            |              |            |
-         |  NS(EARO)  |              |            |
-         |----------->|              |            |
-         |            |  EDAR(TLLAO) |            |
-         |            |------------->|            |
-         |            |              |            | ^
-         |            |              |   query    | |
-         |            |              |----------->| | if pull
-         |            |              |  response  | | model
-         |            |              |<-----------| |
-         |            |                           | v
-         |            |    Evaluation (DAD)       |
-         |            |                           |
-         |            |              |new mapping |
-         |            |              | indication |
-         |            |              |----------->|
-         |            |                           | Inject/maintain
-         |            |   store a mapping state   | eVPN route type 2
-         |            |                           | ------------------>
-         |            |  EDAC(TLLAO) |            | [via BGP Signalling]
-         |            |<-------------|            |
-         |  NA(EARO)  |              |            |
-         |<-----------|              |            |
-         |            |              |            |
+            Server                       Leaf
+      +----------------+          +----------------+
+      |                |          |                |
+       6LN          6LR            6LBR        eVPN
+        |            |              |            |
+        | <vSwitch>  |  Ethernet    | <call I/F> |
+        |            |              |            |
+        |  NS(EARO)  |              |            |
+        |----------->|              |            |
+        |            |  EDAR(TLLAO) |            |
+        |            |------------->|            |
+        |            |              |            | ^
+        |            |              |   query    | |
+        |            |              |----------->| | if pull
+        |            |              |  response  | | model
+        |            |              |<-----------| |
+        |            |                           | v
+        |            |    Evaluation (DAD)       |
+        |            |                           |
+        |            |              |new mapping |
+        |            |              | indication |
+        |            |              |----------->|
+        |            |                           | Inject/maintain
+        |            |   store a mapping state   | eVPN route type 2
+        |            |                           | ------------------>
+        |            |  EDAC(TLLAO) |            | [via BGP Signalling]
+        |            |<-------------|            |
+        |  NA(EARO)  |              |            |
+        |<-----------|              |            |
+        |            |              |            |
 
 
-                        Figure 4: leveraging EDAR
+                         Figure 4: leveraging EDAR
 
 4.3.  Unicast Address Lookup with the 6LBR
 
@@ -669,31 +669,31 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                [Page 12]
+Thubert & Przygienda     Expires 7 January 2022                [Page 12]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
-                Local             Local                   Remote
-                Server            Leaf                    Server
-                +----+          +--------+                +----+
-                |    |          |        |                |    |
-                 6LN             6LR/6LBR                  6LN
-                  |                 |                       |
-                  |    Ethernet     |                       |
-                  |                 |     [via EVPN    ]    |
-                  |    multicast    |     [Data Tunnels]    |
-                  |    NS(lookup)   |                       |
-                  |---------------->|                       |
-                  |                 |    forward unicast    |
-                  |                 |     NS(lookup)        |
-                  |                 |---------------------->|
-                  |                 |                       |
-                  |                 |         NA(O)         |
-                  |                 |<----------------------|
-                  |      NA(O)      |                       |
-                  |<----------------|                       |
-                  |                 |                       |
+              Local             Local                   Remote
+              Server            Leaf                    Server
+              +----+          +--------+                +----+
+              |    |          |        |                |    |
+               6LN             6LR/6LBR                  6LN
+                |                 |                       |
+                |    Ethernet     |                       |
+                |                 |     [via EVPN    ]    |
+                |    multicast    |     [Data Tunnels]    |
+                |    NS(lookup)   |                       |
+                |---------------->|                       |
+                |                 |    forward unicast    |
+                |                 |     NS(lookup)        |
+                |                 |---------------------->|
+                |                 |                       |
+                |                 |         NA(O)         |
+                |                 |<----------------------|
+                |      NA(O)      |                       |
+                |<----------------|                       |
+                |                 |                       |
 
 
                   Figure 5: Forwarding legacy NS (Lookup)
@@ -725,41 +725,41 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                [Page 13]
+Thubert & Przygienda     Expires 7 January 2022                [Page 13]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
-                    Local                 Local             Remote
-                    Server                 Leaf             Server
-              +----------------+       +---------+          +----+
-              |                |       |         |          |    |
-               6LN          6LR         6LBR/eVPN            6LN
-                |            |              |                 |
-                |            |              |  [via EVPN    ] |
-                | <vSwitch>  |  Ethernet    |  [Data Tunnels] |
-                |            |              |                 |
-                |            |              |                 |
-                |  RA(PIO)   |              |                 |
-                | not onlink |              |                 |
-                |<-----------|              |                 |
-                |            |              |                 |
-                |  Packet    |              |                 |
-                |----------->|              |                 |
-                |            |              |                 |
-                |            | AMR (SLLAO)  |                 |
-                |            |------------->|                 |
-                |            |              |                 |
-                |            | AMC (TLLAO)  |                 |
-                |            |<-------------|                 |
-                |            |              |                 |
-                |    NCE in STALE state     |                 |
-                |            |                                |
-                |            |            Packet              |
-                |            |------------------------------->|
-                |            |                                |
-                |    NCE in DELAY state     |                 |
-                |            |              |                 |
+                  Local                 Local             Remote
+                  Server                 Leaf             Server
+            +----------------+       +---------+          +----+
+            |                |       |         |          |    |
+             6LN          6LR         6LBR/eVPN            6LN
+              |            |              |                 |
+              |            |              |  [via EVPN    ] |
+              | <vSwitch>  |  Ethernet    |  [Data Tunnels] |
+              |            |              |                 |
+              |            |              |                 |
+              |  RA(PIO)   |              |                 |
+              | not onlink |              |                 |
+              |<-----------|              |                 |
+              |            |              |                 |
+              |  Packet    |              |                 |
+              |----------->|              |                 |
+              |            |              |                 |
+              |            | AMR (SLLAO)  |                 |
+              |            |------------->|                 |
+              |            |              |                 |
+              |            | AMC (TLLAO)  |                 |
+              |            |<-------------|                 |
+              |            |              |                 |
+              |    NCE in STALE state     |                 |
+              |            |                                |
+              |            |            Packet              |
+              |            |------------------------------->|
+              |            |                                |
+              |    NCE in DELAY state     |                 |
+              |            |              |                 |
 
 
                Figure 6: Unicast Lookup from the virtual Host
@@ -781,7 +781,7 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                [Page 14]
+Thubert & Przygienda     Expires 7 January 2022                [Page 14]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
@@ -803,10 +803,10 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
                         |  Packet    |              |
                         |----------->|              |
                         |            |              |
-                        |            | EDAR(lookup) |
+                        |            | AMR (SLLAO)  |
                         |            |------------->|
                         |            |              |
-                        |            | EDAC(status= |
+                        |            | AMC(status=  |
                         |            | "Not Found") |
                         |            |<-------------|
                         |ICMPv6 Error|              |
@@ -837,47 +837,47 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                [Page 15]
+Thubert & Przygienda     Expires 7 January 2022                [Page 15]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
-             Server                       Leaf
-       +----------------+          +----------------+
-       |                |          |                |
-        6LN          6LR            6LBR        eVPN
-         |            |              |            |
-         | <vSwitch>  |  Ethernet    | <call I/F> |
-         |            |              |            |
-         |            |              |            |
-         |            |              |            | Receive eVPN
-         |            |              |            | route type 2 for
-         |            |              |            | remote address A'
-         |            |              |            | [via BGP Signalling]
-         |            |              |            |<-----------------
-         |            |              |     store a mapping state
-         |            |              |            |
-         |Packet for A'              |            |
-         |----------->|              |            |
-         |            |EDAR(lookup A')            |
-         |            |------------->|            |
-         |            |              |Query addr A'
-         |            |              |----------->|
-         |            |              |            |
-         |            |              | return LLA |
-         |            |              |<-----------|
-         |            |              |            |
-         |            |EDAC(A''s TLLA)            |
-         |            |<-------------|            |
-         |            |              |            |
-         |            |            Packet for A'  |
-         |            |            [via EVPN    ] |
-         |            |            [Data Tunnels] |
-         |            |----------------------------------->
-         |            |              |            |
+            Server                       Leaf
+      +----------------+          +----------------+
+      |                |          |                |
+       6LN          6LR            6LBR        eVPN
+        |            |              |            |
+        | <vSwitch>  |  Ethernet    | <call I/F> |
+        |            |              |            |
+        |            |              |            |
+        |            |              |            | Receive eVPN
+        |            |              |            | route type 2 for
+        |            |              |            | remote address A'
+        |            |              |            | [via BGP Signalling]
+        |            |              |            |<-----------------
+        |            |              |     store a mapping state
+        |            |              |            |
+        |Packet for A'              |            |
+        |----------->|              |            |
+        |            |AMR(lookup A')|            |
+        |            |------------->|            |
+        |            |              |Query addr A'
+        |            |              |----------->|
+        |            |              |            |
+        |            |              | return LLA |
+        |            |              |<-----------|
+        |            |              |            |
+        |            |AMC(A''s TLLA)|            |
+        |            |<-------------|            |
+        |            |              |            |
+        |            |            Packet for A'  |
+        |            |            [via EVPN    ] |
+        |            |            [Data Tunnels] |
+        |            |----------------------------------->
+        |            |              |            |
 
 
-                          Figure 8: Pull models
+                           Figure 8: Pull models
 
    In the case of push model, the eVPN support synchronizes its state
    upon a route type 2 with the 6LBR, and the 6LBR maintains an abstract
@@ -893,47 +893,47 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                [Page 16]
+Thubert & Przygienda     Expires 7 January 2022                [Page 16]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
-             Server                       Leaf
-       +----------------+          +----------------+
-       |                |          |                |
-        6LN          6LR            6LBR        eVPN
-         |            |              |            |
-         | <vSwitch>  |  Ethernet    | <call I/F> |
-         |            |              |            |
-         |            |              |            |
-         |            |              |            |
-         |            |              |            | Receive eVPN
-         |            |              |            | route type 2 for
-         |            |              |            | remote address A'
-         |            |              |            | [via BGP Signalling]
-         |            |              |            |<-----------------
-         |            |              |     store a mapping state
-         |            |              |            |
-         |            |              |indicate LLA|
-         |            |              |<-----------|
-         |            |    store a mapping state  |
-         |            |              |            |
-         |Packet for A'              |            |
-         |----------->|              |            |
-         |            |EDAR(lookup A')            |
-         |            |------------->|            |
-         |            |              |            |
-         |            |EDAC(R's TLLA)|            |
-         |            |<-------------|            |
-         |            |              |            |
-         |            |            Packet for A'  |
-         |            |            [via EVPN    ] |
-         |            |            [Data Tunnels] |
-         |            |----------------------------------->
-         |            |              |            |
+            Server                       Leaf
+      +----------------+          +----------------+
+      |                |          |                |
+       6LN          6LR            6LBR        eVPN
+        |            |              |            |
+        | <vSwitch>  |  Ethernet    | <call I/F> |
+        |            |              |            |
+        |            |              |            |
+        |            |              |            |
+        |            |              |            | Receive eVPN
+        |            |              |            | route type 2 for
+        |            |              |            | remote address A'
+        |            |              |            | [via BGP Signalling]
+        |            |              |            |<-----------------
+        |            |              |     store a mapping state
+        |            |              |            |
+        |            |              |indicate LLA|
+        |            |              |<-----------|
+        |            |    store a mapping state  |
+        |            |              |            |
+        |Packet to A'|              |            |
+        |----------->|              |            |
+        |            |AMR(lookup A')|            |
+        |            |------------->|            |
+        |            |              |            |
+        |            |AMC(A's TLLA) |            |
+        |            |<-------------|            |
+        |            |              |            |
+        |            |            Packet to A'   |
+        |            |            [via EVPN    ] |
+        |            |            [Data Tunnels] |
+        |            |----------------------------------->
+        |            |              |            |
 
 
-                           Figure 9: Push model
+                            Figure 9: Push model
 
    In a mixed environment, a lookup failure (the mapping is not found
    though the address is present in the network) may be caused by a
@@ -949,7 +949,7 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                [Page 17]
+Thubert & Przygienda     Expires 7 January 2022                [Page 17]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
@@ -1005,7 +1005,7 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                [Page 18]
+Thubert & Przygienda     Expires 7 January 2022                [Page 18]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
@@ -1020,36 +1020,36 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
         Local            Local          Local
         Server           Leaf 1         Leaf 2           Reflector
-       +-------+       +---------+    +---------+       +---------+
-       |       |       |         |    |         |       |         |
-          6LN           6LBR/eVPN      6LBR/eVPN             |
-           |                |              |                 |
-           |    Ethernet    |              |                 |
-           |                |              |       [via BGP Signalling]
-           |                |              |                 |
-           |   NS(EARO)     |              |                 |
-           |--------------->|              |                 |
-           |      install local state      |                 |
-           |                |                                |
-           |                |----------install RT A'-------->|
-           |   NA(EARO)     |              |                 |
-           |<---------------|              |                 |
-           |                |              |                 |
-           |                |              |<------ RT  A'---|
-           |                |    install remote state        |
-           |                |              |                 |
-           |             NS(same EARO)     |                 |
-           |------------------------------>|                 |
-           |                |    install local state         |
-           |                |              |                 |
-           |                |              |-install RT A''->|
-           |             NA(same EARO)     |                 |
-           |<------------------------------|                 |
-           |                |              |                 |
-           |                |<------------ RT A''------------|
-           |     install remote state      |                 |
-           |                |              |                 |
-
+      +-------+       +---------+    +---------+       +---------+
+      |       |       |         |    |         |       |         |
+         6LN           6LBR/eVPN      6LBR/eVPN             |
+          |                |              |                 |
+          |    Ethernet    |              |                 |
+          |                |              |       [via BGP Signalling]
+          |                |              |                 |
+          |   NS(EARO)     |              |                 |
+          |--------------->|              |                 |
+          |      install local state      |                 |
+          |                |                                |
+          |                |--------- install RT A' ------->|
+          |   NA(EARO)     |              |                 |
+          |<---------------|              |                 |
+          |                |              |                 |
+          |                |              |<----- RT A' ----|
+          |                |    install remote state        |
+          |                |              |                 |
+          |   NS(same address and EARO)   |                 |
+          |------------------------------>|                 |
+          |                |    install local state         |
+          |                |              |                 |
+          |                |              |-install RT A'-->|
+          |                |              |                 |
+          |     NA(same address and EARO) |                 |
+          |<------------------------------|                 |
+          |                |              |                 |
+          |                |<------------ RT A' ------------|
+          |     install remote state      |                 |
+          |                |              |                 |
 
                   Figure 10: First Host Registration Flow
 
@@ -1061,7 +1061,7 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                [Page 19]
+Thubert & Przygienda     Expires 7 January 2022                [Page 19]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
@@ -1117,7 +1117,7 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                [Page 20]
+Thubert & Przygienda     Expires 7 January 2022                [Page 20]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
@@ -1152,14 +1152,14 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
    tell whether address is really sticky unless advertised as such by
    non-ROVR node) a new "X" flag called "super sticky" is introduced.
 
-       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       | Type=0x06     | Sub-Type=0x00 |       |X|V|R|S| Reserved=0    |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-       |       TID     |                 ROVR Hash                     |
-       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    | Type=0x06     | Sub-Type=0x00 |       |X|V|R|S| Reserved=0    |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+    |       TID     |                 ROVR Hash                     |
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-                           Figure 11: New NLRI
+                            Figure 11: New NLRI
 
    Flags:
 
@@ -1173,7 +1173,7 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                [Page 21]
+Thubert & Przygienda     Expires 7 January 2022                [Page 21]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
@@ -1229,7 +1229,7 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                [Page 22]
+Thubert & Przygienda     Expires 7 January 2022                [Page 22]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
@@ -1265,6 +1265,7 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
            |                |                 |--------------->|
            |                |                 |                |
            |                |                 |    install local state
+           |                |                 |                |
 
 
                         Figure 12: Host Registration
@@ -1284,32 +1285,31 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-
-Thubert & Przygienda     Expires 6 January 2022                [Page 23]
+Thubert & Przygienda     Expires 7 January 2022                [Page 23]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
-         Local                 Local                   Route
-         Server                Leaf                  Reflector
-        +-------+       +-----------------+          +-------+
-        |       |       |                 |          |       |
-           6LN           6LBR         eVPN              BGP
-            |              |            |                |
-            |   Ethernet   |            |                |
-            |              |            |         [via BGP Signalling]
-            |              |            |                |
-            |  NS(EARO(    |            |                |
-            |    TID+1))   |            |                |
-            |------------->|            |                |
-            |              |            |                |
-            |   renew lifetime locally  |                |
-            |              |            | MAC ROVR Route A' (TID+1)
-            |              |            |--------------->|
-            | NA(EARO      |            |                |
-            |  status = 0))|            |                |
-            |<-------------|            |                |
-            |              |            |                |
+        Local                 Local                   Route
+        Server                Leaf                  Reflector
+       +-------+       +-----------------+          +-------+
+       |       |       |                 |          |       |
+          6LN           6LBR         eVPN              BGP
+           |              |            |                |
+           |   Ethernet   |            |                |
+           |              |            |         [via BGP Signalling]
+           |              |            |                |
+           |  NS(EARO(    |            |                |
+           |    TID+1))   |            |                |
+           |------------->|            |                |
+           |              |            |                |
+           |   renew lifetime locally  |                |
+           |              |            | MAC ROVR Route A' (TID+1)
+           |              |            |--------------->|
+           | NA(EARO      |            |                |
+           |  status = 0))|            |                |
+           |<-------------|            |                |
+           |              |            |                |
 
                     Figure 13: Host Registration Renewal
 
@@ -1341,7 +1341,7 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                [Page 24]
+Thubert & Przygienda     Expires 7 January 2022                [Page 24]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
@@ -1397,45 +1397,43 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                [Page 25]
+Thubert & Przygienda     Expires 7 January 2022                [Page 25]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
-    Local            Local              Route           Remote
-    Server           Leaf             Reflector         Leaf
-   +-------+       +---------+        +-------+        +---------+
-   |       |       |         |        |       |        |         |
-      6LN           6LBR/eVPN            BGP            eVPN/6LBR
-       |                |                 |                |
-       |    Ethernet    |                 |                |
-       |                |        [via BGP Signalling]      |
-       |                |                 |                |
-       |   NS(EARO)     |                 |                |
-       |--------------->|                 |                |
-       |                |                 |                |
-       |                |  MAC ROVR Route A'               |
-       |                |  ESI X, TID Z   |                |
-       |                |  ROVR Hash F    |                |
-       |                |---------------->|                |
-       |                |                 |         Local A' Present
-       |                |                 |         with ESI X',
-       |                |                 |         ROVR Hash F, TID Z+1
-       |                |                 |                |
-       |                |                 |  MAC ROVR Route A'
-       |                |                 |  ESI X', ROVR Hash F, TID Z+1
-       |                |                 |<---------------|
-       |   NA(EARO(     |<----------------|                |
-       |   status = 3)) |                 |                |
-       |<---------------|                 |                |
-       |                |                 |                |
-       |                |                 |                |
+       Local            Local              Route           Remote
+       Server           Leaf             Reflector         Leaf
+      +-------+       +---------+        +-------+        +---------+
+      |       |       |         |        |       |        |         |
+         6LN           6LBR/eVPN            BGP            eVPN/6LBR
+          |                |                 |                |
+          |    Ethernet    |                 |                |
+          |                |        [via BGP Signalling]      |
+          |                |                 |                |
+          |   NS(EARO)     |                 |                |
+          |--------------->|                 |                |
+          |                |                 |                |
+          |                |  MAC ROVR Route A'               |
+          |                |  ESI X, TID Z   |                |
+          |                |  ROVR Hash F    |                |
+          |                |---------------->|                |
+          |                |                 |         Local A' Present
+          |                |                 |         with ESI X',
+          |                |                 |         ROVR Hash F,
+          |                |                 |         TID Z+1
+          |                |                 |                |
+          |                |                 |  MAC ROVR Route A'
+          |                |                 |  ESI X', ROVR Hash F,
+          |                |                 |  TID Z+1       |
+          |                |                 |<---------------|
+          |   NA(EARO(     |<----------------|                |
+          |   status = 3)) |                 |                |
+          |<---------------|                 |                |
+          |                |                 |                |
+          |                |                 |                |
 
-               Figure 16: Address Move on Registration
-
-
-
-
+                  Figure 16: Address Move on Registration
 
 
 
@@ -1453,42 +1451,46 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                [Page 26]
+
+
+Thubert & Przygienda     Expires 7 January 2022                [Page 26]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
-     Local            Local              Route           Remote
-     Server           Leaf             Reflector         Leaf
-    +-------+       +---------+        +-------+        +---------+
-    |       |       |         |        |       |        |         |
-       6LN           6LBR/eVPN            BGP            eVPN/6LBR
-        |                |                 |                |
-        |    Ethernet    |                 |                |
-        |                |        [via BGP Signalling]      |
-        |                |                 |                |
-        |   NS(EARO)     |                 |                |
-        |--------------->|                 |                |
-        |                |                 |                |
-        |           Local State:           |                |
-        |           MAC ROVR Route A'      |                |
-        |           ESI X, TID Z           |                |
-        |           ROVR Hash F            |                |
-        |                |                 |        Local A' Present
-        |                |                 |        with ESI X',
-        |                |                 |        ROVR Hash F, TID Z+1
-        |                |                 |                |
-        |                |                 |  MAC ROVR Route A'
-        |                |                 |  ESI X', Hash F, TID Z+1
-        |                |                 |<---------------|
-        |   NA(EARO(     |<----------------|                |
-        |   status = 4)) |                 |                |
-        |<---------------|                 |                |
-        |                | Withdraw MAC ROVR Route A'       |
-        |                |---------------->|                |
-        |                |                 |--------------->|
+       Local            Local              Route           Remote
+       Server           Leaf             Reflector         Leaf
+      +-------+       +---------+        +-------+        +---------+
+      |       |       |         |        |       |        |         |
+         6LN           6LBR/eVPN            BGP            eVPN/6LBR
+          |                |                 |                |
+          |    Ethernet    |                 |                |
+          |                |        [via BGP Signalling]      |
+          |                |                 |                |
+          |   NS(EARO)     |                 |                |
+          |--------------->|                 |                |
+          |                |                 |                |
+          |           Local State:           |                |
+          |           MAC ROVR Route A'      |                |
+          |           ESI X, TID Z           |                |
+          |           ROVR Hash F            |                |
+          |                |                 |        Local A' Present
+          |                |                 |        with ESI X',
+          |                |                 |        ROVR Hash F,
+          |                |                 |        TID Z+1
+          |                |                 |                |
+          |                |                 |  MAC ROVR Route A'
+          |                |                 |  ESI X', Hash F,
+          |                |                 |  TID Z+1       |
+          |                |                 |<---------------|
+          |   NA(EARO(     |<----------------|                |
+          |   status = 4)) |                 |                |
+          |<---------------|                 |                |
+          |                | Withdraw MAC ROVR Route A'       |
+          |                |---------------->|                |
+          |                |                 |--------------->|
 
-                        Figure 17: Address Move
+                          Figure 17: Address Move
 
          Local            Local              Route           Remote
         Server           Leaf             Reflector         Leaf
@@ -1504,15 +1506,15 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
            |                |---------------->|                |
            |                |                 |--------------->|
 
-                         Figure 18: Lifetime Elapse
 
 
 
-
-Thubert & Przygienda     Expires 6 January 2022                [Page 27]
+Thubert & Przygienda     Expires 7 January 2022                [Page 27]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
+
+                         Figure 18: Lifetime Elapse
 
 8.  Security Considerations
 
@@ -1558,17 +1560,20 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
               RFC 6085, DOI 10.17487/RFC6085, January 2011,
               <https://www.rfc-editor.org/info/rfc6085>.
 
+
+
+
+
+
+Thubert & Przygienda     Expires 7 January 2022                [Page 28]
+
+Internet-Draft             eVPN Unaware Hosts                  July 2021
+
+
    [RFC7400]  Bormann, C., "6LoWPAN-GHC: Generic Header Compression for
               IPv6 over Low-Power Wireless Personal Area Networks
               (6LoWPANs)", RFC 7400, DOI 10.17487/RFC7400, November
               2014, <https://www.rfc-editor.org/info/rfc7400>.
-
-
-
-Thubert & Przygienda     Expires 6 January 2022                [Page 28]
-
-Internet-Draft             eVPN Unaware Hosts                  July 2021
-
 
    [RFC7432]  Sajassi, A., Ed., Aggarwal, R., Bitar, N., Isaac, A.,
               Uttaro, J., Drake, J., and W. Henderickx, "BGP MPLS-Based
@@ -1616,12 +1621,7 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
 
-
-
-
-
-
-Thubert & Przygienda     Expires 6 January 2022                [Page 29]
+Thubert & Przygienda     Expires 7 January 2022                [Page 29]
 
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
@@ -1677,4 +1677,4 @@ Authors' Addresses
 
 
 
-Thubert & Przygienda     Expires 6 January 2022                [Page 30]
+Thubert & Przygienda     Expires 7 January 2022                [Page 30]
