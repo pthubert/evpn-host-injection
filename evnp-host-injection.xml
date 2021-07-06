@@ -1067,7 +1067,7 @@ expect other functionality such as 6LoWPAN Header Compression:
         necessary information.
         Only a small hash of the ROVR is carried to allow to distinguish between MAC moves and MAC
         duplicate in MAC ROVR case.
-
+<!-- PT does not work, because when the node moves the new local 6LBR needs to run RFC 8928 -->
     </t>
 
 <section anchor='tgt'><name>ROVR MAC Mobility Extended Community</name>
