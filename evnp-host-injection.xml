@@ -120,7 +120,8 @@
   though it is not operated as a cache.
   The protocol provides the means to reject the registation in case of address
   duplication. It also enables to discriminate mobility from multihoming.
-  <xref target='RFC8928'/> adds the capability to verify the ownership of the address and prevent an attacker from stealing and/or impersonating an address.
+  <xref target='RFC8928'/> adds the capability to verify the ownership of the
+  address and prevent an attacker from stealing and/or impersonating an address.
 </t>
 
 <t>
@@ -325,7 +326,7 @@ expect other functionality such as 6LoWPAN Header Compression:
    the 6LoWPAN Node (6LN) and the 6LoWPAN router (6LR).
 
    It also defines the Duplicate Address Request (DAR) and Duplicate
-   Address Confirmation (DAC) messages between the 6LR and the 6LBR).
+   Address Confirmation (DAC) messages between the 6LR and the 6LBR.
    In an LLN, the 6LBR is the central repository of all the Registered Addresses
    in its domain and the source of truth for uniqueness and ownership.
 </t>
@@ -416,7 +417,8 @@ expect other functionality such as 6LoWPAN Header Compression:
 </t>
 <t>
   This specification uses the  format expressed in <xref target='RFC9010'/>.
-  The value of 0 denotes an unqualified success, 1 indicates an address duplication, 3 a TID value that is outdated, and 4 is used in an asynchronous
+  The value of 0 denotes an unqualified success, 1 indicates an address
+  duplication, 3 a TID value that is outdated, and 4 is used in an asynchronous
   NA to indicate that 6LN should remove that address and possibly form new ones.
 </t>
 </section> <!-- end section "Status" -->
@@ -451,18 +453,65 @@ expect other functionality such as 6LoWPAN Header Compression:
 
 </section> <!-- end section "RFC 8505 Extended ARO" -->
 <section anchor='R8505D'><name>RFC 8505 Extended DAR/DAC</name>
+
 <t>
-   <xref target='RFC8505'/> updates the DAR/DAC messages into the Extended
-   DAR/DAC to carry the ROVR field. With this specification, the abstract 6LBR
-   is distributed in all the Leaf nodes and synchronized with eVPN.
-   The EDAR/EDAC exchange is either local between a virtual router in the server
-   and the leaf, or internal to the Leaf between a collasped 6LR and 6LBR.
-   Based on its local state, the 6LBR in the Leaf checks whether the proposed
-   address/route is new and legit, and can reject it otherwise. It results that
-   duplicate addresses and address impersonation attacks can be filtered at the
-   level of IPv6 ND by the 6LBR before the information reaches eVPN.
+   <xref target='RFC8505'/> updates the DAR/DAC messages to EDAR/EDAC messages
+   to carry  the ROVR field. The EDAR/EDAC exchange takes place between the 6LR
+   to which the node registers an address, and the abstract 6LBR that stores the
+   reference value for the ROVR and the TID associated to that address.
+   It is triggered by an NS(EARO) message from a 6LN to the 6LR, to create,
+   refresh, compare and delete the corresponding state in the 6LBR.
+</t>
+<t>
+   In the status returned with the EDAC message, the 6LBR indicates if the
+   registration is accepted, should be challenged, or is duplicate. The status
+   of 0 (success) indicates that the address is either new or that the current
+   registration matches, and in particular that the ROVR at the 6LBR and the
+   one in the EDAR message  are identical.
 </t>
 
+
+<figure anchor="Figedarc">
+          <name>EDAR/EDAC flow</name>
+       <artwork align="center" name="" type="" alt="">
+       <![CDATA[
+   6LN               6LR                6LBR
+    |                 |                   |
+    |   IP Link       |    subnetwork     |
+    |                 |                   |
+    |  NS(EARO)       |                   |
+    |---------------->|                   |
+    |                 |                   |
+    |                 |    EDAR           |
+    |                 |------------------>|
+    |                 |      EDAC(status) |
+    |                 |<------------------|
+    |                 |                   |
+    |       NA(EARO)  |                   |
+    |<----------------|                   |
+    |                 |                   |
+]]>
+       </artwork>
+</figure>
+<t>
+   The EDAR/EDAC
+   exchange is protected by the retry mechanism specified in Section 8.2.6 of
+   <xref target='RFC6775'/>, though in a data center, a duration significantly
+   shorter than the default value of the RetransTimer  <xref target='RFC4861'/>
+   of 1 second may be sufficient to cover the round-trip delay between the 6LR
+   and the 6LBR.
+</t>
+<t>
+   With this specification, the 6LBR is distributed across the leaves, and all
+   the leaves where an address is currently registered maintain a full 6LBR
+   state for the address, aka local state in the following text.  The
+   specification leverages the EDAR/EDAC exchange to ensure
+   that a leaf (acting as a 6LR) that needs to create a 6LBR state for a new
+   registration has the same value for the ROVR as any 6LBR already serving that
+   address on another leaf. At the same time, the specification avoids placing
+   full ROVR information in BGP so 1) it is not observable by a potential
+   attacker and 2) the new attributes remain reasonably small.
+</t>
 </section> <!-- end section "RFC 8505 Extended DAR/DAC" -->
 
 <section anchor='R7400'><name>RFC 7400 Capability Indication Option</name>
@@ -516,11 +565,13 @@ expect other functionality such as 6LoWPAN Header Compression:
    This document extends <xref target='RFC8928'/> and <xref target='RFC8505'/> as follows
 
    </t><t>
-   This document also updates the behavior of a 6LR acting as eVPN router and of a 6LN acting as Host in the 6LoWPAN ND Address Registration  as follows:
+   This document also updates the behavior of a 6LR acting as eVPN router and of
+   a 6LN acting as Host in the 6LoWPAN ND Address Registration  as follows:
    </t>
    <ul>
    <li>
-   The use of the R Flag is extended to the NA(EARO) to confirm whether the route was installed.
+   The use of the R Flag is extended to the NA(EARO) to confirm whether the
+   route was installed.
  </li>
    </ul>
 
@@ -558,7 +609,8 @@ expect other functionality such as 6LoWPAN Header Compression:
     there is no need for EDAR/EDAC messages.
    </t>
    <t>
-    In that case, the MAC address associated to the Registered Address is indicated in the Target Link-Layer Address Option (TLLAO) in the NS message
+    In that case, the MAC address associated to the Registered Address is
+    indicated in the Target Link-Layer Address Option (TLLAO) in the NS message
     used for the registration, as shown in <xref target="Figdir"/>.
     In the case of a pull model, if the 6LBR does not have a local state for
     the mapping, it queries the eVPN support to obtain the eVPN state if any.
@@ -649,6 +701,29 @@ expect other functionality such as 6LoWPAN Header Compression:
        </artwork>
 </figure>
 
+<t>
+   <xref target='RFC8505'/> updates the DAR/DAC messages into the Extended
+   DAR/DAC to carry the ROVR field. With this specification, the abstract 6LBR
+   is distributed in all the Leaf nodes and synchronized with eVPN.
+   When a server successfully registers an address to a leaf, the 6LR on that
+   leaf becomes 6LBR for that address. It stores the full state for that address
+   including the ROVR and the TID. When the address registration moves to
+   another leaf, an EDAR/EDAC flow between the 6LR in the new leaf and the 6LBR
+   in the old leaf confirms that the ROVR in the NS(EARO) received at the new
+   leaf is correct, in which case the 6LR in the new leaf becomes 6LBR.
+</t>
+<t>
+   When the address is already registered to the local leaf,
+   the EDAR/EDAC exchange is either local between a virtual router in the server
+   and the leaf, or internal to the leaf between a collapsed 6LR and 6LBR.
+   Based on its local state, the 6LBR in the leaf checks whether the proposed
+   address/route is new and legit, and can reject it otherwise.
+</t>
+<t>
+   It results that
+   duplicate addresses and address impersonation attacks can be filtered at the
+   level of IPv6 ND by the 6LBR before the information reaches eVPN.
+</t>
 </section> <!-- Distributing the 6LBR -->
 
 
@@ -657,7 +732,8 @@ expect other functionality such as 6LoWPAN Header Compression:
 
 <t>
   A classical IPv6 ND stack in the server that treats the subnet prefix as
-  on-link (more in section 4.6.2. of <xref target="RFC4861" format="default" sectionFormat="of"/>), will resolve an unknown LLA mapping with a multicast
+  on-link (more in section 4.6.2. of <xref target="RFC4861" format="default"
+  sectionFormat="of"/>), will resolve an unknown LLA mapping with a multicast
   NS(lookup) message addressed to the solicited node multicast address (SNMA)
   associated with the destination address being resolved. The RECOMMENDED
   operation in that case is for the 6LBR that has a mapping state to forward the
@@ -701,7 +777,8 @@ expect other functionality such as 6LoWPAN Header Compression:
   adds the capability to insert IPv6 ND options in the EDAR and EDAC messages.
   This enables the 6LBR to store the link-layer address associated with the
   Registered Address and to serve as a mapping server.
-  <xref target="I-D.thubert-6lo-unicast-lookup"/> leverages that state to define a new unicast address lookup operation, extending the EDAR and EDAC
+  <xref target="I-D.thubert-6lo-unicast-lookup"/> leverages that state to define
+  a new unicast address lookup operation, extending the EDAR and EDAC
   messages as the Address Mapping Request (AMR) and Confirmation (AMC) with a
   different Code Prefix <xref target='RFC8505'/>.
   </t>
@@ -713,7 +790,8 @@ expect other functionality such as 6LoWPAN Header Compression:
   same subnet refrains from resolving the address mapping and passes the packets
   directly to the router.
   </t>
-  <t>In the case where the router is a virtual 6LR running in the server, and the source and destination are in the same subnet served by eVPN, the router
+  <t>In the case where the router is a virtual 6LR running in the server, and
+  the source and destination are in the same subnet served by eVPN, the router
   then resolves the address mapping on behalf of the host. To that effect,
   the router sends a unicast AMR message to the 6LBR.
   The message contains the SLLAO of the router to which the 6LBR will reply.
@@ -935,7 +1013,9 @@ expect other functionality such as 6LoWPAN Header Compression:
    A host sees a prefix as not on-link (e.g., it learned that prefix in a PIO
    in a RA with the L flag not set) should not attempt to resolve an address
    within that prefix using a multicast NS(lookup).
-   Instead, it must pass its packets to a router, preferably one that advertises that prefix in a PIO; it must register the address that it uses as source to that router to enable source address validation using
+   Instead, it must pass its packets to a router, preferably one that advertises
+   that prefix in a PIO; it must register the address that it uses as source to
+   that router to enable source address validation using
    <xref target='RFC8505'/>.
    It is recommended that the Host also implements <xref target='RFC8928'/> to
    prove its ownership of its addresses.
@@ -945,14 +1025,17 @@ expect other functionality such as 6LoWPAN Header Compression:
    set to 1 as discussed in <xref target='R7400'/>, unless configured to do so.
    To obtain routing services for one of its addresses, the host must register
    the address to a router that advertises the prefix, setting the "R" and "T"
-   flags in the EARO to 1 as discussed in <xref target='R8505ER'/> and <xref target='R8505ETID'/>, respectively.
+   flags in the EARO to 1 as discussed in <xref target='R8505ER'/> and
+   <xref target='R8505ETID'/>, respectively.
 </t><t>
    This document echoes the behavior specified in <xref target='RFC9010'/>
-   whereby, when the R Flag set to 1 in a NS(EARO) is not echoed in the NA(EARO), the host must understand that the route injection failed, and
+   whereby, when the R Flag set to 1 in a NS(EARO) is not echoed in the NA(EARO),
+   the host must understand that the route injection failed, and
    if the R flag is reset later in an asynchronous NA(EARO), the host must
    understand that routing service has failed.
 </t><t>
-   The host may attach to multiple 6LRs and is expected to prefer those that provide routing services. The abstract model for this is a P2MP interface
+   The host may attach to multiple 6LRs and is expected to prefer those that
+   provide routing services. The abstract model for this is a P2MP interface
    that wraps together as many P2P IP Links the host has adjacencies to 6LRs
    over that interface. The IPv6 address and the subnet are associated to that
    interface.
@@ -996,6 +1079,14 @@ expect other functionality such as 6LoWPAN Header Compression:
       |                |              |                 |
       |   NS(same address and EARO)   |                 |
       |------------------------------>|                 |
+      |                |              |                 |
+      |                |   EDAR       |                 |
+      |                |<-------------|                 |
+      |                |              |                 |
+      |            confirm match      |                 |
+      |                |   EDAC       |                 |
+      |                |------------->|                 |
+      |                |              |                 |
       |                |    install local state         |
       |                |              |                 |
       |                |              |-install RT A'-->|
