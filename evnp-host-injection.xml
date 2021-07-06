@@ -484,6 +484,7 @@ expect other functionality such as 6LoWPAN Header Compression:
     |                 |                   |
     |                 |    EDAR           |
     |                 |------------------>|
+    |                 |                   |
     |                 |      EDAC(status) |
     |                 |<------------------|
     |                 |                   |
@@ -1054,51 +1055,10 @@ expect other functionality such as 6LoWPAN Header Compression:
    till the Address Registration finally shows on those routes.
    The routers recognize the same (ROVR, TID) as the signal of a multihomed
    address and maintain all the routes.
+   In the case of eVPN, the Ethernet Segment must also be the same. The flow
+   for a successful multihomed registrtaion is illustrated in
+   <xref target = 'fRegmul'/>.
 </t>
- <figure anchor='fRegmul' suppress-title='false'><name>First Host Registration Flow</name>
- <artwork align="center"><![CDATA[
-    Local            Local          Local
-    Server           Leaf 1         Leaf 2           Reflector
-  +-------+       +---------+    +---------+       +---------+
-  |       |       |         |    |         |       |         |
-     6LN           6LBR/eVPN      6LBR/eVPN             |
-      |                |              |                 |
-      |    Ethernet    |              |                 |
-      |                |              |       [via BGP Signalling]
-      |                |              |                 |
-      |   NS(EARO)     |              |                 |
-      |--------------->|              |                 |
-      |      install local state      |                 |
-      |                |                                |
-      |                |--------- install RT A' ------->|
-      |   NA(EARO)     |              |                 |
-      |<---------------|              |                 |
-      |                |              |                 |
-      |                |              |<----- RT A' ----|
-      |                |    install remote state        |
-      |                |              |                 |
-      |   NS(same address and EARO)   |                 |
-      |------------------------------>|                 |
-      |                |              |                 |
-      |                |   EDAR       |                 |
-      |                |<-------------|                 |
-      |                |              |                 |
-      |            confirm match      |                 |
-      |                |   EDAC       |                 |
-      |                |------------->|                 |
-      |                |              |                 |
-      |                |    install local state         |
-      |                |              |                 |
-      |                |              |-install RT A'-->|
-      |                |              |                 |
-      |     NA(same address and EARO) |                 |
-      |<------------------------------|                 |
-      |                |              |                 |
-      |                |<------------ RT A' ------------|
-      |     install remote state      |                 |
-      |                |              |                 |
-]]></artwork>
- </figure>
 <t><xref target='RFC8505'/> introduces error Status values in the NA(EARO)
    which can be received synchronously upon an NS(EARO) or asynchronously.
    The Host needs to support both cases and refrain from using the address
@@ -1136,7 +1096,7 @@ expect other functionality such as 6LoWPAN Header Compression:
             over MAC addresses allocated without using it given it presents a much more trustworthy
             topological information (it will be called ROVR MAC in further
             text). EVPN nodes not supporting extensions introduced by this document
-            will need to be led to believe that a MAC ROVR is to be preferred over any advertisement
+            will need to be led to believe that a ROVR MAC is to be preferred over any advertisement
             they see as long a ROVR MAC is present. Nevertheless, primary key of NRLI is still
             the MAC address as defined in <xref target='RFC7432'/>, Section 7.2 and 7.7. This implies
             that the same MAC (and consequently ROVR MAC) can be assigned multiple IP addresses and
@@ -1151,21 +1111,22 @@ expect other functionality such as 6LoWPAN Header Compression:
     <t>
         EVPN Signalling is not used to carry ROVR since without challenge per  <xref target="RFC8928"/>
         they do not represent any difference over using the IP/MAC combination.
+        Instead, the full ROVR is verified upon a movement or a multihomed advertismeent using an EDAR/EDAC exchange.
+
         Additionally,
         backwards compatibility could not be preserved given comparing routes based on ROVR would
         present a change in primary key of NLRIs which non-ROVR routes could not follow. An indication
         from a ROVR node that a MAC has been validated by proof of ownership is enough to convey the
         necessary information.
         Only a small hash of the ROVR is carried to allow to distinguish between MAC moves and MAC
-        duplicate in MAC ROVR case.
-<!-- PT does not work, because when the node moves the new local 6LBR needs to run RFC 8928 -->
+        duplicate in ROVR MAC case.
     </t>
 
 <section anchor='tgt'><name>ROVR MAC Mobility Extended Community</name>
 
     <t>
         Extending MAC Mobility Extended Community allows to design a solution that,
-        while backwards compatible, allows to introduce MAC ROVR as "more trusted"
+        while backwards compatible, allows to introduce ROVR MAC as "more trusted"
         entities. <xref target="feVPNtgt"/> presents the according extensions that
         will however necessitate some further explanation.
     </t>
@@ -1198,7 +1159,7 @@ expect other functionality such as 6LoWPAN Header Compression:
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  | Type=0x06     | Sub-Type=0x00 |       |X|V|R|S| Reserved=0    |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |       TID     |                 ROVR Hash                     |
+ |       TID     || Reserved=0   |           ROVR Hash           |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 </artwork>
  </figure>
@@ -1213,7 +1174,7 @@ expect other functionality such as 6LoWPAN Header Compression:
         <dt>V:</dt><dd>ROVR Validated indicates that the MAC passed proof of ownership per
             <xref target="RFC8928"/>. Presence of this bit implies the "R" bit being set irregardless of
     its value.</dd>
-        <dt>X:</dt><dd>Super Sticky indicates that the MAC ROVR is sticky and should follow
+        <dt>X:</dt><dd>Super Sticky indicates that the ROVR MAC is sticky and should follow
                 procedures of sticky per <xref target='RFC7432'/>. </dd>
 	</dl>
 
@@ -1222,9 +1183,9 @@ expect other functionality such as 6LoWPAN Header Compression:
     </t>
     <dl  spacing='normal'>
 
-        <dt>TID:</dt><dd>contains the MAC ROVR TID per <xref target="RFC8505"/>. This MUST NOT be
+        <dt>TID:</dt><dd>contains the ROVR MAC TID per <xref target="RFC8505"/>. This MUST NOT be
     zero, i.e. a ROVR </dd>
-        <dt>ROVR Hash:</dt><dd>Hash of ROVR used to generate the according MAC ROVR. Hash is built
+        <dt>ROVR Hash:</dt><dd>Hash of ROVR used to generate the according ROVR MAC. Hash is built
             by XOR'ing ROVR bytes in network order into the least significant byte and rotating
             the three bytes after every byte by one bit to the left.</dd>
     </dl>
@@ -1274,9 +1235,9 @@ expect other functionality such as 6LoWPAN Header Compression:
 <section anchor='op'><name>Protocol Operations </name>
 
 <t>
-Following section illustrates several situations and resulting signalling in EVPN from the point of view
-    of a ROVR node.
- </t>
+   Following section illustrates several situations and resulting signalling
+   in EVPN from the point of view of a ROVR node.
+</t>
 
  <figure anchor='fReg1' suppress-title='false'><name>Host Registration</name>
  <artwork align="center"><![CDATA[
@@ -1292,68 +1253,93 @@ Following section illustrates several situations and resulting signalling in EVP
       |   NS(EARO)     |                 |                |
       |--------------->|                 |                |
       |                |                 |                |
+      |     no state for that address    |                |
       |      install local state         |                |
       |                |                 |                |
-      |                |  MAC ROVR Route A'               |
+      |                |  ROVR MAC Route A'               |
       |                |---------------->|                |
       |   NA(EARO)     |                 |                |
       |<---------------|                 |                |
-      |                |                 | MAC ROVR Route A'
+      |                |                 | ROVR MAC Route A'
       |                |                 |--------------->|
       |                |                 |                |
-      |                |                 |    install local state
+      |                |                 |    install remote state
       |                |                 |                |
 
-    ]]></artwork>
+]]></artwork>
+ </figure>
+ <figure anchor='fRegmul' suppress-title='false'><name>Multihoming</name>
+ <artwork align="center"><![CDATA[
+    Local            Local          Local
+    Server           Leaf 1         Leaf 2           Reflector
+  +-------+       +---------+    +---------+       +---------+
+  |       |       |         |    |         |       |         |
+     6LN           6LBR/eVPN      6LBR/eVPN             |
+      |                |              |                 |
+      |    Ethernet    |              |                 |
+      |                |              |       [via BGP Signalling]
+      |                |              |                 |
+      |   NS(EARO)     |              |                 |
+      |--------------->|              |                 |
+      |      install local state      |                 |
+      |                |                                |
+      |                |------ROVR MAC Route A'   ----->|
+      |   NA(EARO)     |              |                 |
+      |<---------------|              |                 |
+      |                |              |<----------------|
+      |                |    install remote state        |
+      |                |              |                 |
+      | NS(same address, ES and EARO) |                 |
+      |------------------------------>|                 |
+      |                |              |                 |
+      |                |        Same ES check ROVR      |
+      |                |   EDAR       |                 |
+      |                |<-------------|                 |
+      |                |              |                 |
+      |            confirm match      |                 |
+      |                |   EDAC       |                 |
+      |                |------------->|                 |
+      |                |              |                 |
+      |                |    install local state         |
+      |                |              |                 |
+      |                |              |-install RT A'-->|
+      |                |              |                 |
+      |     NA(EARO(status = 0))      |                 |
+      |<------------------------------|                 |
+      |                |              |                 |
+      |                |<----- ROVR MAC Route A' -------|
+      |     install remote state      |                 |
+      |                |              |                 |
+]]></artwork>
  </figure>
  <figure anchor='fReg2' suppress-title='false'><name>Host Registration Renewal</name>
  <artwork align="center"><![CDATA[
-   Local                 Local                   Route
-   Server                Leaf                  Reflector
-  +-------+       +-----------------+          +-------+
-  |       |       |                 |          |       |
-     6LN           6LBR         eVPN              BGP
-      |              |            |                |
-      |   Ethernet   |            |                |
-      |              |            |         [via BGP Signalling]
-      |              |            |                |
-      |  NS(EARO(    |            |                |
-      |    TID+1))   |            |                |
-      |------------->|            |                |
-      |              |            |                |
-      |   renew lifetime locally  |                |
-      |              |            | MAC ROVR Route A' (TID+1)
-      |              |            |--------------->|
-      | NA(EARO      |            |                |
-      |  status = 0))|            |                |
-      |<-------------|            |                |
-      |              |            |                |
-]]></artwork>
-</figure>
-<figure anchor='fRegcons' suppress-title='false'><name>Multihoming</name>
-<artwork align="center"><![CDATA[
+
    Local            Local              Route           Remote
    Server           Leaf             Reflector         Leaf
   +-------+       +---------+        +-------+        +---------+
   |       |       |         |        |       |        |         |
      6LN           6LBR/eVPN            BGP            eVPN/6LBR
       |                |                 |                |
-      |    Ethernet    |                 |                |
-      |                |        [via BGP Signalling]      |
+      |    Ethernet    |      [via BGP Signalling]        |
       |                |                 |                |
-      |   NS(EARO)     |                 |                |
+      |                |                 |                |
+      |  NS(EARO(      |                 |                |
+      |    TID+1))     |                 |                |
       |--------------->|                 |                |
       |                |                 |                |
-      |                |  MAC ROVR Route A'               |
-      |                |---------------->|                |
-      |                |                 |  MAC ROVR Route A'
-      |                |                 |--------------->|
-      |   NA(EARO      |                 |                |
-      |   status = 0)) |                remote state with |
-      |<---------------|                same A', TID, ESI, Flags,
-      |                |                ROVR Hash
+      |   renew lifetime locally         |                |
       |                |                 |                |
-    ]]></artwork> </figure>
+      |                |  ROVR MAC Route A'(TID+1)        |
+      |                |---------------->|                |
+      |   NA(EARO      |                 |--------------->|
+      |   status = 0)) |                 |     update remote state
+      |<---------------|                 |                |
+      |                |                 |                |
+      |                |                 |                |
+]]></artwork>
+</figure>
+
 
  <figure anchor='fRegdup' suppress-title='false'><name>Duplicate Addresses</name>
  <artwork align="center"><![CDATA[
@@ -1366,21 +1352,19 @@ Following section illustrates several situations and resulting signalling in EVP
       |    Ethernet    |                 |                |
       |                |        [via BGP Signalling]      |
       |                |                 |                |
-      |   NS(EARO)     |                 |                |
-      |--------------->|                 |                |
+      |                |                 |         Local state for A'
       |                |                 |                |
-      |                |  MAC ROVR Route A'               |
-      |                |  ESI X, TID Z   |                |
-      |                |  ROVR Hash F    |                |
-      |                |---------------->|                |
-      |                |                 |         Local A' Present
-      |                |                 |         with ESI X',
-      |                |                 |         ROVR Hash G
-      |                |                 |                |
-      |                |                 |  MAC ROVR Route A'
-      |                |                 |  ESI X', ROVR Hash G'
+      |                |          ROVR MAC Route A'       |
+      |                |              ROVR Hash G         |
       |                |                 |<---------------|
       |                |<----------------|                |
+      |                |                 |                |
+      |      Create remote state for A'  |                |
+      |                |                 |                |
+      |   NS(EARO)     |                 |                |
+      |--------------->|                 |                |
+      |         compute ROVR Hash F      |                |
+      |                |                 |                |
       |   NA(EARO(     |                 |                |
       |   status = 1)) |                 |                |
       |<---------------|                 |                |
@@ -1388,7 +1372,43 @@ Following section illustrates several situations and resulting signalling in EVP
       |                |                 |                |
 ]]></artwork> </figure>
 
- <figure anchor='fRegold' suppress-title='false'><name>Address Move on Registration</name>
+ <figure anchor='fRegdup2' suppress-title='false'><name>Duplicate Addresses, ROVR Hash Collision</name>
+ <artwork align="center"><![CDATA[
+   Local            Local              Route           Remote
+   Server           Leaf             Reflector         Leaf
+  +-------+       +---------+        +-------+        +---------+
+  |       |       |         |        |       |        |         |
+     6LN           6LBR eVPN            BGP            eVPN/6LBR
+      |              |   |               |               |   |
+      |    Ethernet  |   |               |               |   |
+      |              |   |        [via BGP Signalling]   |   |
+      |              |   |               |               |   |
+      |              |   |               |     Local state for A'
+      |              |   |               |               |   |
+      |              |   |        ROVR MAC Route A'      |   |
+      |              |   |            ROVR Hash G        |   |
+      |              |   |               |<--------------|   |
+      |              |   |<--------------|               |   |
+      |      Create remote state for A'  |               |   |
+      |              |   |                               |   |
+      |              |                                       |
+      |              |     [out of band signaling]           |
+      |   NS(EARO)   |                                       |
+      |------------->|                                       |
+      |         compute ROVR Hash G                          |
+      |              |                                       |
+      |              |      EDAR to eVPN Next Hop            |
+      |              |-------------------------------------->|
+      |              |                                       |
+      |              |               EDAR (status = 1)       |
+      |              |<--------------------------------------|
+      |              |                                       |
+      |  NA(EARO(    |                                       |
+      |  status = 1))|                                       |
+      |<-------------|                                       |
+      |              |                                       |
+]]></artwork> </figure>
+ <figure anchor='fRegold' suppress-title='false'><name>Address Already Moved</name>
  <artwork align="center"><![CDATA[
    Local            Local              Route           Remote
    Server           Leaf             Reflector         Leaf
@@ -1399,30 +1419,28 @@ Following section illustrates several situations and resulting signalling in EVP
       |    Ethernet    |                 |                |
       |                |        [via BGP Signalling]      |
       |                |                 |                |
-      |   NS(EARO)     |                 |                |
-      |--------------->|                 |                |
       |                |                 |                |
-      |                |  MAC ROVR Route A'               |
-      |                |  ESI X, TID Z   |                |
-      |                |  ROVR Hash F    |                |
-      |                |---------------->|                |
-      |                |                 |         Local A' Present
-      |                |                 |         with ESI X',
-      |                |                 |         ROVR Hash F,
-      |                |                 |         TID Z+1
-      |                |                 |                |
-      |                |                 |  MAC ROVR Route A'
-      |                |                 |  ESI X', ROVR Hash F,
-      |                |                 |  TID Z+1       |
+      |                |          ROVR MAC Route A'       |
+      |                |         ESI X', Hash F, TID Z    |
       |                |                 |<---------------|
-      |   NA(EARO(     |<----------------|                |
+      |                |<----------------|                |
+      |         create remote start A'   |                |
+      |       ESI X', ROVR Hash F, TID Z |                |
+      |                |                 |                |
+      |   NS(EARO(     |                 |                |
+      |     TID=Z-1))  |                 |                |
+      |--------------->|                 |                |
+      |           computes as            |                |
+      |           ROVR Hash F            |                |
+      |           ESI X, TID Z-1         |                |
+      |   NA(EARO)     |                 |                |
       |   status = 3)) |                 |                |
       |<---------------|                 |                |
-      |                |                 |                |
       |                |                 |                |
 ]]></artwork> </figure>
  <figure anchor='fRegmov' suppress-title='false'><name>Address Move</name>
  <artwork align="center"><![CDATA[
+
    Local            Local              Route           Remote
    Server           Leaf             Reflector         Leaf
   +-------+       +---------+        +-------+        +---------+
@@ -1435,28 +1453,59 @@ Following section illustrates several situations and resulting signalling in EVP
       |   NS(EARO)     |                 |                |
       |--------------->|                 |                |
       |                |                 |                |
-      |           Local State:           |                |
-      |           MAC ROVR Route A'      |                |
-      |           ESI X, TID Z           |                |
-      |           ROVR Hash F            |                |
-      |                |                 |        Local A' Present
-      |                |                 |        with ESI X',
-      |                |                 |        ROVR Hash F,
-      |                |                 |        TID Z+1
-      |                |                 |                |
-      |                |                 |  MAC ROVR Route A'
-      |                |                 |  ESI X', Hash F,
-      |                |                 |  TID Z+1       |
-      |                |                 |<---------------|
-      |   NA(EARO(     |<----------------|                |
-      |   status = 4)) |                 |                |
-      |<---------------|                 |                |
-      |                | Withdraw MAC ROVR Route A'       |
+      |        Cteate local state        |                |
+      |                |  ROVR MAC Route A'               |
+      |                |  ESI X, TID Z   |                |
+      |                |  ROVR Hash F    |                |
       |                |---------------->|                |
       |                |                 |--------------->|
+
+
+Different ES (movement):
+      |                |                 |                |<--
+      |                |                 | Local state A' created
+      |                |                 |                |
+      |                |          ROVR MAC Route A'       |
+      |                |         ESI X', Hash F, TID Z+1  |
+      |                |                 |<---------------|
+      |                |<----------------|                |
+      |        Create remote state       |                |
+      |                |                 |                |
+      |   NA(EARO(     |                 |                |
+      |   status = 4)) |                 |                |
+      |<---------------|                 |                |
+      |                | Withdraw ROVR MAC Route A'       |
+      |                |---------------->|                |
+      |                |                 |--------------->|
+      |     remove local state           |                |
+      |                |                 |                |
+
+
+Same ES (multihomed):
+      |                |                 |                |<--
+      |                |                 | Local state A' created
+      |                |                 |                |
+      |                |          ROVR MAC Route A'       |
+      |                |         ESI X, Hash F, TID Z+1   |
+      |                |                 |<---------------|
+      |                |<----------------|                |
+      |                |                 |                |
+      |          <wait a short time>     |                |
+      |                |                 |                |
+      |   NA(EARO(     |                 |                |
+      |   status = 4)) |                 |                |
+      |<---------------|                 |                |
+      |                | Withdraw ROVR MAC Route A'       |
+      |                |---------------->|                |
+      |                |                 |--------------->|
+      |     remove local state           |                |
+      |                |                 |                |
+
+
+
 ]]></artwork> </figure>
 
- <figure anchor='fRegrmov' suppress-title='false'><name>Address Removal</name>
+ <figure anchor='fRegArmov' suppress-title='false'><name>Address Removal</name>
  <artwork align="center"><![CDATA[
    Local            Local              Route           Remote
    Server           Leaf             Reflector         Leaf
@@ -1471,15 +1520,33 @@ Following section illustrates several situations and resulting signalling in EVP
       |    lifetime=0) |                 |                |
       |--------------->|                 |                |
       |                |                 |                |
-      |                | Withdraw MAC ROVR Route A'       |
+      |                | Withdraw ROVR MAC Route A'       |
       |                |---------------->|                |
       |                |                 |--------------->|
-      |                |                 |                |
       |   NA(EARO(     |                 |                |
-      |   status = 5)) |                 |                |
+      |   status = 4)) |                 |                |
       |<---------------|                 |                |
       |                |                 |                |
       |     remove local state           |                |
+      |                |                 |                |
+]]></artwork> </figure>
+
+
+ <figure anchor='fRegRrmov' suppress-title='false'><name>Route Type 2 Removal</name>
+ <artwork align="center"><![CDATA[
+      | NS(EARO,       |                 |                |
+      |    R reset)    |                 |                |
+      |--------------->|                 |                |
+      |                |                 |                |
+      |                | Withdraw ROVR MAC Route A'       |
+      |                |---------------->|                |
+      |                |                 |--------------->|
+      |   NA(EARO(     |                 |                |
+      |   R reset,     |                 |                |
+      |   status = 0)) |                 |                |
+      |<---------------|                 |                |
+      |                |                 |                |
+      |     retain only NCE              |                |
       |                |                 |                |
 ]]></artwork> </figure>
 
@@ -1496,11 +1563,11 @@ Following section illustrates several situations and resulting signalling in EVP
       |                |                 |                |
       |     lifetime Expired             |                |
       |                |                 |                |
-      |                | Withdraw MAC ROVR Route A'       |
+      |                | Withdraw ROVR MAC Route A'       |
       |                |---------------->|                |
       |                |                 |--------------->|
       |   NA(EARO(     |                 |                |
-      |   status = 5)) |                 |                |
+      |   status = 4)) |                 |                |
       |<---------------|                 |                |
       |                |                 |                |
       |     remove local state           |                |
