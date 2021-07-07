@@ -5,12 +5,12 @@
 BESS                                                          P. Thubert
 Internet-Draft                                             Cisco Systems
 Intended status: Standards Track                           A. Przygienda
-Expires: 8 January 2022               Juniper Networks Switzerland, GmbH
+Expires: 8 January 2022                                 Juniper Networks
                                                              7 July 2021
 
 
-                         Routing for EVPN Hosts
-               draft-thubert-bess-evnp-Host-injection-00
+                       Secure EVPN MAC Signaling
+            draft-thubert-bess-secure-evpn-mac-signaling-00
 
 Abstract
 
@@ -55,7 +55,7 @@ Copyright Notice
 
 Thubert & Przygienda     Expires 8 January 2022                 [Page 1]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 Table of Contents
@@ -111,7 +111,7 @@ Table of Contents
 
 Thubert & Przygienda     Expires 8 January 2022                 [Page 2]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
    multihoming.  [RFC8928] adds the capability to verify the ownership
@@ -167,7 +167,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                 [Page 3]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
    NCE:  Neighbor Cache Entry
@@ -223,7 +223,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                 [Page 4]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
       needs it, or "push", meaning that any information that EVPN
@@ -279,7 +279,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                 [Page 5]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
    This section goes through the 6LoWPAN ND mechanisms that this
@@ -335,7 +335,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                 [Page 6]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
       0                   1                   2                   3
@@ -391,7 +391,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                 [Page 7]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
    This document specifies the use of the "I" field and the Opaque field
@@ -447,7 +447,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                 [Page 8]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 3.3.  RFC 8505 Extended DAR/DAC
@@ -503,7 +503,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                 [Page 9]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
    new registration has the same value for the ROVR as any 6LBR already
@@ -559,7 +559,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 10]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 4.2.  Distributing the 6LBR
@@ -615,7 +615,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 11]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
                 Server              Leaf
@@ -671,7 +671,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 12]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
             Server                       Leaf
@@ -727,7 +727,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 13]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
    6LBR.  Based on its local state, the 6LBR in the leaf checks whether
@@ -783,7 +783,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 14]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
    Section 3.1. of [RFC8929] adds the capability to insert IPv6 ND
@@ -839,7 +839,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 15]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
                   Local                 Local             Remote
@@ -895,7 +895,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 16]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
                             Local                 Local
@@ -951,7 +951,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 17]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
             Server                       Leaf
@@ -1007,7 +1007,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 18]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
             Server                       Leaf
@@ -1063,7 +1063,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 19]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 5.  Requirements on the EVPN-Unaware Host
@@ -1119,7 +1119,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 20]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
    those routes.  The routers recognize the same (ROVR, TID) as the
@@ -1175,7 +1175,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 21]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
       advertisement of an anycast address is coordinated, with the same
@@ -1231,7 +1231,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 22]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
    non-ROVR routers do not implement.  An indication from a ROVR node
@@ -1287,7 +1287,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 23]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
       that EVPN next hop, but is advertised for the purpose of
@@ -1343,7 +1343,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 24]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
    A ROVR node advertising a ROVR MAC that has not been validated and
@@ -1399,7 +1399,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 25]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
        Local            Local              Route           Remote
@@ -1455,7 +1455,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 26]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
          Local            Local          Local
@@ -1511,7 +1511,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 27]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
        Local            Local              Route           Remote
@@ -1567,7 +1567,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 28]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
       Local            Local              Route           Remote
@@ -1623,7 +1623,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 29]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
         Local            Local              Route           Remote
@@ -1679,7 +1679,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 30]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
         Local            Local              Route           Remote
@@ -1735,7 +1735,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 31]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
          |   NS(EARO)     |                 |                |
@@ -1791,7 +1791,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 32]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
         Local            Local              Route           Remote
@@ -1847,7 +1847,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 33]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
          Local            Local              Route           Remote
@@ -1903,7 +1903,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 34]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
    [RFC4861]  Narten, T., Nordmark, E., Simpson, W., and H. Soliman,
@@ -1959,7 +1959,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 35]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
    [RFC8928]  Thubert, P., Ed., Sarikaya, B., Sethi, M., and R. Struik,
@@ -2015,11 +2015,11 @@ Authors' Addresses
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 36]
 
-Internet-Draft             EVPN Unaware Hosts                  July 2021
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
    Tony Przygienda
-   Juniper Networks Switzerland, GmbH
+   Juniper Networks
    Zürcherstrasse 42
    CH-8103 Unterengstringen
    Switzerland

@@ -13,13 +13,15 @@
 <?rfc subcompact="no"?>
 <?rfc authorship="yes"?>
 <?rfc tocappendix="yes"?>
-<rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true" updates='' obsoletes="" consensus="true" submissionType="IETF" xml:lang="en" version="3" docName="draft-thubert-bess-evnp-Host-injection-00" >
+<rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true" updates='' obsoletes="" consensus="true"
+      submissionType="IETF" xml:lang="en" version="3"
+      docName="draft-thubert-bess-secure-evpn-mac-signaling-00" >
 
 
 <front>
 
 
-    <title abbrev='EVPN Unaware Hosts'>Routing for EVPN Hosts</title>
+    <title abbrev='EVPN Secure MAC'>Secure EVPN MAC Signaling</title>
 
    <author initials='P' surname='Thubert' fullname='Pascal Thubert'>
       <organization abbrev='Cisco Systems'>Cisco Systems, Inc</organization>
@@ -37,7 +39,7 @@
    </author>
 
     <author fullname="Tony Przygienda" initials="A." surname="Przygienda">
-        <organization>Juniper Networks Switzerland, GmbH</organization>
+        <organization>Juniper Networks</organization>
         <address>
             <postal>
                 <street>Z&#252;rcherstrasse 42
