@@ -1203,7 +1203,7 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
       to form the ROVR, in which case the IPv6 address can be locally
       autoconfigured with no central coordination; in that case, the
       ROVR only protects the ownership and enforce first-come first-
-      serve and source address validation.  But is is also possible to
+      serve and source address validation.  But it is also possible to
       pre-provision the ROVR in the 6LBR and then provision the keypair
       in the node, e.g., in the case of a trusted server.  To enable
       that capability in eVPN, this specification adds a flag to signal
