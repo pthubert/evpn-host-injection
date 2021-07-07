@@ -1122,7 +1122,8 @@ expect other functionality such as 6LoWPAN Header Compression:
 
         </li>
         <li>
-           <xref target='RFC8928'/> needs the full ROVR to validate the address ownership, but the full ROVR can be too large to advertise through BGP.
+           <xref target='RFC8928'/> needs the full ROVR to validate the address ownership,
+            but the full ROVR can be too large to advertise through BGP.
            When an IP address is advertised through EVPN, it is REQUIRED that the EVPN Next Hop
             represents
             the address of the 6LBR of the leaf where the address was registered as well.
@@ -1136,8 +1137,23 @@ expect other functionality such as 6LoWPAN Header Compression:
 
         </li>
         <li>
-           <xref target='RFC8928'/> expects nodes to autoconfigure the keypair that is used to form the ROVR, in which case the IPv6 address can be locally autoconfigured with no central coordination; in that case, the ROVR only protects the ownership and enforce first-come first-serve and source address validation. But it is also possible to pre-provision the ROVR in the 6LBR and then provision the keypair in the node, e.g., in the case of a trusted server. To enable that capability in EVPN, this specification adds a flag to signal that the 6LBR that injects the address in EVPN does not provide reachability to the address. When that flag is set, the value of the TID is ignored in the mobility computation, the mapping to the MAC address is ignored, and the route to the IP address is not injected in the RIB.
-
+           <xref target='RFC8928'/> expects nodes to autoconfigure the keypair that is
+            used to form the ROVR, in which case the IPv6 address can be locally
+            autoconfigured with no central coordination; in that case, the ROVR only
+            protects the ownership and enforce first-come first-serve and source address
+            validation. But it is also possible to pre-provision the ROVR in the 6LBR
+            and then provision the keypair in the node, e.g., in the case of a trusted
+            server. To enable that capability in EVPN, this specification adds a flag to
+            signal that the 6LBR that injects the address in EVPN does not provide
+            reachability to the address. When that flag is set, the value of the TID is
+            ignored in the mobility computation, the mapping to the MAC address is ignored,
+            and the route to the IP address is not injected in the RIB on ROVR nodes.
+            Non-ROVR nodes will consider the node a "honey-pot". Once the address is
+            registered by a 6LN in the network and the according validation with
+            the node advertising the U-bit version of the route performed, the
+            owner will inject the route without the U-bit. A node advertising the
+            NLRI with U-bit MUST withdraw the U-bit route once it sees a validated
+            NLRI without the U-bit.
         </li>
     </ul>
     <t>
@@ -1201,8 +1217,12 @@ expect other functionality such as 6LoWPAN Header Compression:
 
 	<dt>U:</dt><dd>Unreachable, indicating that the IP address is not reachable
         via that EVPN next hop, but is advertised for the purpose of protecting
-        the value of the ROVR at all times.</dd>
-	<dt>A:</dt><dd>Anycast, indicating that the IP address duplication should be ignored.The any </dd>
+        the value of the ROVR until a first 6LBR that can reach the address
+        becomes available.</dd>
+	<dt>A:</dt><dd>Anycast, indicating that the IP address duplication
+        should be ignored. When this bit is set, TID should be ignored in
+        comparison of EVPN advertisements, i.e. all ROVR MACs at same
+        level of validation MUST be considered having same TID.</dd>
 	<dt>S:</dt><dd>Sticky as defined in <xref target='RFC7432'/>.</dd>
     <dt>R:</dt><dd>ROVR Capable indicates that the advertisement is originated
             after processing signaling from host meeting the requirements in <xref target="prereq"/>.
@@ -1474,6 +1494,20 @@ expect other functionality such as 6LoWPAN Header Compression:
       |<---------------|                 |                |
       |                |                 |                |
 ]]></artwork> </figure>
+
+    <t>
+        Address move differs from multi-homing by the ESI being different
+        as visualized by <xref target="fRegmov"/>.
+        In case of different ESI BGP signalling happens immediately, in
+        case of multi-homing we can reasonably expect for the signalling
+        to catch up on the other leg with a new, higher TID. However,
+        since ESI matches TID doesn't matter strictly speaking and the
+        new remote state can be installed as is. However, if 6LN is
+        not refreshing it registration we can expect elapsed lifetime
+        to create scenario
+        <xref target="fRegTO"/> over time.
+    </t>
+
  <figure anchor='fRegmov' suppress-title='false'><name>Address Move</name>
  <artwork align="center"><![CDATA[
 
@@ -1484,7 +1518,7 @@ expect other functionality such as 6LoWPAN Header Compression:
      6LN           6LBR/EVPN            BGP            EVPN/6LBR
       |                |                 |                |
       |    Ethernet    |                 |                |
-      |                |        [via BGP signaling]      |
+      |                |        [via BGP signaling]       |
       |                |                 |                |
       |   NS(EARO)     |                 |                |
       |--------------->|                 |                |
@@ -1493,13 +1527,15 @@ expect other functionality such as 6LoWPAN Header Compression:
       |                |  ROVR MAC Route A'               |
       |                |  ESI X', TID Z  |                |
       |                |  ROVR Hash F    |                |
-      |                |---------------->|                |
+      |                |---------------->|         Install remote
+      |                |                 |              state
       |                |                 |--------------->|
 
 
 Different ES (movement):
       |                |                 |                |<----
-      |                |                 | New local state A' created
+      |                |                 |     New local state A'
+      |                |                 |            created
       |                |                 |                |
       |                |          ROVR MAC Route A'       |
       |                |         ESI X'', Hash F, TID Z+1 |
@@ -1525,16 +1561,6 @@ Same ES (multihomed):
       |                |         ESI X', Hash F, TID Z+1  |
       |                |                 |<---------------|
       |                |<----------------|                |
-      |                |                 |                |
-      |          <wait a short time>     |                |
-      |                |                 |                |
-      |   NA(EARO(     |                 |                |
-      |   status = 4)) |                 |                |
-      |<---------------|                 |                |
-      |                | Withdraw ROVR MAC Route A'       |
-      |                |---------------->|                |
-      |                |                 |--------------->|
-      |     remove local state           |                |
       |                |                 |                |
 ]]></artwork> </figure>
 

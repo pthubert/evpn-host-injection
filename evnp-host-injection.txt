@@ -84,12 +84,12 @@ Table of Contents
      6.1.  ROVR MAC Mobility Extended Community  . . . . . . . . . .  23
      6.2.  Extended ROVR MAC Procedures  . . . . . . . . . . . . . .  24
    7.  Protocol Operations . . . . . . . . . . . . . . . . . . . . .  25
-   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  33
-   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  33
-   10. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  33
-   11. Normative References  . . . . . . . . . . . . . . . . . . . .  33
-   12. Informative References  . . . . . . . . . . . . . . . . . . .  35
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  35
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  34
+   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  34
+   10. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  34
+   11. Normative References  . . . . . . . . . . . . . . . . . . . .  34
+   12. Informative References  . . . . . . . . . . . . . . . . . . .  36
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  36
 
 1.  Introduction
 
@@ -1212,7 +1212,13 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
       reachability to the address.  When that flag is set, the value of
       the TID is ignored in the mobility computation, the mapping to the
       MAC address is ignored, and the route to the IP address is not
-      injected in the RIB.
+      injected in the RIB on ROVR nodes.  Non-ROVR nodes will consider
+      the node a "honey-pot".  Once the address is registered by a 6LN
+      in the network and the according validation with the node
+      advertising the U-bit version of the route performed, the owner
+      will inject the route without the U-bit.  A node advertising the
+      NLRI with U-bit MUST withdraw the U-bit route once it sees a
+      validated NLRI without the U-bit.
 
    EVPN signaling is not used to carry ROVR since without challenge per
    [RFC8928] they do not represent any difference over using the IP/MAC
@@ -1220,12 +1226,6 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
    multi-homed advertisement using an EDAR/EDAC exchange.  Additionally,
    backwards compatibility could not be preserved given comparing routes
    based on ROVR would present a change in primary key of NLRIs which
-   non-ROVR routers do not implement.  An indication from a ROVR node
-   that a MAC has been validated by proof of ownership is enough to
-   convey the necessary information.  Only a small hash of the ROVR is
-   carried to speed up the identification of an address duplication.
-
-
 
 
 
@@ -1233,6 +1233,11 @@ Thubert & Przygienda     Expires 8 January 2022                [Page 22]
 
 Internet-Draft             EVPN Unaware Hosts                  July 2021
 
+
+   non-ROVR routers do not implement.  An indication from a ROVR node
+   that a MAC has been validated by proof of ownership is enough to
+   convey the necessary information.  Only a small hash of the ROVR is
+   carried to speed up the identification of an address duplication.
 
 6.1.  ROVR MAC Mobility Extended Community
 
@@ -1277,11 +1282,6 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
    Flags:
 
    U:  Unreachable, indicating that the IP address is not reachable via
-      that EVPN next hop, but is advertised for the purpose of
-      protecting the value of the ROVR at all times.
-
-   A:  Anycast, indicating that the IP address duplication should be
-      ignored.The any
 
 
 
@@ -1289,6 +1289,15 @@ Thubert & Przygienda     Expires 8 January 2022                [Page 23]
 
 Internet-Draft             EVPN Unaware Hosts                  July 2021
 
+
+      that EVPN next hop, but is advertised for the purpose of
+      protecting the value of the ROVR until a first 6LBR that can reach
+      the address becomes available.
+
+   A:  Anycast, indicating that the IP address duplication should be
+      ignored.  When this bit is set, TID should be ignored in
+      comparison of EVPN advertisements, i.e. all ROVR MACs at same
+      level of validation MUST be considered having same TID.
 
    S:  Sticky as defined in [RFC7432].
 
@@ -1327,15 +1336,6 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
    increasing the sequence number after that it is indication of
    violation of [RFC7432] on its part.
 
-   A ROVR node advertising a ROVR MAC that has not been validated and
-   receiving same type-2 NLRI that has been validated MUST immediately
-   withdraw its advertisement.
-
-   A ROVR node advertising a ROVR MAC and receiving an equivalent ROVR
-   MAC from other node with a higher TID MUST immediately withdraw its
-   advertisement.  This will allow the non-ROVR nodes to correctly
-   interpret the sequence as MAC move despite ignoring the sequence
-   number due to presence of "S" bit.
 
 
 
@@ -1345,6 +1345,16 @@ Thubert & Przygienda     Expires 8 January 2022                [Page 24]
 
 Internet-Draft             EVPN Unaware Hosts                  July 2021
 
+
+   A ROVR node advertising a ROVR MAC that has not been validated and
+   receiving same type-2 NLRI that has been validated MUST immediately
+   withdraw its advertisement.
+
+   A ROVR node advertising a ROVR MAC and receiving an equivalent ROVR
+   MAC from other node with a higher TID MUST immediately withdraw its
+   advertisement.  This will allow the non-ROVR nodes to correctly
+   interpret the sequence as MAC move despite ignoring the sequence
+   number due to presence of "S" bit.
 
    A ROVR node that receives a ROVR MAC with "super sticky" indication
    and seeing the MAC locally MUST follow analogous procedures to
@@ -1362,6 +1372,35 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
    Following section illustrates several situations and resulting
    signaling in EVPN from the point of view of a ROVR node.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Thubert & Przygienda     Expires 8 January 2022                [Page 25]
+
+Internet-Draft             EVPN Unaware Hosts                  July 2021
+
 
        Local            Local              Route           Remote
        Server           Leaf             Reflector         Leaf
@@ -1397,7 +1436,24 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 25]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Thubert & Przygienda     Expires 8 January 2022                [Page 26]
 
 Internet-Draft             EVPN Unaware Hosts                  July 2021
 
@@ -1453,7 +1509,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 26]
+Thubert & Przygienda     Expires 8 January 2022                [Page 27]
 
 Internet-Draft             EVPN Unaware Hosts                  July 2021
 
@@ -1509,7 +1565,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 27]
+Thubert & Przygienda     Expires 8 January 2022                [Page 28]
 
 Internet-Draft             EVPN Unaware Hosts                  July 2021
 
@@ -1565,7 +1621,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 28]
+Thubert & Przygienda     Expires 8 January 2022                [Page 29]
 
 Internet-Draft             EVPN Unaware Hosts                  July 2021
 
@@ -1621,7 +1677,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 29]
+Thubert & Przygienda     Expires 8 January 2022                [Page 30]
 
 Internet-Draft             EVPN Unaware Hosts                  July 2021
 
@@ -1656,6 +1712,15 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
                       Figure 17: Address Already Moved
 
+   Address move differs from multi-homing by the ESI being different as
+   visualized by Figure 18.  In case of different ESI BGP signalling
+   happens immediately, in case of multi-homing we can reasonably expect
+   for the signalling to catch up on the other leg with a new, higher
+   TID.  However, since ESI matches TID doesn't matter strictly speaking
+   and the new remote state can be installed as is.  However, if 6LN is
+   not refreshing it registration we can expect elapsed lifetime to
+   create scenario Figure 21 over time.
+
       Local            Local              Route           Remote
       Server           Leaf             Reflector         Leaf
      +-------+       +---------+        +-------+        +---------+
@@ -1663,8 +1728,16 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
         6LN           6LBR/EVPN            BGP            EVPN/6LBR
          |                |                 |                |
          |    Ethernet    |                 |                |
-         |                |        [via BGP signaling]      |
+         |                |        [via BGP signaling]       |
          |                |                 |                |
+
+
+
+Thubert & Przygienda     Expires 8 January 2022                [Page 31]
+
+Internet-Draft             EVPN Unaware Hosts                  July 2021
+
+
          |   NS(EARO)     |                 |                |
          |--------------->|                 |                |
          |                |                 |                |
@@ -1672,19 +1745,15 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
          |                |  ROVR MAC Route A'               |
          |                |  ESI X', TID Z  |                |
          |                |  ROVR Hash F    |                |
-         |                |---------------->|                |
+         |                |---------------->|         Install remote
+         |                |                 |              state
          |                |                 |--------------->|
-
-
-
-Thubert & Przygienda     Expires 8 January 2022                [Page 30]
-
-Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 
    Different ES (movement):
          |                |                 |                |<----
-         |                |                 | New local state A' created
+         |                |                 |     New local state A'
+         |                |                 |            created
          |                |                 |                |
          |                |          ROVR MAC Route A'       |
          |                |         ESI X'', Hash F, TID Z+1 |
@@ -1711,16 +1780,6 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
          |                |                 |<---------------|
          |                |<----------------|                |
          |                |                 |                |
-         |          <wait a short time>     |                |
-         |                |                 |                |
-         |   NA(EARO(     |                 |                |
-         |   status = 4)) |                 |                |
-         |<---------------|                 |                |
-         |                | Withdraw ROVR MAC Route A'       |
-         |                |---------------->|                |
-         |                |                 |--------------->|
-         |     remove local state           |                |
-         |                |                 |                |
 
                           Figure 18: Address Move
 
@@ -1730,10 +1789,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 
 
-
-
-
-Thubert & Przygienda     Expires 8 January 2022                [Page 31]
+Thubert & Przygienda     Expires 8 January 2022                [Page 32]
 
 Internet-Draft             EVPN Unaware Hosts                  July 2021
 
@@ -1789,7 +1845,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 32]
+Thubert & Przygienda     Expires 8 January 2022                [Page 33]
 
 Internet-Draft             EVPN Unaware Hosts                  July 2021
 
@@ -1845,7 +1901,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 33]
+Thubert & Przygienda     Expires 8 January 2022                [Page 34]
 
 Internet-Draft             EVPN Unaware Hosts                  July 2021
 
@@ -1901,7 +1957,7 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 34]
+Thubert & Przygienda     Expires 8 January 2022                [Page 35]
 
 Internet-Draft             EVPN Unaware Hosts                  July 2021
 
@@ -1957,7 +2013,7 @@ Authors' Addresses
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 35]
+Thubert & Przygienda     Expires 8 January 2022                [Page 36]
 
 Internet-Draft             EVPN Unaware Hosts                  July 2021
 
@@ -2013,4 +2069,4 @@ Internet-Draft             EVPN Unaware Hosts                  July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 36]
+Thubert & Przygienda     Expires 8 January 2022                [Page 37]
