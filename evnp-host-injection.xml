@@ -1110,7 +1110,7 @@ expect other functionality such as 6LoWPAN Header Compression:
         <li>
            <xref target='RFC8505'/> supports IP multihoming, but does not differentiate multihoming from anycast, e.g., using the MAC address, to enable MAC address rotation. If an anycast IP address is registered with a different ROVR it will be rejected as duplicate. If it is
            registered with a different TI, the older sequence will be withdrawn. So the basic expectation with <xref target='RFC8505'/> is that
-           the advertisment of an anycast address is coordinated, with the same keypair known to all parties, and the same value of the TID used by all nodes (and possibly never increasing), in other words, with no concept of mobility.
+           the advertisement of an anycast address is coordinated, with the same keypair known to all parties, and the same value of the TID used by all nodes (and possibly never increasing), in other words, with no concept of mobility.
            This specification adds a flag in eVPN that signals that the IP address is anycast and requires the local 6LBR to ignore the duplication if the same IP address is registered locally, and then to inject the NLRI with the flag set as well.
 
         </li>

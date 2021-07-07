@@ -1178,7 +1178,7 @@ Thubert & Przygienda     Expires 8 January 2022                [Page 21]
 Internet-Draft             eVPN Unaware Hosts                  July 2021
 
 
-      advertisment of an anycast address is coordinated, with the same
+      advertisement of an anycast address is coordinated, with the same
       keypair known to all parties, and the same value of the TID used
       by all nodes (and possibly never increasing), in other words, with
       no concept of mobility.  This specification adds a flag in eVPN
