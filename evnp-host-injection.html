@@ -4,19 +4,19 @@
 <meta charset="utf-8">
 <meta content="Common,Latin" name="scripts">
 <meta content="initial-scale=1.0" name="viewport">
-<title>Routing for eVPN Hosts</title>
+<title>Secure EVPN MAC Signaling</title>
 <meta content="Pascal Thubert" name="author">
 <meta content="Tony Przygienda" name="author">
 <meta content="
        
-  This specification adds attributes to eVPN to carry IPv6 address metadata
+  This specification adds attributes to EVPN to carry IPv6 address metadata
   learned from RFC 8505 and RFC 8928 so as to maintain a synchronized copy of
-  the 6LoWPAN ND registrar at each eVPN router and perform locally a unicast
+  the 6LoWPAN ND registrar at each EVPN router and perform locally a unicast
   IPv6 ND service for address lookup and duplicate address detection.
  
     " name="description">
 <meta content="xml2rfc 3.5.0" name="generator">
-<meta content="draft-thubert-bess-evnp-Host-injection-00" name="ietf.draft">
+<meta content="draft-thubert-bess-secure-evpn-mac-signaling-00" name="ietf.draft">
 <!-- Generator version information:
   xml2rfc 3.5.0
     Python 3.7.3
@@ -1172,7 +1172,7 @@ dt+dd:empty::before{
 <table class="ears">
 <thead><tr>
 <td class="left">Internet-Draft</td>
-<td class="center">eVPN Unaware Hosts</td>
+<td class="center">EVPN Secure MAC</td>
 <td class="right">July 2021</td>
 </tr></thead>
 <tfoot><tr>
@@ -1207,13 +1207,13 @@ dt+dd:empty::before{
 </dd>
 </dl>
 </div>
-<h1 id="title">Routing for eVPN Hosts</h1>
+<h1 id="title">Secure EVPN MAC Signaling</h1>
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
 <p id="section-abstract-1">
-  This specification adds attributes to eVPN to carry IPv6 address metadata
+  This specification adds attributes to EVPN to carry IPv6 address metadata
   learned from RFC 8505 and RFC 8928 so as to maintain a synchronized copy of
-  the 6LoWPAN ND registrar at each eVPN router and perform locally a unicast
+  the 6LoWPAN ND registrar at each EVPN router and perform locally a unicast
   IPv6 ND service for address lookup and duplicate address detection.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
@@ -1327,7 +1327,7 @@ dt+dd:empty::before{
             </ul>
 </li>
           <li class="ulEmpty toc compact" id="section-toc.1-1.5">
-            <p id="section-toc.1-1.5.1"><a href="#section-5" class="xref">5</a>.  <a href="#name-requirements-on-the-evpn-un" class="xref">Requirements on the eVPN-Unaware Host</a><a href="#section-toc.1-1.5.1" class="pilcrow">¶</a></p>
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="xref">5</a>.  <a href="#name-requirements-on-the-evpn-un" class="xref">Requirements on the EVPN-Unaware Host</a><a href="#section-toc.1-1.5.1" class="pilcrow">¶</a></p>
 <ul class="ulEmpty toc compact">
 <li class="ulEmpty toc compact" id="section-toc.1-1.5.2.1">
                 <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="xref">5.1</a>.  <a href="#name-support-of-6lowpan-nd" class="xref">Support of 6LoWPAN ND</a><a href="#section-toc.1-1.5.2.1.1" class="pilcrow">¶</a></p>
@@ -1335,7 +1335,7 @@ dt+dd:empty::before{
             </ul>
 </li>
           <li class="ulEmpty toc compact" id="section-toc.1-1.6">
-            <p id="section-toc.1-1.6.1"><a href="#section-6" class="xref">6</a>.  <a href="#name-enhancements-to-evpn" class="xref">Enhancements to eVPN</a><a href="#section-toc.1-1.6.1" class="pilcrow">¶</a></p>
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="xref">6</a>.  <a href="#name-enhancements-to-evpn" class="xref">Enhancements to EVPN</a><a href="#section-toc.1-1.6.1" class="pilcrow">¶</a></p>
 <ul class="ulEmpty toc compact">
 <li class="ulEmpty toc compact" id="section-toc.1-1.6.2.1">
                 <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="xref">6.1</a>.  <a href="#name-rovr-mac-mobility-extended-" class="xref">ROVR MAC Mobility Extended Community</a><a href="#section-toc.1-1.6.2.1.1" class="pilcrow">¶</a></p>
@@ -1388,15 +1388,15 @@ dt+dd:empty::before{
   that enables the host called a 6LowPAN Node (6LN) to install a ND binding
   state in the 6LowPAN Router (6LR) that can serve as Neighbor Cache Entry (NCE),
   though it is not operated as a cache.
-  The protocol provides the means to reject the registation in case of address
+  The protocol provides the means to reject the registration in case of address
   duplication. It also enables to discriminate mobility from multihoming.
   <span>[<a href="#RFC8928" class="xref">RFC8928</a>]</span> adds the capability to verify the ownership of the
   address and prevent an attacker from stealing and/or impersonating an address.<a href="#section-1-2" class="pilcrow">¶</a></p>
 <p id="section-1-3">
   <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span> defines the 6LoWPAN Border Router (6LBR) as an
-  abstract address registrar that provides autoritative service for Address
+  abstract address registrar that provides authoritative service for Address
   Registration and duplicate detection. The 6LBR stores address metadata
-  that is obtained during the Address Registration, including a owner ID and a
+  that is obtained during the Address Registration, including an owner ID and a
   sequence counter.
   As part of the process of a new Address Registration, the 6LR queries the 6LBR
   for existing metadata related to the address being registered. This enables in
@@ -1408,9 +1408,9 @@ dt+dd:empty::before{
 <p id="section-1-4">
   The <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span> address registrar can be centralized, but it can
   also be distributed and maintained synchronized using a routing protocol.
-  This specification adds attributes to eVPN to carry the IPv6 address metadata
+  This specification adds attributes to EVPN to carry the IPv6 address metadata
   learned from <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span> so as to maintain a synchronized copy of
-  the 6LBR abstract data at each eVPN router.<a href="#section-1-4" class="pilcrow">¶</a></p>
+  the 6LBR abstract data at each EVPN router.<a href="#section-1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <section id="section-2">
@@ -1537,6 +1537,34 @@ dt+dd:empty::before{
 <dt id="section-2.2-2.49">non-ROVR Node:</dt>
           <dd style="margin-left: 1.5em" id="section-2.2-2.50"> EVPN node not supporting extensions defined in this document.<a href="#section-2.2-2.50" class="pilcrow">¶</a>
 </dd>
+          <dd class="break"></dd>
+<dt id="section-2.2-2.51">LLN</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.52">?<a href="#section-2.2-2.52" class="pilcrow">¶</a>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.2-2.53">6CIO</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.54">?<a href="#section-2.2-2.54" class="pilcrow">¶</a>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.2-2.55">DAR</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.56">?<a href="#section-2.2-2.56" class="pilcrow">¶</a>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.2-2.57">DAC</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.58">?<a href="#section-2.2-2.58" class="pilcrow">¶</a>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.2-2.59">EDAR</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.60">?<a href="#section-2.2-2.60" class="pilcrow">¶</a>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.2-2.61">EDAC</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.62">?<a href="#section-2.2-2.62" class="pilcrow">¶</a>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.2-2.63">ARO</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.64">?<a href="#section-2.2-2.64" class="pilcrow">¶</a>
+</dd>
         <dd class="break"></dd>
 </dl>
 </section>
@@ -1559,16 +1587,16 @@ nodes that implement the said roles in <span>[<a href="#RFC8505" class="xref">RF
 expect other functionality such as 6LoWPAN Header Compression:<a href="#section-2.3-3" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-2.3-4.1">
-   In the context of this document, the 6LN is a server that adversises an
+   In the context of this document, the 6LN is a server that advertises an
    address mapping using <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span>, and optionally protects its
    ownership with <span>[<a href="#RFC8928" class="xref">RFC8928</a>]</span>.<a href="#section-2.3-4.1" class="pilcrow">¶</a>
 </li>
           <li class="normal" id="section-2.3-4.2">
    The 6LR and 6LBR function are collapsed at the leaf and its state is
-   synchonized with that of the eVPN functional support using an internal
+   synchronized with that of the EVPN functional support using an internal
    interface that is out of scope. That interface could be "pull" meaning that
-   the 6LBR fetches the eVPN information when it needs it, or "push", meaning
-   that any information that eVPn distributes is immediately fed in all the
+   the 6LBR fetches the EVPN information when it needs it, or "push", meaning
+   that any information that EVPN distributes is immediately fed in all the
    6LBRs in all the leaves. Note that this is pure control plane and is not
    subject to abbreviating optimization as the FIB may be.<a href="#section-2.3-4.2" class="pilcrow">¶</a>
 </li>
@@ -1577,7 +1605,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
  In this document, readers will encounter terms and concepts
  that are discussed in the following documents:<a href="#section-2.3-5" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlParallel" id="section-2.3-6">
-          <dt id="section-2.3-6.1">eVPN:</dt>
+          <dt id="section-2.3-6.1">EVPN:</dt>
           <dd style="margin-left: 1.5em" id="section-2.3-6.2">
             <span><a href="#RFC7432" class="xref">"BGP MPLS-Based Ethernet VPN"</a> [<a href="#RFC7432" class="xref">RFC7432</a>]</span> and
      <span><a href="#RFC8365" class="xref">"Network Virtualization Overlay Solution"</a> [<a href="#RFC8365" class="xref">RFC8365</a>]</span>,<a href="#section-2.3-6.2" class="pilcrow">¶</a>
@@ -1705,15 +1733,15 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
    The Registering Node sets the R Flag to indicate whether the 6LR should
    ensure reachability for the Registered Address.
    If the R Flag is set to 0, then the Registering Node handles the reachability
-   of the Registered Address by other means. In an eVPN network, this means that
+   of the Registered Address by other means. In an EVPN network, this means that
    either it is a RAN that injects the route by itself or that it uses another
-   eVPN router for reachability services.<a href="#section-3.2.1-1" class="pilcrow">¶</a></p>
+   EVPN router for reachability services.<a href="#section-3.2.1-1" class="pilcrow">¶</a></p>
 <p id="section-3.2.1-2">
-   This document specifies how the R Flag is used in the context of eVPN.
-   An eVPN Host that implements the 6LN functionality from <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span>
+   This document specifies how the R Flag is used in the context of EVPN.
+   An EVPN Host that implements the 6LN functionality from <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span>
    requires reachability services for an IPv6 address if and only if it sets
    the R Flag in the NS(EARO) used to register the address to a 6LR acting as
-   an eVPN border router. Upon receiving the NS(EARO), the eVPN router
+   an EVPN border router. Upon receiving the NS(EARO), the EVPN router
    generates a BGP advertisement for the Registered Address if and only if the R
    flag is set to 1.<a href="#section-3.2.1-2" class="pilcrow">¶</a></p>
 <p id="section-3.2.1-3"></p>
@@ -1721,7 +1749,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 
    <span>[<a href="#RFC9010" class="xref">RFC9010</a>]</span> specifies that the 'R' flags is
    set in the responded NA messages if and only if the route was installed.
-   This specification echoes that behaviour.<a href="#section-3.2.1-4" class="pilcrow">¶</a></p>
+   This specification echoes that behavior.<a href="#section-3.2.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="R8505ETID">
@@ -1756,7 +1784,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 <p id="section-3.2.3-2">
   <span>[<a href="#RFC6775" class="xref">RFC6775</a>]</span> and <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span> defined the original
   values whereas <span>[<a href="#RFC9010" class="xref">RFC9010</a>]</span> reduced range to 64 values and
-  reformated the octet field to enable to transport an external error, e.g.,
+  reformatted the octet field to enable to transport an external error, e.g.,
   coming form a routing protocol.<a href="#section-3.2.3-2" class="pilcrow">¶</a></p>
 <p id="section-3.2.3-3">
   This specification uses the  format expressed in <span>[<a href="#RFC9010" class="xref">RFC9010</a>]</span>.
@@ -1788,7 +1816,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 <p id="section-3.2.4-3">
 
    This specification does not address how the protection by
-   <span>[<a href="#RFC8928" class="xref">RFC8928</a>]</span> could be extended for use in eVPN.
+   <span>[<a href="#RFC8928" class="xref">RFC8928</a>]</span> could be extended for use in EVPN.
    On the other hand, it adds the ROVR to the BGP advertisement to share the
    state with the other routers via the Reflector (see <a href="#tgt" class="xref">Section 6.1</a>),
    which means that the routers that are aware of the Host route are also aware
@@ -1910,7 +1938,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 </div>
 <p id="section-3.4-5">
 
-    A 6LR that provides reachability services for a Host in an eVPN network
+    A 6LR that provides reachability services for a Host in an EVPN network
     as specified in this document includes a 6CIO in its RA messages and
     set the L, P and E flags to 1 as prescribed by <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span>.<a href="#section-3.4-5" class="pilcrow">¶</a></p>
 </section>
@@ -1930,7 +1958,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 <p id="section-4.1-1">
    This document extends <span>[<a href="#RFC8928" class="xref">RFC8928</a>]</span> and <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span> as follows<a href="#section-4.1-1" class="pilcrow">¶</a></p>
 <p id="section-4.1-2">
-   This document also updates the behavior of a 6LR acting as eVPN router and of
+   This document also updates the behavior of a 6LR acting as EVPN router and of
    a 6LN acting as Host in the 6LoWPAN ND Address Registration  as follows:<a href="#section-4.1-2" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="section-4.1-3.1">
@@ -1946,22 +1974,22 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 <a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-distributing-the-6lbr" class="section-name selfRef">Distributing the 6LBR</a>
         </h3>
 <p id="section-4.2-1">
- This specification enables to distribute the 6LBR at the edge of the eVPN
-    network and collapse the 6LBR function with that of the eVPN support.
-    In that model, the eVPN to 6LBR interaction becomes an internal interface,
+ This specification enables to distribute the 6LBR at the edge of the EVPN
+    network and collapse the 6LBR function with that of the EVPN support.
+    In that model, the EVPN to 6LBR interaction becomes an internal interface,
     where each side informs the other in case of new information concerning an
     IP to Link-Layer Address (LLA) mapping. Since this is an internal interface,
     this specification makes no assumption on whether the 6LBR stores its own
-    representation of the full eVPN state, which means that the eVPN support
-    informs the 6LBR in case of any change on the eVPN side (this is called
+    representation of the full EVPN state, which means that the EVPN support
+    informs the 6LBR in case of any change on the EVPN side (this is called
     the push model, see <a href="#Figpush" class="xref">Figure 10</a>), or if the 6LBR queries the
-    eVPN support when it does not have a mapping to satisfy a request (pull
+    EVPN support when it does not have a mapping to satisfy a request (pull
     model, see <a href="#Figpull" class="xref">Figure 9</a>).<a href="#section-4.2-1" class="pilcrow">¶</a></p>
 <p id="section-4.2-2">
     This specification leverages <span>[<a href="#RFC8929" class="xref">RFC8929</a>]</span> that augments the
     abstract data model of the 6LBR to store the LLA associated with the
     registered address. Based on that additional state, the 6LBR in a leaf can
-    communicate the mapping to the colocated eVPN function and respond to
+    communicate the mapping to the colocated EVPN function and respond to
     unicast address mapping lookups from the server side.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
 <p id="section-4.2-3">
     In an environment where the server ranges from a classical host to a more
@@ -1975,11 +2003,11 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
     indicated in the Target Link-Layer Address Option (TLLAO) in the NS message
     used for the registration, as shown in <a href="#Figdir" class="xref">Figure 4</a>.
     In the case of a pull model, if the 6LBR does not have a local state for
-    the mapping, it queries the eVPN support to obtain the eVPN state if any.
+    the mapping, it queries the EVPN support to obtain the EVPN state if any.
     If a mapping is known then the 6LR/6LBR evaluates the registration for
     address duplication and other possible issues per <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span>.
     Else (this is for a new mapping), if the registration is accepted, then
-    the 6LBR notifies the eVPN support to inject a route type 2 in the fabric.<a href="#section-4.2-4" class="pilcrow">¶</a></p>
+    the 6LBR notifies the EVPN support to inject a route type 2 in the fabric.<a href="#section-4.2-4" class="pilcrow">¶</a></p>
 <span id="name-direct-registration"></span><div id="Figdir">
 <figure id="figure-4">
           <div class="artwork art-text alignCenter" id="section-4.2-5.1">
@@ -1988,7 +2016,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
         Server              Leaf
   +--------------+   +-------------------+
   |              |   |                   |
-   6LN                6LR/6LBR       eVPN
+   6LN                6LR/6LBR       EVPN
     |                    |            |
     | &lt;vSwitch&gt; Ethernet | &lt;call I/F&gt; |
     |                    |            |
@@ -2006,9 +2034,9 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
     |                    | indication |
     |                    |-----------&gt;|
     |                                 | Inject/maintain
-    |         store a mapping state   | eVPN route type 2
+    |         store a mapping state   | EVPN route type 2
     |                                 | ------------------&gt;
-    |       NA(EARO)     |            | [via BGP Signalling]
+    |       NA(EARO)     |            | [via BGP signaling]
     |&lt;-------------------|            |
     |                    |            |
 
@@ -2034,7 +2062,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
         Server                       Leaf
   +----------------+          +----------------+
   |                |          |                |
-   6LN          6LR            6LBR        eVPN
+   6LN          6LR            6LBR        EVPN
     |            |              |            |
     | &lt;vSwitch&gt;  |  Ethernet    | &lt;call I/F&gt; |
     |            |              |            |
@@ -2054,9 +2082,9 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
     |            |              | indication |
     |            |              |-----------&gt;|
     |            |                           | Inject/maintain
-    |            |   store a mapping state   | eVPN route type 2
+    |            |   store a mapping state   | EVPN route type 2
     |            |                           | ------------------&gt;
-    |            |  EDAC(TLLAO) |            | [via BGP Signalling]
+    |            |  EDAC(TLLAO) |            | [via BGP signaling]
     |            |&lt;-------------|            |
     |  NA(EARO)  |              |            |
     |&lt;-----------|              |            |
@@ -2071,7 +2099,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 <p id="section-4.2-8">
    <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span> updates the DAR/DAC messages into the Extended
    DAR/DAC to carry the ROVR field. With this specification, the abstract 6LBR
-   is distributed in all the Leaf nodes and synchronized with eVPN.
+   is distributed in all the Leaf nodes and synchronized with EVPN.
    When a server successfully registers an address to a leaf, the 6LR on that
    leaf becomes 6LBR for that address. It stores the full state for that address
    including the ROVR and the TID. When the address registration moves to
@@ -2087,7 +2115,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 <p id="section-4.2-10">
    It results that
    duplicate addresses and address impersonation attacks can be filtered at the
-   level of IPv6 ND by the 6LBR before the information reaches eVPN.<a href="#section-4.2-10" class="pilcrow">¶</a></p>
+   level of IPv6 ND by the 6LBR before the information reaches EVPN.<a href="#section-4.2-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="unic">
@@ -2150,11 +2178,11 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
   In that model, the router advertises the subnet prefix as not on-link by
   setting the L flag to 0 in the Prefix Information Option (PIO), more in
   section 4.6.2. of <span>[<a href="#RFC4861" class="xref">RFC4861</a>]</span>.
-  The expected behaviour is that the host that communicates with a peer in the
+  The expected behavior is that the host that communicates with a peer in the
   same subnet refrains from resolving the address mapping and passes the packets
   directly to the router.<a href="#section-4.3-4" class="pilcrow">¶</a></p>
 <p id="section-4.3-5">In the case where the router is a virtual 6LR running in the server, and
-  the source and destination are in the same subnet served by eVPN, the router
+  the source and destination are in the same subnet served by EVPN, the router
   then resolves the address mapping on behalf of the host. To that effect,
   the router sends a unicast AMR message to the 6LBR.
   The message contains the SLLAO of the router to which the 6LBR will reply.
@@ -2169,7 +2197,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
         Server                 Leaf             Server
   +----------------+       +---------+          +----+
   |                |       |         |          |    |
-   6LN          6LR         6LBR/eVPN            6LN
+   6LN          6LR         6LBR/EVPN            6LN
     |            |              |                 |
     |            |              |  [via EVPN    ] |
     | &lt;vSwitch&gt;  |  Ethernet    |  [Data Tunnels] |
@@ -2223,7 +2251,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
            Server                 Leaf
      +----------------+       +---------+
      |                |       |         |
-      6LN          6LR         6LBR/eVPN
+      6LN          6LR         6LBR/EVPN
        |            |              |
        |            |              |
        | &lt;vSwitch&gt;  |  Ethernet    |
@@ -2257,9 +2285,9 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 </div>
 <p id="section-4.3-10">
   Note that the figures above make no assumption on the pull vs. push model.
-  In the case of pull model, the 6LBR queries the eVPN support when it does not have the mapping information to satisfy a request.
+  In the case of pull model, the 6LBR queries the EVPN support when it does not have the mapping information to satisfy a request.
   <a href="#Figpull" class="xref">Figure 9</a> illustrates a successful pull model lookup flow,
-  when the route type 2 for the mapping is already known on the eVPN side.<a href="#section-4.3-10" class="pilcrow">¶</a></p>
+  when the route type 2 for the mapping is already known on the EVPN side.<a href="#section-4.3-10" class="pilcrow">¶</a></p>
 <span id="name-pull-model"></span><div id="Figpull">
 <figure id="figure-9">
           <div class="artwork art-text alignCenter" id="section-4.3-11.1">
@@ -2268,15 +2296,15 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
         Server                       Leaf
   +----------------+          +----------------+
   |                |          |                |
-   6LN          6LR            6LBR        eVPN
+   6LN          6LR            6LBR        EVPN
     |            |              |            |
     | &lt;vSwitch&gt;  |  Ethernet    | &lt;call I/F&gt; |
     |            |              |            |
     |            |              |            |
-    |            |              |            | Receive eVPN
+    |            |              |            | Receive EVPN
     |            |              |            | route type 2 for
     |            |              |            | remote address A'
-    |            |              |            | [via BGP Signalling]
+    |            |              |            | [via BGP signaling]
     |            |              |            |&lt;-----------------
     |            |              |     store a mapping state
     |            |              |            |
@@ -2306,7 +2334,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
           </figcaption></figure>
 </div>
 <p id="section-4.3-12">
-  In the case of push model, the eVPN support synchronizes its state upon a route type 2 with the 6LBR, and the 6LBR maintains an abstract data structure for all information known to eVPN. This way, the 6LBR already has the mapping information to satisfy any request for an existing mapping and
+  In the case of push model, the EVPN support synchronizes its state upon a route type 2 with the 6LBR, and the 6LBR maintains an abstract data structure for all information known to EVPN. This way, the 6LBR already has the mapping information to satisfy any request for an existing mapping and
   it can answer right away.
   <a href="#Figpush" class="xref">Figure 10</a> illustrates a successful push model lookup flow,
   when the 6LBR is already in possession of the mapping.<a href="#section-4.3-12" class="pilcrow">¶</a></p>
@@ -2318,16 +2346,16 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
         Server                       Leaf
   +----------------+          +----------------+
   |                |          |                |
-   6LN          6LR            6LBR        eVPN
+   6LN          6LR            6LBR        EVPN
     |            |              |            |
     | &lt;vSwitch&gt;  |  Ethernet    | &lt;call I/F&gt; |
     |            |              |            |
     |            |              |            |
     |            |              |            |
-    |            |              |            | Receive eVPN
+    |            |              |            | Receive EVPN
     |            |              |            | route type 2 for
     |            |              |            | remote address A'
-    |            |              |            | [via BGP Signalling]
+    |            |              |            | [via BGP signaling]
     |            |              |            |&lt;-----------------
     |            |              |     store a mapping state
     |            |              |            |
@@ -2368,11 +2396,11 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 <div id="prereq">
 <section id="section-5">
       <h2 id="name-requirements-on-the-evpn-un">
-<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-requirements-on-the-evpn-un" class="section-name selfRef">Requirements on the eVPN-Unaware Host</a>
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-requirements-on-the-evpn-un" class="section-name selfRef">Requirements on the EVPN-Unaware Host</a>
       </h2>
 <p id="section-5-1">
-   This document describes how eVPN routing can be extended to reach a Host.
-   This section specifies the minimal eVPN-independent functionality that the Host
+   This document describes how EVPN routing can be extended to reach a Host.
+   This section specifies the minimal EVPN-independent functionality that the Host
    needs to implement to obtain routing services for its addresses.<a href="#section-5-1" class="pilcrow">¶</a></p>
 <div id="prereq6lp">
 <section id="section-5.1">
@@ -2422,7 +2450,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
    till the Address Registration finally shows on those routes.
    The routers recognize the same (ROVR, TID) as the signal of a multihomed
    address and maintain all the routes.
-   In the case of eVPN, the Ethernet Segment must also be the same. The flow
+   In the case of EVPN, the Ethernet Segment must also be the same. The flow
    for a successful multihomed registrtaion is illustrated in
    <a href="#fRegmul" class="xref">Figure 13</a>.<a href="#section-5.1-5" class="pilcrow">¶</a></p>
 <p id="section-5.1-6"><span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span> introduces error Status values in the NA(EARO)
@@ -2436,7 +2464,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 <div id="upd">
 <section id="section-6">
       <h2 id="name-enhancements-to-evpn">
-<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-enhancements-to-evpn" class="section-name selfRef">Enhancements to eVPN</a>
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-enhancements-to-evpn" class="section-name selfRef">Enhancements to EVPN</a>
       </h2>
 <p id="section-6-1">This section addresses the necessary changes to EVPN formats and behavior to support
         address registration security per <span>[<a href="#RFC8928" class="xref">RFC8928</a>]</span> and mobility per <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span>
@@ -2455,38 +2483,66 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
             topological information (it will be called ROVR MAC in further
             text). EVPN nodes not supporting extensions introduced by this document
             will need to be led to believe that a ROVR MAC is to be preferred over any advertisement
-            they see as long a ROVR MAC is present. Nevertheless, primary key of NRLI is still
-            the MAC address as defined in <span>[<a href="#RFC7432" class="xref">RFC7432</a>]</span>, Section 7.2 and 7.7. This implies
+            they see as long a ROVR MAC route is present. Nevertheless, primary key of NRLI is still
+            the IP/MAC/ESI combination as defined in <span>[<a href="#RFC7432" class="xref">RFC7432</a>]</span>, Section 7.2 and 7.7.
+            This implies
             that the same MAC (and consequently ROVR MAC) can be assigned multiple IP addresses and
             those represent independent NLRIs.<a href="#section-6-2.1" class="pilcrow">¶</a>
 </li>
         <li class="normal" id="section-6-2.2">
            The TID field in the EARO is smaller than the mobility sequence number in <span>[<a href="#RFC7432" class="xref">RFC7432</a>]</span>.
-           To allow a ROVR MAC mobility to "win" over legacy MACs, signalling must be introduced that enables to
+           To allow a ROVR MAC mobility to "win" over legacy MACs in every circumstance,
+            signaling must be introduced that enables to
            distinguish a TID-generated sequence number from a legacy sequence number.<a href="#section-6-2.2" class="pilcrow">¶</a>
 </li>
         <li class="normal" id="section-6-2.3">
           <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span> supports IP multihoming, but does not differentiate multihoming from anycast, e.g., using the MAC address, to enable MAC address rotation. If an anycast IP address is registered with a different ROVR it will be rejected as duplicate. If it is
-           registered with a different TI, the older sequence will be withdrawn. So the basic expectation with <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span> is that
+           registered with a different TID, the older sequence will be withdrawn. So the basic expectation with <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span> is that
            the advertisement of an anycast address is coordinated, with the same keypair known to all parties, and the same value of the TID used by all nodes (and possibly never increasing), in other words, with no concept of mobility.
-           This specification adds a flag in eVPN that signals that the IP address is anycast and requires the local 6LBR to ignore the duplication if the same IP address is registered locally, and then to inject the NLRI with the flag set as well.<a href="#section-6-2.3" class="pilcrow">¶</a>
+           This specification adds a flag in EVPN that signals that the IP address is anycast and requires the local 6LBR to ignore the duplication if the same IP address is registered locally, and then to inject the NLRI with the flag set as well.<a href="#section-6-2.3" class="pilcrow">¶</a>
 </li>
         <li class="normal" id="section-6-2.4">
-          <span>[<a href="#RFC8928" class="xref">RFC8928</a>]</span> needs the full ROVR to validate the address ownership, but the full ROVR can be too large to advertise through BGP.
-           When an IP address is advertised through eVPN, it is REQUIRED that the eVPN Next Hop is the address of the 6LBR of the leaf where the address was registered. This way, if the address is registered later on a second leaf, the 6LR in second leaf can leverage an out-of-band EDAR/EDAC exchange with that 6LBR to validate that the ROVR in the registration is indeed the same. When that is the case, it can continue with the registration procedure and if successful, become a 6LBR for that IP address, either as a mobility event or as a multihomed registration.<a href="#section-6-2.4" class="pilcrow">¶</a>
+          <span>[<a href="#RFC8928" class="xref">RFC8928</a>]</span> needs the full ROVR to validate the address ownership,
+            but the full ROVR can be too large to advertise through BGP.
+           When an IP address is advertised through EVPN, it is REQUIRED that the EVPN Next Hop
+            represents
+            the address of the 6LBR of the leaf where the address was registered as well.
+            This way, if the address is registered later on a second leaf,
+            the 6LR in second leaf can leverage an out-of-band, i.e. via EVPN traffic carrying
+            tunnels, EDAR/EDAC exchange
+            with that 6LBR to validate that the ROVR in the registration is indeed the same.
+            When that is the case, it can continue with the registration procedure and if
+            successful, become a 6LBR for that IP address, either as a mobility event or as a
+            multihomed registration.<a href="#section-6-2.4" class="pilcrow">¶</a>
 </li>
         <li class="normal" id="section-6-2.5">
-          <span>[<a href="#RFC8928" class="xref">RFC8928</a>]</span> expects nodes to autoconfigure the keypair that is used to form the ROVR, in which case the IPv6 address can be locally autoconfigured with no central coordination; in that case, the ROVR only protects the ownership and enforce first-come first-serve and source address validation. But it is also possible to pre-provision the ROVR in the 6LBR and then provision the keypair in the node, e.g., in the case of a trusted server. To enable that capability in eVPN, this specification adds a flag to signal that the 6LBR that injects the address in eVPN does not provide reachability to the address. When that flag is set, the value of the TID is ignored in the mobility computation, the mapping to the MAC address is ignored, and the route to the IP address is not injected in the RIB.<a href="#section-6-2.5" class="pilcrow">¶</a>
+          <span>[<a href="#RFC8928" class="xref">RFC8928</a>]</span> expects nodes to autoconfigure the keypair that is
+            used to form the ROVR, in which case the IPv6 address can be locally
+            autoconfigured with no central coordination; in that case, the ROVR only
+            protects the ownership and enforce first-come first-serve and source address
+            validation. But it is also possible to pre-provision the ROVR in the 6LBR
+            and then provision the keypair in the node, e.g., in the case of a trusted
+            server. To enable that capability in EVPN, this specification adds a flag to
+            signal that the 6LBR that injects the address in EVPN does not provide
+            reachability to the address. When that flag is set, the value of the TID is
+            ignored in the mobility computation, the mapping to the MAC address is ignored,
+            and the route to the IP address is not injected in the RIB on ROVR nodes.
+            Non-ROVR nodes will consider the node a "honey-pot". Once the address is
+            registered by a 6LN in the network and the according validation with
+            the node advertising the U-bit version of the route performed, the
+            owner will inject the route without the U-bit. A node advertising the
+            NLRI with U-bit MUST withdraw the U-bit route once it sees a validated
+            NLRI without the U-bit and it MAY reinject the route with the U-bit once all routes without the U-bit are withdrawn to protect the address again.<a href="#section-6-2.5" class="pilcrow">¶</a>
 </li>
       </ul>
 <p id="section-6-3">
-        EVPN Signalling is not used to carry ROVR since without challenge per  <span>[<a href="#RFC8928" class="xref">RFC8928</a>]</span>
+        EVPN signaling is not used to carry ROVR since without challenge per  <span>[<a href="#RFC8928" class="xref">RFC8928</a>]</span>
         they do not represent any difference over using the IP/MAC combination.
-        Instead, the full ROVR is verified upon a movement or a multihomed advertismeent using an EDAR/EDAC exchange.
+        Instead, the full ROVR is verified upon a movement or a multi-homed advertisement using an EDAR/EDAC exchange.
 
         Additionally,
         backwards compatibility could not be preserved given comparing routes based on ROVR would
-        present a change in primary key of NLRIs which non-ROVR routes could not follow. An indication
+        present a change in primary key of NLRIs which non-ROVR routers do not implement. An indication
         from a ROVR node that a MAC has been validated by proof of ownership is enough to convey the
         necessary information.
         Only a small hash of the ROVR is carried to speed up the identification of an address duplication.<a href="#section-6-3" class="pilcrow">¶</a></p>
@@ -2512,7 +2568,8 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
     number) the TID in the high bits of the sequence number field to "override" any normal MAC
     advertisement (further considerations will be provided in <a href="#evpnproc" class="xref">Section 6.2</a>).<a href="#section-6.1-3" class="pilcrow">¶</a></p>
 <p id="section-6.1-4">ROVR nodes MUST set the "V" flag if the address assignment passed proof of ownership per
-        <span>[<a href="#RFC8928" class="xref">RFC8928</a>]</span>. Such addresses will be preferred by ROVR nodes over non
+        <span>[<a href="#RFC8928" class="xref">RFC8928</a>]</span>. Such "validated" ROVR MAC addresses will be preferred by
+        ROVR nodes over non
     validated ROVR MACs.<a href="#section-6.1-4" class="pilcrow">¶</a></p>
 <p id="section-6.1-5">In case a ROVR node configures the address as "sticky" (since the sticky bit semantics
     have been changed to the point a ROVR cannot tell whether address is really sticky unless
@@ -2536,11 +2593,17 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 <p id="section-6.1-7">Flags:<a href="#section-6.1-7" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlParallel" id="section-6.1-8">
           <dt id="section-6.1-8.1">U:</dt>
-          <dd style="margin-left: 1.5em" id="section-6.1-8.2">Unreachable, indicating that the IP address is not reachable via that eVPN next hop, but is advertised for the purpose of protecting the value of the ROVR at all times.<a href="#section-6.1-8.2" class="pilcrow">¶</a>
+          <dd style="margin-left: 1.5em" id="section-6.1-8.2">Unreachable, indicating that the IP address is not reachable
+        via that EVPN next hop, but is advertised for the purpose of protecting
+        the value of the ROVR until a first 6LBR that can reach the address
+        becomes available.<a href="#section-6.1-8.2" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
 <dt id="section-6.1-8.3">A:</dt>
-          <dd style="margin-left: 1.5em" id="section-6.1-8.4">Anycast, indicating that the IP address duplication should be ignored.<a href="#section-6.1-8.4" class="pilcrow">¶</a>
+          <dd style="margin-left: 1.5em" id="section-6.1-8.4">Anycast, indicating that the IP address duplication
+        should be ignored. When this bit is set, TID should be ignored in
+        comparison of EVPN advertisements, i.e. all ROVR MACs at same
+        level of validation MUST be considered having same TID.<a href="#section-6.1-8.4" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
 <dt id="section-6.1-8.5">S:</dt>
@@ -2549,7 +2612,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
           <dd class="break"></dd>
 <dt id="section-6.1-8.7">R:</dt>
           <dd style="margin-left: 1.5em" id="section-6.1-8.8">ROVR Capable indicates that the advertisement is originated
-            after processing signalling from host meeting the requirements in <a href="#prereq" class="xref">Section 5</a>.
+            after processing signaling from host meeting the requirements in <a href="#prereq" class="xref">Section 5</a>.
             This indicates a ROVR MAC.<a href="#section-6.1-8.8" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
@@ -2576,7 +2639,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 <dt id="section-6.1-10.3">ROVR Hash:</dt>
           <dd style="margin-left: 1.5em" id="section-6.1-10.4">Hash of ROVR used to generate the according ROVR MAC. Hash is built
             by XOR'ing ROVR bytes in network order into the least significant byte and rotating
-            the three bytes after every byte by one bit to the left.<a href="#section-6.1-10.4" class="pilcrow">¶</a>
+            the two bytes result after every byte by one bit to the left.<a href="#section-6.1-10.4" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
 </dl>
@@ -2619,7 +2682,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 <a href="#section-7" class="section-number selfRef">7. </a><a href="#name-protocol-operations" class="section-name selfRef">Protocol Operations</a>
       </h2>
 <p id="section-7-1">
-   Following section illustrates several situations and resulting signalling
+   Following section illustrates several situations and resulting signaling
    in EVPN from the point of view of a ROVR node.<a href="#section-7-1" class="pilcrow">¶</a></p>
 <span id="name-host-registration"></span><div id="fReg1">
 <figure id="figure-12">
@@ -2629,9 +2692,9 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
    Server           Leaf             Reflector         Leaf
   +-------+       +---------+        +-------+        +---------+
   |       |       |         |        |       |        |         |
-     6LN           6LBR/eVPN            BGP            eVPN/6LBR
+     6LN           6LBR/EVPN            BGP            EVPN/6LBR
       |                |                 |                |
-      |    Ethernet    |      [via BGP Signalling]        |
+      |    Ethernet    |      [via BGP signaling]        |
       |                |                 |                |
       |                |                 |                |
       |   NS(EARO)     |                 |                |
@@ -2664,10 +2727,10 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
     Server           Leaf 1         Leaf 2           Reflector
   +-------+       +---------+    +---------+       +---------+
   |       |       |         |    |         |       |         |
-     6LN           6LBR/eVPN      6LBR/eVPN             |
+     6LN           6LBR/EVPN      6LBR/EVPN             |
       |                |              |                 |
       |    Ethernet    |              |                 |
-      |                |              |       [via BGP Signalling]
+      |                |              |       [via BGP signaling]
       |                |              |                 |
       |   NS(EARO)     |              |                 |
       |---------------&gt;|              |                 |
@@ -2715,9 +2778,9 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
    Server           Leaf             Reflector         Leaf
   +-------+       +---------+        +-------+        +---------+
   |       |       |         |        |       |        |         |
-     6LN           6LBR/eVPN            BGP            eVPN/6LBR
+     6LN           6LBR/EVPN            BGP            EVPN/6LBR
       |                |                 |                |
-      |    Ethernet    |      [via BGP Signalling]        |
+      |    Ethernet    |      [via BGP signaling]        |
       |                |                 |                |
       |                |                 |                |
       |  NS(EARO(      |                 |                |
@@ -2747,10 +2810,10 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
    Server           Leaf             Reflector         Leaf
   +-------+       +---------+        +-------+        +---------+
   |       |       |         |        |       |        |         |
-     6LN           6LBR/eVPN            BGP            eVPN/6LBR
+     6LN           6LBR/EVPN            BGP            EVPN/6LBR
       |                |                 |                |
       |    Ethernet    |                 |                |
-      |                |        [via BGP Signalling]      |
+      |                |        [via BGP signaling]      |
       |                |                 |                |
       |                |                 |         Local state for A'
       |                |                 |                |
@@ -2784,10 +2847,10 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
    Server           Leaf             Reflector         Leaf
   +-------+       +---------+        +-------+        +---------+
   |       |       |         |        |       |        |         |
-     6LN           6LBR eVPN            BGP            eVPN/6LBR
+     6LN           6LBR EVPN            BGP            EVPN/6LBR
       |              |   |               |               |   |
       |    Ethernet  |   |               |               |   |
-      |              |   |        [via BGP Signalling]   |   |
+      |              |   |        [via BGP signaling]    |   |
       |              |   |               |               |   |
       |              |   |               |     Local state for A'
       |              |   |               |               |   |
@@ -2803,7 +2866,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
       |-------------&gt;|                                       |
       |         compute ROVR Hash G                          |
       |              |                                       |
-      |              |      EDAR to eVPN Next Hop            |
+      |              |      EDAR to EVPN Next Hop            |
       |              |--------------------------------------&gt;|
       |              |                                       |
       |              |               EDAR (status = 1)       |
@@ -2827,10 +2890,10 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
    Server           Leaf             Reflector         Leaf
   +-------+       +---------+        +-------+        +---------+
   |       |       |         |        |       |        |         |
-     6LN           6LBR/eVPN            BGP            eVPN/6LBR
+     6LN           6LBR/EVPN            BGP            EVPN/6LBR
       |                |                 |                |
       |    Ethernet    |                 |                |
-      |                |        [via BGP Signalling]      |
+      |                |        [via BGP signaling]      |
       |                |                 |                |
       |                |                 |                |
       |                |          ROVR MAC Route A'       |
@@ -2845,7 +2908,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
       |---------------&gt;|                 |                |
       |           computes as            |                |
       |           ROVR Hash F            |                |
-      |           ESI X, TID Z-1         |                |
+      |           ESI X'', TID Z-1       |                |
       |   NA(EARO)     |                 |                |
       |   status = 3)) |                 |                |
       |&lt;---------------|                 |                |
@@ -2856,37 +2919,50 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 <a href="#name-address-already-moved" class="selfRef">Address Already Moved</a>
         </figcaption></figure>
 </div>
+<p id="section-7-8">
+        Address move differs from multi-homing by the ESI being different
+        as visualized by <a href="#fRegmov" class="xref">Figure 18</a>.
+        In case of different ESI BGP signalling happens immediately, in
+        case of multi-homing we can reasonably expect for the signalling
+        to catch up on the other leg with a new, higher TID. However,
+        since ESI matches TID doesn't matter strictly speaking and the
+        new remote state can be installed as is. However, if 6LN is
+        not refreshing it registration we can expect elapsed lifetime
+        to create scenario
+        <a href="#fRegTO" class="xref">Figure 21</a> over time.<a href="#section-7-8" class="pilcrow">¶</a></p>
 <span id="name-address-move"></span><div id="fRegmov">
 <figure id="figure-18">
-        <div class="artwork art-text alignCenter" id="section-7-8.1">
+        <div class="artwork art-text alignCenter" id="section-7-9.1">
 <pre>
 
    Local            Local              Route           Remote
    Server           Leaf             Reflector         Leaf
   +-------+       +---------+        +-------+        +---------+
   |       |       |         |        |       |        |         |
-     6LN           6LBR/eVPN            BGP            eVPN/6LBR
+     6LN           6LBR/EVPN            BGP            EVPN/6LBR
       |                |                 |                |
       |    Ethernet    |                 |                |
-      |                |        [via BGP Signalling]      |
+      |                |        [via BGP signaling]       |
       |                |                 |                |
       |   NS(EARO)     |                 |                |
       |---------------&gt;|                 |                |
       |                |                 |                |
-      |        Cteate local state        |                |
+      |        Create local state        |                |
       |                |  ROVR MAC Route A'               |
-      |                |  ESI X, TID Z   |                |
+      |                |  ESI X', TID Z  |                |
       |                |  ROVR Hash F    |                |
-      |                |----------------&gt;|                |
+      |                |----------------&gt;|         Install remote
+      |                |                 |              state
       |                |                 |---------------&gt;|
 
 
 Different ES (movement):
-      |                |                 |                |&lt;--
-      |                |                 | Local state A' created
+      |                |                 |                |&lt;----
+      |                |                 |     New local state A'
+      |                |                 |            created
       |                |                 |                |
       |                |          ROVR MAC Route A'       |
-      |                |         ESI X', Hash F, TID Z+1  |
+      |                |         ESI X'', Hash F, TID Z+1 |
       |                |                 |&lt;---------------|
       |                |&lt;----------------|                |
       |        Create remote state       |                |
@@ -2903,22 +2979,12 @@ Different ES (movement):
 
 Same ES (multihomed):
       |                |                 |                |&lt;--
-      |                |                 | Local state A' created
+      |                |                 | New local state A' created
       |                |                 |                |
       |                |          ROVR MAC Route A'       |
-      |                |         ESI X, Hash F, TID Z+1   |
+      |                |         ESI X', Hash F, TID Z+1  |
       |                |                 |&lt;---------------|
       |                |&lt;----------------|                |
-      |                |                 |                |
-      |          &lt;wait a short time&gt;     |                |
-      |                |                 |                |
-      |   NA(EARO(     |                 |                |
-      |   status = 4)) |                 |                |
-      |&lt;---------------|                 |                |
-      |                | Withdraw ROVR MAC Route A'       |
-      |                |----------------&gt;|                |
-      |                |                 |---------------&gt;|
-      |     remove local state           |                |
       |                |                 |                |
 </pre>
 </div>
@@ -2928,16 +2994,16 @@ Same ES (multihomed):
 </div>
 <span id="name-address-removal"></span><div id="fRegArmov">
 <figure id="figure-19">
-        <div class="artwork art-text alignCenter" id="section-7-9.1">
+        <div class="artwork art-text alignCenter" id="section-7-10.1">
 <pre>
    Local            Local              Route           Remote
    Server           Leaf             Reflector         Leaf
   +-------+       +---------+        +-------+        +---------+
   |       |       |         |        |       |        |         |
-     6LN           6LBR/eVPN            BGP            eVPN/6LBR
+     6LN           6LBR/EVPN            BGP            EVPN/6LBR
       |                |                 |                |
       |    Ethernet    |                 |                |
-      |                |        [via BGP Signalling]      |
+      |                |        [via BGP signaling]       |
       |                |                 |                |
       | NS(EARO,       |                 |                |
       |    lifetime=0) |                 |                |
@@ -2960,7 +3026,7 @@ Same ES (multihomed):
 </div>
 <span id="name-route-type-2-removal"></span><div id="fRegRrmov">
 <figure id="figure-20">
-        <div class="artwork art-text alignCenter" id="section-7-10.1">
+        <div class="artwork art-text alignCenter" id="section-7-11.1">
 <pre>
       | NS(EARO,       |                 |                |
       |    R reset)    |                 |                |
@@ -2984,16 +3050,16 @@ Same ES (multihomed):
 </div>
 <span id="name-lifetime-elapse"></span><div id="fRegTO">
 <figure id="figure-21">
-        <div class="artwork art-text alignCenter" id="section-7-11.1">
+        <div class="artwork art-text alignCenter" id="section-7-12.1">
 <pre>
     Local            Local              Route           Remote
    Server           Leaf             Reflector         Leaf
   +-------+       +---------+        +-------+        +---------+
   |       |       |         |        |       |        |         |
-     6LN           6LBR/eVPN            BGP            eVPN/6LBR
+     6LN           6LBR/EVPN            BGP            EVPN/6LBR
       |                |                 |                |
       |    Ethernet    |                 |                |
-      |                |        [via BGP Signalling]      |
+      |                |        [via BGP signaling]      |
       |                |                 |                |
       |     lifetime Expired             |                |
       |                |                 |                |
@@ -3145,10 +3211,10 @@ Same ES (multihomed):
 <address class="vcard">
         <div dir="auto" class="left"><span class="fn nameRole">Tony Przygienda</span></div>
 <div dir="auto" class="left"><span class="org">Juniper Networks</span></div>
-<div dir="auto" class="left"><span class="street-address">1137 Innovation Way</span></div>
-<div dir="auto" class="left">
-<span class="locality">Sunnyvale</span>, <span class="region">CA</span> </div>
-<div dir="auto" class="left"><span class="country-name">United States of America</span></div>
+<div dir="auto" class="left"><span class="street-address">Zürcherstrasse 42</span></div>
+<div dir="auto" class="left">CH-<span class="postal-code">8103</span> <span class="locality">Unterengstringen</span>
+</div>
+<div dir="auto" class="left"><span class="country-name">Switzerland</span></div>
 <div class="email">
 <span>Email:</span>
 <a href="mailto:prz@juniper.net" class="email">prz@juniper.net</a>

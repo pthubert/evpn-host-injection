@@ -1218,14 +1218,14 @@ Internet-Draft               EVPN Secure MAC                   July 2021
       advertising the U-bit version of the route performed, the owner
       will inject the route without the U-bit.  A node advertising the
       NLRI with U-bit MUST withdraw the U-bit route once it sees a
-      validated NLRI without the U-bit.
+      validated NLRI without the U-bit and it MAY reinject the route
+      with the U-bit once all routes without the U-bit are withdrawn to
+      protect the address again.
 
    EVPN signaling is not used to carry ROVR since without challenge per
    [RFC8928] they do not represent any difference over using the IP/MAC
    combination.  Instead, the full ROVR is verified upon a movement or a
    multi-homed advertisement using an EDAR/EDAC exchange.  Additionally,
-   backwards compatibility could not be preserved given comparing routes
-   based on ROVR would present a change in primary key of NLRIs which
 
 
 
@@ -1234,6 +1234,8 @@ Thubert & Przygienda     Expires 8 January 2022                [Page 22]
 Internet-Draft               EVPN Secure MAC                   July 2021
 
 
+   backwards compatibility could not be preserved given comparing routes
+   based on ROVR would present a change in primary key of NLRIs which
    non-ROVR routers do not implement.  An indication from a ROVR node
    that a MAC has been validated by proof of ownership is enough to
    convey the necessary information.  Only a small hash of the ROVR is
@@ -1281,8 +1283,6 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
    Flags:
 
-   U:  Unreachable, indicating that the IP address is not reachable via
-
 
 
 Thubert & Przygienda     Expires 8 January 2022                [Page 23]
@@ -1290,6 +1290,7 @@ Thubert & Przygienda     Expires 8 January 2022                [Page 23]
 Internet-Draft               EVPN Secure MAC                   July 2021
 
 
+   U:  Unreachable, indicating that the IP address is not reachable via
       that EVPN next hop, but is advertised for the purpose of
       protecting the value of the ROVR until a first 6LBR that can reach
       the address becomes available.
@@ -1335,7 +1336,6 @@ Internet-Draft               EVPN Secure MAC                   July 2021
    generated sequence number again.  In case a non-ROVR node persists in
    increasing the sequence number after that it is indication of
    violation of [RFC7432] on its part.
-
 
 
 

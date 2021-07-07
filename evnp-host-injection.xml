@@ -1155,7 +1155,7 @@ expect other functionality such as 6LoWPAN Header Compression:
             the node advertising the U-bit version of the route performed, the
             owner will inject the route without the U-bit. A node advertising the
             NLRI with U-bit MUST withdraw the U-bit route once it sees a validated
-            NLRI without the U-bit.
+            NLRI without the U-bit and it MAY reinject the route with the U-bit once all routes without the U-bit are withdrawn to protect the address again.
         </li>
     </ul>
     <t>
