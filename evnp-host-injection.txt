@@ -81,9 +81,9 @@ Table of Contents
    5.  Requirements on the eVPN-Unaware Host . . . . . . . . . . . .  20
      5.1.  Support of 6LoWPAN ND . . . . . . . . . . . . . . . . . .  20
    6.  Enhancements to eVPN  . . . . . . . . . . . . . . . . . . . .  21
-     6.1.  ROVR MAC Mobility Extended Community  . . . . . . . . . .  22
+     6.1.  ROVR MAC Mobility Extended Community  . . . . . . . . . .  23
      6.2.  Extended ROVR MAC Procedures  . . . . . . . . . . . . . .  24
-   7.  Protocol Operations . . . . . . . . . . . . . . . . . . . . .  24
+   7.  Protocol Operations . . . . . . . . . . . . . . . . . . . . .  25
    8.  Security Considerations . . . . . . . . . . . . . . . . . . .  33
    9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  33
    10. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  33
@@ -1188,16 +1188,30 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
       as well.
 
    *  [RFC8928] needs the full ROVR to validate the address ownership,
-      but the full RIVR can be too large to advertise through BGP.  When
-      an address is advertised through eVPN, it is REQUIRED that the
+      but the full ROVR can be too large to advertise through BGP.  When
+      an IP address is advertised through eVPN, it is REQUIRED that the
       eVPN Next Hop is the address of the 6LBR of the leaf where the
-      address is registered.  This way, if the address is registered
+      address was registered.  This way, if the address is registered
       later on a second leaf, the 6LR in second leaf can leverage an
       out-of-band EDAR/EDAC exchange with that 6LBR to validate that the
-      ROVR in the registration is indeed the same when that is the case,
-      it can continue with the registration procedure and if successful,
-      become a 6LBR for that IP address, either as a mobility event or
-      as a multihomed registration.
+      ROVR in the registration is indeed the same.  When that is the
+      case, it can continue with the registration procedure and if
+      successful, become a 6LBR for that IP address, either as a
+      mobility event or as a multihomed registration.
+
+   *  [RFC8928] expects nodes to autoconfigure the keypair that is used
+      to form the ROVR, in which case the IPv6 address can be locally
+      autoconfigured with no central coordination; in that case, the
+      ROVR only protects the ownership and enforce first-come first-
+      serve and source address validation.  But is is also possible to
+      pre-provision the ROVR in the 6LBR and then provision the keypair
+      in the node, e.g., in the case of a trusted server.  To enable
+      that capability in eVPN, this specification adds a flag to signal
+      that the 6LBR that injects the address in eVPN does not provide
+      reachability to the address.  When that flag is set, the value of
+      the TID is ignored in the mobility computation, the mapping to the
+      MAC address is ignored, and the route to the IP address is not
+      injected in the RIB.
 
    EVPN Signalling is not used to carry ROVR since without challenge per
    [RFC8928] they do not represent any difference over using the IP/MAC
@@ -1209,6 +1223,16 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
    that a MAC has been validated by proof of ownership is enough to
    convey the necessary information.  Only a small hash of the ROVR is
    carried to speed up the identification of an address duplication.
+
+
+
+
+
+
+Thubert & Przygienda     Expires 8 January 2022                [Page 22]
+
+Internet-Draft             eVPN Unaware Hosts                  July 2021
+
 
 6.1.  ROVR MAC Mobility Extended Community
 
@@ -1223,16 +1247,6 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
    called non-ROVR nodes vs. ROVR nodes.  The "sticky" bit will force
    non-ROVR nodes to disregard the sequence number and accept any NLRI
    route provided.
-
-
-
-
-
-
-Thubert & Przygienda     Expires 8 January 2022                [Page 22]
-
-Internet-Draft             eVPN Unaware Hosts                  July 2021
-
 
    ROVR nodes MUST set the "R" flag in Mobility Extended Community to
    indicate that the advertisement is a ROVR MAC in case the host
@@ -1252,7 +1266,7 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    | Type=0x06     | Sub-Type=0x00 | rsv |A|X|V|R|S|  Reserved = 0 |
+    | Type=0x06     | Sub-Type=0x00 |rsv|U|A|X|V|R|S|  Reserved = 0 |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
     |       TID     |  Reserved = 0 |           ROVR Hash           |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -1261,8 +1275,20 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
    Flags:
 
+   U:  Unreachable, indicating that the IP address is not reachable via
+      that eVPN next hop, but is advertised for the purpose of
+      protecting the value of the ROVR at all times.
+
    A:  Anycast, indicating that the IP address duplication should be
       ignored.
+
+
+
+
+Thubert & Przygienda     Expires 8 January 2022                [Page 23]
+
+Internet-Draft             eVPN Unaware Hosts                  July 2021
+
 
    S:  Sticky as defined in [RFC7432].
 
@@ -1281,14 +1307,6 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
    TID:  contains the ROVR MAC TID per [RFC8505].  This MUST NOT be
       zero, i.e. a ROVR
-
-
-
-
-Thubert & Przygienda     Expires 8 January 2022                [Page 23]
-
-Internet-Draft             eVPN Unaware Hosts                  July 2021
-
 
    ROVR Hash:  Hash of ROVR used to generate the according ROVR MAC.
       Hash is built by XOR'ing ROVR bytes in network order into the
@@ -1319,6 +1337,15 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
    interpret the sequence as MAC move despite ignoring the sequence
    number due to presence of "S" bit.
 
+
+
+
+
+Thubert & Przygienda     Expires 8 January 2022                [Page 24]
+
+Internet-Draft             eVPN Unaware Hosts                  July 2021
+
+
    A ROVR node that receives a ROVR MAC with "super sticky" indication
    and seeing the MAC locally MUST follow analogous procedures to
    [RFC7432].
@@ -1335,16 +1362,6 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
 
    Following section illustrates several situations and resulting
    signalling in EVPN from the point of view of a ROVR node.
-
-
-
-
-
-
-Thubert & Przygienda     Expires 8 January 2022                [Page 24]
-
-Internet-Draft             eVPN Unaware Hosts                  July 2021
-
 
        Local            Local              Route           Remote
        Server           Leaf             Reflector         Leaf
@@ -1372,23 +1389,6 @@ Internet-Draft             eVPN Unaware Hosts                  July 2021
           |                |                 |                |
 
                         Figure 12: Host Registration
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

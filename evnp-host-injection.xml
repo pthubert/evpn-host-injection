@@ -1115,8 +1115,12 @@ expect other functionality such as 6LoWPAN Header Compression:
 
         </li>
         <li>
-           <xref target='RFC8928'/> needs the full ROVR to validate the address ownership, but the full RIVR can be too large to advertise through BGP.
-           When an address is advertised through eVPN, it is REQUIRED that the eVPN Next Hop is the address of the 6LBR of the leaf where the address is registered. This way, if the address is registered later on a second leaf, the 6LR in second leaf can leverage an out-of-band EDAR/EDAC exchange with that 6LBR to validate that the ROVR in the registration is indeed the same when that is the case, it can continue with the registration procedure and if successful, become a 6LBR for that IP address, either as a mobility event or as a multihomed registration.
+           <xref target='RFC8928'/> needs the full ROVR to validate the address ownership, but the full ROVR can be too large to advertise through BGP.
+           When an IP address is advertised through eVPN, it is REQUIRED that the eVPN Next Hop is the address of the 6LBR of the leaf where the address was registered. This way, if the address is registered later on a second leaf, the 6LR in second leaf can leverage an out-of-band EDAR/EDAC exchange with that 6LBR to validate that the ROVR in the registration is indeed the same. When that is the case, it can continue with the registration procedure and if successful, become a 6LBR for that IP address, either as a mobility event or as a multihomed registration.
+
+        </li>
+        <li>
+           <xref target='RFC8928'/> expects nodes to autoconfigure the keypair that is used to form the ROVR, in which case the IPv6 address can be locally autoconfigured with no central coordination; in that case, the ROVR only protects the ownership and enforce first-come first-serve and source address validation. But is is also possible to pre-provision the ROVR in the 6LBR and then provision the keypair in the node, e.g., in the case of a trusted server. To enable that capability in eVPN, this specification adds a flag to signal that the 6LBR that injects the address in eVPN does not provide reachability to the address. When that flag is set, the value of the TID is ignored in the mobility computation, the mapping to the MAC address is ignored, and the route to the IP address is not injected in the RIB.
 
         </li>
     </ul>
@@ -1168,7 +1172,7 @@ expect other functionality such as 6LoWPAN Header Compression:
  <artwork>
   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- | Type=0x06     | Sub-Type=0x00 | rsv |A|X|V|R|S|  Reserved = 0 |
+ | Type=0x06     | Sub-Type=0x00 |rsv|U|A|X|V|R|S|  Reserved = 0 |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  |       TID     |  Reserved = 0 |           ROVR Hash           |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -1178,6 +1182,7 @@ expect other functionality such as 6LoWPAN Header Compression:
 
     <dl  spacing='normal'>
 
+	<dt>U:</dt><dd>Unreachable, indicating that the IP address is not reachable via that eVPN next hop, but is advertised for the purpose of protecting the value of the ROVR at all times.</dd>
 	<dt>A:</dt><dd>Anycast, indicating that the IP address duplication should be ignored.</dd>
 	<dt>S:</dt><dd>Sticky as defined in <xref target='RFC7432'/>.</dd>
     <dt>R:</dt><dd>ROVR Capable indicates that the advertisement is originated
