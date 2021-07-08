@@ -1240,8 +1240,8 @@ Internet-Draft               EVPN Secure MAC                   July 2021
       no concept of mobility.  This specification adds a flag in EVPN
       that signals that the IP address is anycast and requires the local
       6LBR to ignore the duplication if the same IP address is
-      registered locally, and then to inject the NLRI with the flag set
-      as well.
+      registered locally, and then to inject the NLRI with the A flag
+      set on mobility extended community as well.
 
    *  [RFC8928] needs the full ROVR to validate the address ownership,
       but the full ROVR can be too large to advertise through BGP.  When
@@ -1273,10 +1273,10 @@ Internet-Draft               EVPN Secure MAC                   July 2021
       in the network and the according validation with the node
       advertising the U-bit version of the route performed, the owner
       will inject the route without the U-bit.  A node advertising the
-      NLRI with U-bit MUST withdraw the U-bit route once it sees a
-      validated NLRI without the U-bit and it MAY reinject the route
-      with the U-bit once all routes without the U-bit are withdrawn to
-      protect the address again.
+      NLRI with U-bit in its mobility extended community MUST withdraw
+      the U-bit route once it sees a validated NLRI without the U-bit
+      and it MAY reinject the route with the U-bit once all routes
+      without the U-bit are withdrawn to protect the address again.
 
    EVPN signaling is not used to carry ROVR since without challenge per
    [RFC8928] they do not represent any difference over using the IP/MAC
@@ -1308,7 +1308,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
    MACs are advertised to look like "sticky" MACs for non-ROVR nodes.
    As defined in the glossary, for simplicity reasons such nodes will be
    called non-ROVR nodes vs. ROVR nodes.  The "sticky" bit will force
-   non-ROVR nodes to disregard the sequence number and accept any NLRI
+   non-ROVR nodes to disregard the sequence number and accept any IP/MAC
    route provided.
 
    ROVR nodes MUST set the "R" flag in Mobility Extended Community to
@@ -1335,7 +1335,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
     |       TID     |  Reserved = 0 |           ROVR Hash           |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-                            Figure 11: New NLRI
+            Figure 11: Modified MAC Mobility Extended Community
 
    Flags:
 
@@ -1364,7 +1364,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
    V:  ROVR Validated indicates that the MAC passed proof of ownership
       per [RFC8928].  Presence of this bit implies the "R" bit being set
-      regardless of its setting.
+      irregardless of its value.
 
    X:  Super Sticky indicates that the ROVR MAC is sticky and should
       follow procedures of sticky per [RFC7432].
@@ -1403,7 +1403,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
    A ROVR node advertising a ROVR MAC that has not been validated and
-   receiving same type-2 NLRI that has been validated MUST immediately
+   receiving same type-2 route that has been validated MUST immediately
    withdraw its advertisement.
 
    A ROVR node advertising a ROVR MAC and receiving an equivalent ROVR
@@ -1448,7 +1448,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
    With this specification, the 6LBR communicates internally with the
    collocated eVPN router to inject the route in eVPN.  Since the
-   [RFC8928] validation was performed, hte V flag is set.  Once this is
+   [RFC8928] validation was performed, the V flag is set.  Once this is
    done, the local 6LBR installs a local state associated to the NCE and
 
 
