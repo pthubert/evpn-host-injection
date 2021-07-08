@@ -188,6 +188,7 @@
     <dt>AMC:</dt><dd> Address Mapping Confirmation <xref target="I-D.thubert-6lo-unicast-lookup"/></dd>
     <dt>AMR:</dt><dd> Address Mapping Request <xref target="I-D.thubert-6lo-unicast-lookup"/></dd>
     <dt>ARO</dt><dd>Address Registration Option  <xref target='RFC6775'/></dd>
+    <dt>CIPO:</dt><dd>Crypto-ID Parameters Option</dd>
     <dt>DAD:</dt><dd> Duplicate Address Detection <xref target='RFC4862'/></dd>
     <dt>ICMPv6:</dt><dd> Internet Control Message Protocol for IPv6</dd>
     <dt>DAC</dt><dd>Duplicate Address Confirmation  <xref target='RFC6775'/> </dd>
@@ -201,6 +202,7 @@
     <dt>NA:</dt><dd>  Neighbor Advertisement <xref target='RFC4861'/></dd>
     <dt>NCE:</dt><dd>  Neighbor Cache Entry <xref target='RFC4861'/> </dd>
     <dt>ND:</dt><dd>  Neighbor Discovery <xref target='RFC4861'/> </dd>
+    <dt>NDPSO:</dt><dd>  <dd> Neighbor Discovery Protocol Signature Option</dd>
     <dt>NS:</dt><dd>  Neighbor Solicitation <xref target='RFC4861'/> </dd>
     <dt>RA:</dt><dd>  Router Advertisement <xref target='RFC4861'/> </dd>
     <dt>ROVR:</dt><dd> Registration Ownership Verifier <xref target='RFC8505'/></dd>
@@ -304,7 +306,7 @@ expect other functionality such as 6LoWPAN Header Compression:
   neighbors for the duration of their interaction. Though it is also called a
   Neighbor Cache Entry (BCE) in <xref target='RFC6775'/>, and in contrast with
   the the BCE in SLAAC, that state is not a cache that can be casually flushed and rebuilt. It must be installed proactively  and refreshed periodically to
-  maintain the connecticity and enable unicast-only operations.
+  maintain the connectivity and enable unicast-only operations.
 </t>
 <t>
   The typical abstraction for an IP Link with 6LoWPAN ND is point-to-point (P2P)
@@ -517,9 +519,9 @@ expect other functionality such as 6LoWPAN Header Compression:
    The EDAR/EDAC
    exchange is protected by the retry mechanism specified in Section 8.2.6 of
    <xref target='RFC6775'/>, though in a data center, a duration significantly
-   shorter than the default value of the RetransTimer  <xref target='RFC4861'/>
-   of 1 second may be sufficient to cover the round-trip delay between the 6LR
-   and the 6LBR.
+   shorter than the default value of the Retransmission Timer <xref target=
+   'RFC4861'/> of 1 second may be sufficient to cover the round-trip delay
+   between the 6R and the 6LBR.
 </t>
 <t>
    With this specification, the 6LBR is distributed across the leaves, and all
@@ -1075,7 +1077,7 @@ expect other functionality such as 6LoWPAN Header Compression:
    The routers recognize the same (ROVR, TID) as the signal of a multihomed
    address and maintain all the routes.
    In the case of EVPN, the Ethernet Segment must also be the same. The flow
-   for a successful multihomed registrtaion is illustrated in
+   for a successful multihomed registration is illustrated in
    <xref target = 'fRegmul'/>.
 </t>
 <t><xref target='RFC8505'/> introduces error Status values in the NA(EARO)
@@ -1242,8 +1244,7 @@ expect other functionality such as 6LoWPAN Header Compression:
             after processing signaling from host meeting the requirements in <xref target="prereq"/>.
             This indicates a ROVR MAC.</dd>
         <dt>V:</dt><dd>ROVR Validated indicates that the MAC passed proof of ownership per
-            <xref target="RFC8928"/>. Presence of this bit implies the "R" bit being set irregardless of
-    its value.</dd>
+            <xref target="RFC8928"/>. Presence of this bit implies the "R" bit being set regardless of its setting.</dd>
         <dt>X:</dt><dd>Super Sticky indicates that the ROVR MAC is sticky and should follow
                 procedures of sticky per <xref target='RFC7432'/>. </dd>
 	</dl>
@@ -1280,7 +1281,7 @@ expect other functionality such as 6LoWPAN Header Compression:
         </t>
         <t>
             A ROVR node that receives a ROVR MAC with "super sticky" indication and seeing the MAC locally MUST
-            follow analogous procedures to  <xref target='RFC7432'/>.
+            follow analogous procedures to <xref target='RFC7432'/>.
         </t>
         <t>
             Multi-homing a MAC on mix of ROVR and non-ROVR nodes will lead to operational notifications since
@@ -1308,6 +1309,29 @@ expect other functionality such as 6LoWPAN Header Compression:
    Following section illustrates several situations and resulting signaling
    in EVPN from the point of view of a ROVR node.
 </t>
+<t>
+  <xref target='fReg1'/> illustrates the registration flow of a new address
+  protected by <xref target='RFC8928'/>. The ROVR in the EARO is a Crypto-ID
+  that derives from a public address through hashing with some other terms.
+  The router challenges the host with a status of 5 (validation requested).
+</t>
+<t>
+  The host performs the NS again, passing the parameters that enable to build
+  the Crypto-ID in a Crypto-ID Parameters Option (CIPO), and signing that set
+  of parameters together with a pair of Nonce values, one from each side, in a
+  resulting Neighbor Discovery Protocol Signature Option (NDPDO). The 6LR first
+  verifies that the Crypto-ID can be rebuilt based on the public key, then verifies that the signature in the NDPSO was effectively performed with the
+  associated public key. When that is the case, the registration flow can
+  continue, else the registration is rejected with a status of 10 (Validation
+  Failed) in the NA(EARO).
+</t>
+
+<t>
+  With this specification, the 6LBR communicates internally with the collocated
+  eVPN router to inject the route in eVPN. Once this is done, the local 6LBR
+  installs a local state associated to the NCE and becomes owner of the registration, whereas the remote leaves optionally install a remote state for the address with the indication of the 6LBR that owns the registration.
+
+</t>
 
  <figure anchor='fReg1' suppress-title='false'><name>Host Registration</name>
  <artwork align="center"><![CDATA[
@@ -1317,11 +1341,24 @@ expect other functionality such as 6LoWPAN Header Compression:
   |       |       |         |        |       |        |         |
      6LN           6LBR/EVPN            BGP            EVPN/6LBR
       |                |                 |                |
-      |    Ethernet    |      [via BGP signaling]        |
+      |    Ethernet    |      [via BGP signaling]         |
       |                |                 |                |
       |                |                 |                |
-      |   NS(EARO)     |                 |                |
+      |  NS(EARO)      |                 |                |
       |--------------->|                 |                |
+      |                |                 |                |
+      |   ROVR in EARO is cryptographic  |                |
+      |                |                 |                |
+      |     NA(EARO(   |                 |                |
+      |   status = 5), |                 |                |
+      |   Nonce1)      |                 |                |
+      |<---------------|                 |                |
+      |                |                 |                |
+      | NS(EARO, CIPO, |                 |                |
+      | Nonce2, NDPSO) |                 |                |
+      |--------------->|                 |                |
+      |                |                 |                |
+      |        Proof verified            |                |
       |                |                 |                |
       |     no state for that address    |                |
       |      install local state         |                |
