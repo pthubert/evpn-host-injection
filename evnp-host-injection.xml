@@ -35,13 +35,9 @@
    </author>
 
     <author fullname="Tony Przygienda" initials="A." surname="Przygienda">
-        <organization>Juniper Networks</organization>
+        <organization>Juniper Networks, Inc</organization>
         <address>
             <postal>
-                <street>Z&#252;rcherstrasse 42
-                </street>
-                <city>Unterengstringen</city>
-                <code>8103</code>
                 <country>Switzerland
                 </country>
             </postal>

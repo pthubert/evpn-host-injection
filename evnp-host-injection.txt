@@ -5,7 +5,7 @@
 BESS                                                     P. Thubert, Ed.
 Internet-Draft                                             Cisco Systems
 Intended status: Standards Track                           A. Przygienda
-Expires: 9 January 2022                                 Juniper Networks
+Expires: 9 January 2022                            Juniper Networks, Inc
                                                              J. Tantsura
                                                                Microsoft
                                                              8 July 2021
@@ -2213,9 +2213,7 @@ Authors' Addresses
 
 
    Tony Przygienda
-   Juniper Networks
-   Zürcherstrasse 42
-   CH-8103 Unterengstringen
+   Juniper Networks, Inc
    Switzerland
 
    Email: prz@juniper.net
@@ -2225,6 +2223,8 @@ Authors' Addresses
    Microsoft
 
    Email: jefftant.ietf@gmail.com
+
+
 
 
 
