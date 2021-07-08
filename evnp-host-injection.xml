@@ -185,15 +185,18 @@
     <dt>6LN:</dt><dd> 6LoWPAN Node (the Host) <xref target='RFC6775'/> </dd>
     <dt>6LR:</dt><dd> 6LoWPAN router (the router) <xref target='RFC6775'/></dd>
     <dt>6LBR:</dt><dd> 6LoWPAN Border router  <xref target='RFC6775'/></dd>
-    <dt>AMC:</dt><dd> Address Mapping Confirmation <xref target="I-D.thubert-6lo-unicast-lookup"/></dd>
-    <dt>AMR:</dt><dd> Address Mapping Request <xref target="I-D.thubert-6lo-unicast-lookup"/></dd>
+    <dt>AMC:</dt><dd> Address Mapping Confirmation <xref target=
+         "I-D.thubert-6lo-unicast-lookup"/></dd>
+    <dt>AMR:</dt><dd> Address Mapping Request <xref target=
+         "I-D.thubert-6lo-unicast-lookup"/></dd>
     <dt>ARO</dt><dd>Address Registration Option  <xref target='RFC6775'/></dd>
     <dt>CIPO:</dt><dd>Crypto-ID Parameters Option</dd>
     <dt>DAD:</dt><dd> Duplicate Address Detection <xref target='RFC4862'/></dd>
     <dt>ICMPv6:</dt><dd> Internet Control Message Protocol for IPv6</dd>
     <dt>DAC</dt><dd>Duplicate Address Confirmation  <xref target='RFC6775'/> </dd>
     <dt>DAR</dt><dd>Duplicate Address Request <xref target='RFC6775'/></dd>
-    <dt>EDAC</dt><dd>Extended Duplicate Address Confirmation  <xref target='RFC8505'/></dd>
+    <dt>EDAC</dt><dd>Extended Duplicate Address Confirmation  <xref target=
+       'RFC8505'/></dd>
     <dt>EDAR</dt><dd>Extended Duplicate Address Request <xref target='RFC8505'/></dd>
     <dt>EARO:</dt><dd> Extended Address Registration Option <xref target='RFC8505'/></dd>
     <dt>EVPN:</dt><dd> Ethernet VPN  <xref target='RFC7432'/></dd>
@@ -202,7 +205,7 @@
     <dt>NA:</dt><dd>  Neighbor Advertisement <xref target='RFC4861'/></dd>
     <dt>NCE:</dt><dd>  Neighbor Cache Entry <xref target='RFC4861'/> </dd>
     <dt>ND:</dt><dd>  Neighbor Discovery <xref target='RFC4861'/> </dd>
-    <dt>NDPSO:</dt><dd>  <dd> Neighbor Discovery Protocol Signature Option</dd>
+    <dt>NDPSO:</dt><dd> Neighbor Discovery Protocol Signature Option</dd>
     <dt>NS:</dt><dd>  Neighbor Solicitation <xref target='RFC4861'/> </dd>
     <dt>RA:</dt><dd>  Router Advertisement <xref target='RFC4861'/> </dd>
     <dt>ROVR:</dt><dd> Registration Ownership Verifier <xref target='RFC8505'/></dd>
