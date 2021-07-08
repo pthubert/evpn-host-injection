@@ -15,7 +15,7 @@
 <?rfc tocappendix="yes"?>
 <rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true" updates='' obsoletes="" consensus="true"
       submissionType="IETF" xml:lang="en" version="3"
-      docName="draft-thubert-bess-secure-evpn-mac-signaling-00" >
+      docName="draft-thubert-bess-secure-evpn-mac-signaling-01" >
 
 
 <front>
@@ -1698,6 +1698,15 @@ Different ES (movement):
 
  <figure anchor='fRegRrmov' suppress-title='false'><name>Route Type 2 Removal</name>
  <artwork align="center"><![CDATA[
+    Local            Local              Route           Remote
+   Server           Leaf             Reflector         Leaf
+  +-------+       +---------+        +-------+        +---------+
+  |       |       |         |        |       |        |         |
+     6LN           6LBR/EVPN            BGP            EVPN/6LBR
+      |                |                 |                |
+      |    Ethernet    |                 |                |
+      |                |        [via BGP signaling]       |
+      |                |                 |                |
       | NS(EARO,       |                 |                |
       |    R reset)    |                 |                |
       |--------------->|                 |                |
@@ -1726,7 +1735,7 @@ Different ES (movement):
      6LN           6LBR/EVPN            BGP            EVPN/6LBR
       |                |                 |                |
       |    Ethernet    |                 |                |
-      |                |        [via BGP signaling]      |
+      |                |        [via BGP signaling]       |
       |                |                 |                |
       |     lifetime Expired             |                |
       |                |                 |                |

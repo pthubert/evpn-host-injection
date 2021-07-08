@@ -12,7 +12,7 @@ Expires: 9 January 2022                            Juniper Networks, Inc
 
 
                        Secure EVPN MAC Signaling
-            draft-thubert-bess-secure-evpn-mac-signaling-00
+            draft-thubert-bess-secure-evpn-mac-signaling-01
 
 Abstract
 
@@ -93,11 +93,11 @@ Table of Contents
      6.1.  ROVR MAC Mobility Extended Community  . . . . . . . . . .  24
      6.2.  Extended ROVR MAC Procedures  . . . . . . . . . . . . . .  25
    7.  Protocol Operations . . . . . . . . . . . . . . . . . . . . .  26
-   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  36
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  37
    9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  37
    10. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  37
    11. Normative References  . . . . . . . . . . . . . . . . . . . .  37
-   12. Informative References  . . . . . . . . . . . . . . . . . . .  38
+   12. Informative References  . . . . . . . . . . . . . . . . . . .  39
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  39
 
 
@@ -1962,25 +1962,61 @@ Thubert, et al.          Expires 9 January 2022                [Page 35]
 Internet-Draft               EVPN Secure MAC                   July 2021
 
 
-              | NS(EARO,       |                 |                |
-              |    R reset)    |                 |                |
-              |--------------->|                 |                |
-              |                |                 |                |
-              |                | Withdraw ROVR MAC Route A'       |
-              |                |---------------->|                |
-              |                |                 |--------------->|
-              |   NA(EARO(     |                 |                |
-              |   R reset,     |                 |                |
-              |   status = 0)) |                 |                |
-              |<---------------|                 |                |
-              |                |                 |                |
-              |     retain only NCE              |                |
-              |                |                 |                |
+         Local            Local              Route           Remote
+        Server           Leaf             Reflector         Leaf
+       +-------+       +---------+        +-------+        +---------+
+       |       |       |         |        |       |        |         |
+          6LN           6LBR/EVPN            BGP            EVPN/6LBR
+           |                |                 |                |
+           |    Ethernet    |                 |                |
+           |                |        [via BGP signaling]       |
+           |                |                 |                |
+           | NS(EARO,       |                 |                |
+           |    R reset)    |                 |                |
+           |--------------->|                 |                |
+           |                |                 |                |
+           |                | Withdraw ROVR MAC Route A'       |
+           |                |---------------->|                |
+           |                |                 |--------------->|
+           |   NA(EARO(     |                 |                |
+           |   R reset,     |                 |                |
+           |   status = 0)) |                 |                |
+           |<---------------|                 |                |
+           |                |                 |                |
+           |     retain only NCE              |                |
+           |                |                 |                |
 
                       Figure 20: Route Type 2 Removal
 
    When the lifetime elapses, the 6LBR requires the collocated eVPN
    router to withdraw the route.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Thubert, et al.          Expires 9 January 2022                [Page 36]
+
+Internet-Draft               EVPN Secure MAC                   July 2021
+
 
          Local            Local              Route           Remote
         Server           Leaf             Reflector         Leaf
@@ -1989,7 +2025,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
           6LN           6LBR/EVPN            BGP            EVPN/6LBR
            |                |                 |                |
            |    Ethernet    |                 |                |
-           |                |        [via BGP signaling]      |
+           |                |        [via BGP signaling]       |
            |                |                 |                |
            |     lifetime Expired             |                |
            |                |                 |                |
@@ -2008,15 +2044,6 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 8.  Security Considerations
 
    TBD
-
-
-
-
-
-Thubert, et al.          Expires 9 January 2022                [Page 36]
-
-Internet-Draft               EVPN Secure MAC                   July 2021
-
 
 9.  IANA Considerations
 
@@ -2039,6 +2066,13 @@ Internet-Draft               EVPN Secure MAC                   July 2021
               Protocol Version 6 (IPv6) Specification", STD 89,
               RFC 4443, DOI 10.17487/RFC4443, March 2006,
               <https://www.rfc-editor.org/info/rfc4443>.
+
+
+
+Thubert, et al.          Expires 9 January 2022                [Page 37]
+
+Internet-Draft               EVPN Secure MAC                   July 2021
+
 
    [RFC4861]  Narten, T., Nordmark, E., Simpson, W., and H. Soliman,
               "Neighbor Discovery for IP version 6 (IPv6)", RFC 4861,
@@ -2066,14 +2100,6 @@ Internet-Draft               EVPN Secure MAC                   July 2021
               (6LoWPANs)", RFC 7400, DOI 10.17487/RFC7400, November
               2014, <https://www.rfc-editor.org/info/rfc7400>.
 
-
-
-
-Thubert, et al.          Expires 9 January 2022                [Page 37]
-
-Internet-Draft               EVPN Secure MAC                   July 2021
-
-
    [RFC7432]  Sajassi, A., Ed., Aggarwal, R., Bitar, N., Isaac, A.,
               Uttaro, J., Drake, J., and W. Henderickx, "BGP MPLS-Based
               Ethernet VPN", RFC 7432, DOI 10.17487/RFC7432, February
@@ -2094,6 +2120,15 @@ Internet-Draft               EVPN Secure MAC                   July 2021
               Overlay Solution Using Ethernet VPN (EVPN)", RFC 8365,
               DOI 10.17487/RFC8365, March 2018,
               <https://www.rfc-editor.org/info/rfc8365>.
+
+
+
+
+
+Thubert, et al.          Expires 9 January 2022                [Page 38]
+
+Internet-Draft               EVPN Secure MAC                   July 2021
+
 
    [RFC8928]  Thubert, P., Ed., Sarikaya, B., Sethi, M., and R. Struik,
               "Address-Protected Neighbor Discovery for Low-Power and
@@ -2120,16 +2155,6 @@ Internet-Draft               EVPN Secure MAC                   July 2021
               "IPv6 Backbone Router", RFC 8929, DOI 10.17487/RFC8929,
               November 2020, <https://www.rfc-editor.org/info/rfc8929>.
 
-
-
-
-
-
-Thubert, et al.          Expires 9 January 2022                [Page 38]
-
-Internet-Draft               EVPN Secure MAC                   July 2021
-
-
    [RFC9010]  Thubert, P., Ed. and M. Richardson, "Routing for RPL
               (Routing Protocol for Low-Power and Lossy Networks)
               Leaves", RFC 9010, DOI 10.17487/RFC9010, April 2021,
@@ -2153,6 +2178,14 @@ Authors' Addresses
    France
 
    Phone: +33 497 23 26 34
+
+
+
+Thubert, et al.          Expires 9 January 2022                [Page 39]
+
+Internet-Draft               EVPN Secure MAC                   July 2021
+
+
    Email: pthubert@cisco.com
 
 
@@ -2181,4 +2214,27 @@ Authors' Addresses
 
 
 
-Thubert, et al.          Expires 9 January 2022                [Page 39]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Thubert, et al.          Expires 9 January 2022                [Page 40]
