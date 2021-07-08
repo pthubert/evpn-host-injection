@@ -2,11 +2,13 @@
 
 
 
-BESS                                                          P. Thubert
+BESS                                                     P. Thubert, Ed.
 Internet-Draft                                             Cisco Systems
 Intended status: Standards Track                           A. Przygienda
-Expires: 8 January 2022                                 Juniper Networks
-                                                             7 July 2021
+Expires: 9 January 2022                                 Juniper Networks
+                                                             J. Tantsura
+                                                               Microsoft
+                                                             8 July 2021
 
 
                        Secure EVPN MAC Signaling
@@ -35,12 +37,26 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 January 2022.
+   This Internet-Draft will expire on 9 January 2022.
 
 Copyright Notice
 
    Copyright (c) 2021 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
+
+
+
+
+
+
+
+
+
+
+Thubert, et al.          Expires 9 January 2022                 [Page 1]
+
+Internet-Draft               EVPN Secure MAC                   July 2021
+
 
    This document is subject to BCP 78 and the IETF Trust's Legal
    Provisions Relating to IETF Documents (https://trustee.ietf.org/
@@ -51,54 +67,70 @@ Copyright Notice
    as described in Section 4.e of the Trust Legal Provisions and are
    provided without warranty as described in the Simplified BSD License.
 
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   3
+   2.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   4
+     2.1.  Requirements Language . . . . . . . . . . . . . . . . . .   4
+     2.2.  Glossary  . . . . . . . . . . . . . . . . . . . . . . . .   4
+     2.3.  References  . . . . . . . . . . . . . . . . . . . . . . .   5
+   3.  6LoWPAN Neighbor Discovery  . . . . . . . . . . . . . . . . .   6
+     3.1.  RFC 6775 Address Registration . . . . . . . . . . . . . .   6
+     3.2.  RFC 8505 Extended Address Registration  . . . . . . . . .   7
+       3.2.1.  R Flag  . . . . . . . . . . . . . . . . . . . . . . .   8
+       3.2.2.  TID, "I" Field and Opaque Fields  . . . . . . . . . .   8
+       3.2.3.  Status  . . . . . . . . . . . . . . . . . . . . . . .   8
+       3.2.4.  Route Ownership Verifier  . . . . . . . . . . . . . .   9
+     3.3.  RFC 8505 Extended DAR/DAC . . . . . . . . . . . . . . . .   9
+     3.4.  RFC 7400 Capability Indication Option . . . . . . . . . .  10
+   4.  Extending 6LoWPAN ND  . . . . . . . . . . . . . . . . . . . .  11
+     4.1.  Use of the R flag in NA . . . . . . . . . . . . . . . . .  11
+     4.2.  Distributing the 6LBR . . . . . . . . . . . . . . . . . .  11
+     4.3.  Unicast Address Lookup with the 6LBR  . . . . . . . . . .  15
+   5.  Requirements on the EVPN-Unaware Host . . . . . . . . . . . .  21
+     5.1.  Support of 6LoWPAN ND . . . . . . . . . . . . . . . . . .  21
+   6.  Enhancements to EVPN  . . . . . . . . . . . . . . . . . . . .  22
+     6.1.  ROVR MAC Mobility Extended Community  . . . . . . . . . .  24
+     6.2.  Extended ROVR MAC Procedures  . . . . . . . . . . . . . .  25
+   7.  Protocol Operations . . . . . . . . . . . . . . . . . . . . .  26
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  35
+   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  35
+   10. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  35
+   11. Normative References  . . . . . . . . . . . . . . . . . . . .  35
+   12. Informative References  . . . . . . . . . . . . . . . . . . .  37
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  37
 
 
-Thubert & Przygienda     Expires 8 January 2022                 [Page 1]
+
+
+
+
+
+
+
+
+Thubert, et al.          Expires 9 January 2022                 [Page 2]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
 
-Table of Contents
-
-   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
-   2.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   3
-     2.1.  Requirements Language . . . . . . . . . . . . . . . . . .   3
-     2.2.  Glossary  . . . . . . . . . . . . . . . . . . . . . . . .   3
-     2.3.  References  . . . . . . . . . . . . . . . . . . . . . . .   4
-   3.  6LoWPAN Neighbor Discovery  . . . . . . . . . . . . . . . . .   5
-     3.1.  RFC 6775 Address Registration . . . . . . . . . . . . . .   6
-     3.2.  RFC 8505 Extended Address Registration  . . . . . . . . .   6
-       3.2.1.  R Flag  . . . . . . . . . . . . . . . . . . . . . . .   7
-       3.2.2.  TID, "I" Field and Opaque Fields  . . . . . . . . . .   7
-       3.2.3.  Status  . . . . . . . . . . . . . . . . . . . . . . .   8
-       3.2.4.  Route Ownership Verifier  . . . . . . . . . . . . . .   8
-     3.3.  RFC 8505 Extended DAR/DAC . . . . . . . . . . . . . . . .   9
-     3.4.  RFC 7400 Capability Indication Option . . . . . . . . . .  10
-   4.  Extending 6LoWPAN ND  . . . . . . . . . . . . . . . . . . . .  10
-     4.1.  Use of the R flag in NA . . . . . . . . . . . . . . . . .  10
-     4.2.  Distributing the 6LBR . . . . . . . . . . . . . . . . . .  11
-     4.3.  Unicast Address Lookup with the 6LBR  . . . . . . . . . .  14
-   5.  Requirements on the EVPN-Unaware Host . . . . . . . . . . . .  20
-     5.1.  Support of 6LoWPAN ND . . . . . . . . . . . . . . . . . .  20
-   6.  Enhancements to EVPN  . . . . . . . . . . . . . . . . . . . .  21
-     6.1.  ROVR MAC Mobility Extended Community  . . . . . . . . . .  23
-     6.2.  Extended ROVR MAC Procedures  . . . . . . . . . . . . . .  24
-   7.  Protocol Operations . . . . . . . . . . . . . . . . . . . . .  25
-   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  34
-   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  34
-   10. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  34
-   11. Normative References  . . . . . . . . . . . . . . . . . . . .  34
-   12. Informative References  . . . . . . . . . . . . . . . . . . .  36
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  36
-
 1.  Introduction
 
    "Registration Extensions for IPv6 over 6LoWPAN Neighbor Discovery"
-   [RFC8505] (ND) provides a routing-agnostic Host-to-Router Link-Local
-   interface to claim an IPv6 address and obtain reachability services
-   for that address.  [RFC8505] is already used to redistribute host
-   routes in RPL [RFC9010] and RIFT "Routing in Fat Trees" [RIFT], and
-   to maintain a proxy-ND state in a backbone router [RFC8929].
+   [RFC8505] (ND) provides a zeroconf routing-agnostic Host-to-Router
+   Link-Local interface for Stateful Address Autoconfiguration.
+   "Address-Protected Neighbor Discovery for Low-Power and Lossy
+   Networks" [RFC8928] (AP-ND) adds a zeroconf anti-theft protection
+   that protects the ownership of the autoconfigured address with
+   autoconfigured proof of ownership called a Registration Ownership
+   Verifier (ROVR).
+
+   [RFC8505] enables the host to claim an IPv6 address and obtain
+   reachability services for that address.  It is already used to inject
+   host routes in RPL [RFC9010] and RIFT "Routing in Fat Trees" [RIFT],
+   and to maintain a proxy-ND state in a backbone router [RFC8929]; this
+   specification extends its applicability to the case of Ethernet
+   Virtual Private Network (eVPN).
 
    [RFC8505] specifies a unicast address registration mechanism that
    enables the host called a 6LowPAN Node (6LN) to install a ND binding
@@ -106,14 +138,6 @@ Table of Contents
    Entry (NCE), though it is not operated as a cache.  The protocol
    provides the means to reject the registration in case of address
    duplication.  It also enables to discriminate mobility from
-
-
-
-Thubert & Przygienda     Expires 8 January 2022                 [Page 2]
-
-Internet-Draft               EVPN Secure MAC                   July 2021
-
-
    multihoming.  [RFC8928] adds the capability to verify the ownership
    of the address and prevent an attacker from stealing and/or
    impersonating an address.
@@ -137,6 +161,15 @@ Internet-Draft               EVPN Secure MAC                   July 2021
    metadata learned from [RFC8505] so as to maintain a synchronized copy
    of the 6LBR abstract data at each EVPN router.
 
+
+
+
+
+Thubert, et al.          Expires 9 January 2022                 [Page 3]
+
+Internet-Draft               EVPN Secure MAC                   July 2021
+
+
 2.  Terminology
 
 2.1.  Requirements Language
@@ -151,48 +184,47 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
    This document uses the following acronyms:
 
-   6LN:  6LoWPAN Node (the Host)
-   6LR:  6LoWPAN router (the router)
-   6LBR:  6LoWPAN Border router (the reflector)
-   AMC:  Address Mapping Confirmation
-   AMR:  Address Mapping Request
-   EARO:  Extended Address Registration Option
-   DAD:  Duplicate Address Detection
+   6CIO  Capability Indication Option [RFC7400]
+   6LN:  6LoWPAN Node (the Host) [RFC6775]
+   6LR:  6LoWPAN router (the router) [RFC6775]
+   6LBR:  6LoWPAN Border router [RFC6775]
+   AMC:  Address Mapping Confirmation [UNICAST-LOOKUP]
+   AMR:  Address Mapping Request [UNICAST-LOOKUP]
+   ARO  Address Registration Option [RFC6775]
+   DAD:  Duplicate Address Detection [RFC4862]
    ICMPv6:  Internet Control Message Protocol for IPv6
-   EVPN:  Ethernet VPN
+   DAC  Duplicate Address Confirmation [RFC6775]
+   DAR  Duplicate Address Request [RFC6775]
+   EDAC  Extended Duplicate Address Confirmation [RFC8505]
+   EDAR  Extended Duplicate Address Request [RFC8505]
+   EARO:  Extended Address Registration Option [RFC8505]
+   EVPN:  Ethernet VPN [RFC7432]
    LLA:  Link-Layer Address (the MAC address on Ethernet)
-   NA:  Neighbor Advertisement
-
-
-
-Thubert & Przygienda     Expires 8 January 2022                 [Page 3]
-
-Internet-Draft               EVPN Secure MAC                   July 2021
-
-
-   NCE:  Neighbor Cache Entry
-   ND:  Neighbor Discovery
-   NS:  Neighbor Solicitation
-   RA:  Router Advertisement
-   ROVR:  Registration Ownership Verifier
-   TID:  Transaction ID (a sequence counter in the EARO)
-   TIO:  Transit Information Option
-   SLAAC:  Stateless Address Autoconfiguration
-   SLLAO:  Source Link-Layer Address Option
-   TLLAO:  Target Link-Layer Address Option
+   LLN  Low-Power and Lossy Network [RFC6550]
+   NA:  Neighbor Advertisement [RFC4861]
+   NCE:  Neighbor Cache Entry [RFC4861]
+   ND:  Neighbor Discovery [RFC4861]
+   NS:  Neighbor Solicitation [RFC4861]
+   RA:  Router Advertisement [RFC4861]
+   ROVR:  Registration Ownership Verifier [RFC8505]
+   TID:  Transaction ID (a sequence counter in the EARO) [RFC8505]
+   SLAAC:  Stateless Address Autoconfiguration [RFC4862]
+   SLLAO:  Source Link-Layer Address Option [RFC4861]
+   TLLAO:  Target Link-Layer Address Option [RFC4861]
    ROVR MAC:  MAC obtained from a host meeting requirements in Section 5
    Validated ROVR MAC:  ROVR MAC validated by procedures specified in
       [RFC8928]
    ROVR Node:  EVPN node capable of advertising ROVR MACs
    non-ROVR Node:  EVPN node not supporting extensions defined in this
       document.
-   LLN  ?
-   6CIO  ?
-   DAR  ?
-   DAC  ?
-   EDAR  ?
-   EDAC  ?
-   ARO  ?
+   VPN:  Virtual Private Network
+
+
+
+Thubert, et al.          Expires 9 January 2022                 [Page 4]
+
+Internet-Draft               EVPN Secure MAC                   July 2021
+
 
 2.3.  References
 
@@ -218,14 +250,6 @@ Internet-Draft               EVPN Secure MAC                   July 2021
       is synchronized with that of the EVPN functional support using an
       internal interface that is out of scope.  That interface could be
       "pull" meaning that the 6LBR fetches the EVPN information when it
-
-
-
-Thubert & Przygienda     Expires 8 January 2022                 [Page 4]
-
-Internet-Draft               EVPN Secure MAC                   July 2021
-
-
       needs it, or "push", meaning that any information that EVPN
       distributes is immediately fed in all the 6LBRs in all the leaves.
       Note that this is pure control plane and is not subject to
@@ -245,6 +269,18 @@ Internet-Draft               EVPN Secure MAC                   July 2021
       Discovery" [RFC8505], "Address Protected Neighbor Discovery for
       Low-power and Lossy Networks" [RFC8928], and "IPv6 Backbone
       Router" [RFC8929].
+
+
+
+
+
+
+
+
+Thubert, et al.          Expires 9 January 2022                 [Page 5]
+
+Internet-Draft               EVPN Secure MAC                   July 2021
+
 
 3.  6LoWPAN Neighbor Discovery
 
@@ -275,13 +311,6 @@ Internet-Draft               EVPN Secure MAC                   July 2021
    connectivity across the subnet is ensured through L3 routing as
    opposed to transitive (any-to-any) reachability from L2.
 
-
-
-Thubert & Przygienda     Expires 8 January 2022                 [Page 5]
-
-Internet-Draft               EVPN Secure MAC                   July 2021
-
-
    This section goes through the 6LoWPAN ND mechanisms that this
    specification leverages, as a non-normative reference to the reader.
    The relevant normative text is to be found in [RFC6775], [RFC8505],
@@ -294,6 +323,20 @@ Internet-Draft               EVPN Secure MAC                   July 2021
    Ethernet.  It is a reactive protocol that relies heavily on multicast
    operations for Address Discovery (aka Lookup) and Duplicate Address
    Detection (DAD).
+
+
+
+
+
+
+
+
+
+
+Thubert, et al.          Expires 9 January 2022                 [Page 6]
+
+Internet-Draft               EVPN Secure MAC                   July 2021
+
 
    "Neighbor Discovery Optimizations for 6LoWPAN networks" [RFC6775]
    adapts IPv6 ND for operations over energy-constrained LLNs.  The main
@@ -308,9 +351,10 @@ Internet-Draft               EVPN Secure MAC                   July 2021
    Advertisement (NA) messages between the 6LoWPAN Node (6LN) and the
    6LoWPAN router (6LR).  It also defines the Duplicate Address Request
    (DAR) and Duplicate Address Confirmation (DAC) messages between the
-   6LR and the 6LBR.  In an LLN, the 6LBR is the central repository of
-   all the Registered Addresses in its domain and the source of truth
-   for uniqueness and ownership.
+   6LR and the 6LBR.  In a Low-Power and Lossy Network (LLN), the 6LBR
+   is the central repository of all the Registered Addresses in its
+   domain and the authoritative source of truth for uniqueness and
+   ownership.
 
 3.2.  RFC 8505 Extended Address Registration
 
@@ -319,23 +363,6 @@ Internet-Draft               EVPN Secure MAC                   July 2021
    can be used to access services such as routing and ND proxy.  To that
    effect, [RFC8505] defines the Extended Address Registration Option
    (EARO), shown in Figure 1:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Thubert & Przygienda     Expires 8 January 2022                 [Page 6]
-
-Internet-Draft               EVPN Secure MAC                   July 2021
 
 
       0                   1                   2                   3
@@ -351,6 +378,21 @@ Internet-Draft               EVPN Secure MAC                   July 2021
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
                         Figure 1: EARO Option Format
+
+
+
+
+
+
+
+
+
+
+
+Thubert, et al.          Expires 9 January 2022                 [Page 7]
+
+Internet-Draft               EVPN Secure MAC                   July 2021
+
 
 3.2.1.  R Flag
 
@@ -386,14 +428,6 @@ Internet-Draft               EVPN Secure MAC                   July 2021
    and an associated "I" field that describes what the Opaque field
    transports and how to use it.
 
-
-
-
-Thubert & Przygienda     Expires 8 January 2022                 [Page 7]
-
-Internet-Draft               EVPN Secure MAC                   July 2021
-
-
    This document specifies the use of the "I" field and the Opaque field
    by a Host.
 
@@ -407,6 +441,14 @@ Internet-Draft               EVPN Secure MAC                   July 2021
    [RFC6775] and [RFC8505] defined the original values whereas [RFC9010]
    reduced range to 64 values and reformatted the octet field to enable
    to transport an external error, e.g., coming form a routing protocol.
+
+
+
+
+Thubert, et al.          Expires 9 January 2022                 [Page 8]
+
+Internet-Draft               EVPN Secure MAC                   July 2021
+
 
    This specification uses the format expressed in [RFC9010].  The value
    of 0 denotes an unqualified success, 1 indicates an address
@@ -436,20 +478,6 @@ Internet-Draft               EVPN Secure MAC                   July 2021
    associated to the Target Address, whether it is cryptographic and
    should be verified.
 
-
-
-
-
-
-
-
-
-
-Thubert & Przygienda     Expires 8 January 2022                 [Page 8]
-
-Internet-Draft               EVPN Secure MAC                   July 2021
-
-
 3.3.  RFC 8505 Extended DAR/DAC
 
    [RFC8505] updates the DAR/DAC messages to EDAR/EDAC messages to carry
@@ -465,6 +493,17 @@ Internet-Draft               EVPN Secure MAC                   July 2021
    The status of 0 (success) indicates that the address is either new or
    that the current registration matches, and in particular that the
    ROVR at the 6LBR and the one in the EDAR message are identical.
+
+
+
+
+
+
+
+
+Thubert, et al.          Expires 9 January 2022                 [Page 9]
+
+Internet-Draft               EVPN Secure MAC                   July 2021
 
 
                   6LN               6LR                6LBR
@@ -498,14 +537,6 @@ Internet-Draft               EVPN Secure MAC                   July 2021
    a full 6LBR state for the address, aka local state in the following
    text.  The specification leverages the EDAR/EDAC exchange to ensure
    that a leaf (acting as a 6LR) that needs to create a 6LBR state for a
-
-
-
-Thubert & Przygienda     Expires 8 January 2022                 [Page 9]
-
-Internet-Draft               EVPN Secure MAC                   July 2021
-
-
    new registration has the same value for the ROVR as any 6LBR already
    serving that address on another leaf.  At the same time, the
    specification avoids placing full ROVR information in BGP so 1) it is
@@ -523,6 +554,14 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
    L:  Node is a 6LR.
    E:  Node is an IPv6 ND Registrar -- i.e., it supports registrations
+
+
+
+Thubert, et al.          Expires 9 January 2022                [Page 10]
+
+Internet-Draft               EVPN Secure MAC                   July 2021
+
+
       based on EARO.
    P:  Node is a Routing Registrar, -- i.e., an IPv6 ND Registrar that
       also provides reachability services for the Registered Address.
@@ -555,13 +594,6 @@ Internet-Draft               EVPN Secure MAC                   July 2021
    *  The use of the R Flag is extended to the NA(EARO) to confirm
       whether the route was installed.
 
-
-
-Thubert & Przygienda     Expires 8 January 2022                [Page 10]
-
-Internet-Draft               EVPN Secure MAC                   July 2021
-
-
 4.2.  Distributing the 6LBR
 
    This specification enables to distribute the 6LBR at the edge of the
@@ -576,6 +608,15 @@ Internet-Draft               EVPN Secure MAC                   July 2021
    model, see Figure 10), or if the 6LBR queries the EVPN support when
    it does not have a mapping to satisfy a request (pull model, see
    Figure 9).
+
+
+
+
+
+Thubert, et al.          Expires 9 January 2022                [Page 11]
+
+Internet-Draft               EVPN Secure MAC                   July 2021
+
 
    This specification leverages [RFC8929] that augments the abstract
    data model of the 6LBR to store the LLA associated with the
@@ -613,7 +654,22 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 11]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Thubert, et al.          Expires 9 January 2022                [Page 12]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -669,7 +725,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 12]
+Thubert, et al.          Expires 9 January 2022                [Page 13]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -725,7 +781,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 13]
+Thubert, et al.          Expires 9 January 2022                [Page 14]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -781,7 +837,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 14]
+Thubert, et al.          Expires 9 January 2022                [Page 15]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -837,7 +893,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 15]
+Thubert, et al.          Expires 9 January 2022                [Page 16]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -893,7 +949,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 16]
+Thubert, et al.          Expires 9 January 2022                [Page 17]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -949,7 +1005,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 17]
+Thubert, et al.          Expires 9 January 2022                [Page 18]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1005,7 +1061,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 18]
+Thubert, et al.          Expires 9 January 2022                [Page 19]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1061,7 +1117,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 19]
+Thubert, et al.          Expires 9 January 2022                [Page 20]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1117,7 +1173,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 20]
+Thubert, et al.          Expires 9 January 2022                [Page 21]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1173,7 +1229,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 21]
+Thubert, et al.          Expires 9 January 2022                [Page 22]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1229,7 +1285,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 22]
+Thubert, et al.          Expires 9 January 2022                [Page 23]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1285,7 +1341,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 23]
+Thubert, et al.          Expires 9 January 2022                [Page 24]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1341,7 +1397,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 24]
+Thubert, et al.          Expires 9 January 2022                [Page 25]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1397,7 +1453,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 25]
+Thubert, et al.          Expires 9 January 2022                [Page 26]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1453,7 +1509,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 26]
+Thubert, et al.          Expires 9 January 2022                [Page 27]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1509,7 +1565,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 27]
+Thubert, et al.          Expires 9 January 2022                [Page 28]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1565,7 +1621,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 28]
+Thubert, et al.          Expires 9 January 2022                [Page 29]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1621,7 +1677,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 29]
+Thubert, et al.          Expires 9 January 2022                [Page 30]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1677,7 +1733,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 30]
+Thubert, et al.          Expires 9 January 2022                [Page 31]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1733,7 +1789,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 31]
+Thubert, et al.          Expires 9 January 2022                [Page 32]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1789,7 +1845,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 32]
+Thubert, et al.          Expires 9 January 2022                [Page 33]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1845,7 +1901,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 33]
+Thubert, et al.          Expires 9 January 2022                [Page 34]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1881,7 +1937,10 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 10.  Acknowledgments
 
-   The authors wish to thank you for reading that far.
+   The authors wish to thank you for reading that far.  We acknowledge
+   and express gratitude to Wen Lin, Stephane Litkowski, Eric Levy-
+   Abegnoli, Lukas Krattiger, Jerome Tollet, and Ali Sajassi, for their
+   help and support.
 
 11.  Normative References
 
@@ -1898,10 +1957,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-
-
-
-Thubert & Przygienda     Expires 8 January 2022                [Page 34]
+Thubert, et al.          Expires 9 January 2022                [Page 35]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1957,7 +2013,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert & Przygienda     Expires 8 January 2022                [Page 35]
+Thubert, et al.          Expires 9 January 2022                [Page 36]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1975,6 +2031,13 @@ Internet-Draft               EVPN Secure MAC                   July 2021
               lookup-00>.
 
 12.  Informative References
+
+   [RFC6550]  Winter, T., Ed., Thubert, P., Ed., Brandt, A., Hui, J.,
+              Kelsey, R., Levis, P., Pister, K., Struik, R., Vasseur,
+              JP., and R. Alexander, "RPL: IPv6 Routing Protocol for
+              Low-Power and Lossy Networks", RFC 6550,
+              DOI 10.17487/RFC6550, March 2012,
+              <https://www.rfc-editor.org/info/rfc6550>.
 
    [RFC8929]  Thubert, P., Ed., Perkins, C.E., and E. Levy-Abegnoli,
               "IPv6 Backbone Router", RFC 8929, DOI 10.17487/RFC8929,
@@ -1998,24 +2061,20 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 Authors' Addresses
 
-   Pascal Thubert
+   Pascal Thubert (editor)
    Cisco Systems, Inc
-   Building D
-   45 Allee des Ormes - BP1200
-   06254 Mougins - Sophia Antipolis
    France
 
    Phone: +33 497 23 26 34
-   Email: pthubert@cisco.com
 
 
 
-
-
-
-Thubert & Przygienda     Expires 8 January 2022                [Page 36]
+Thubert, et al.          Expires 9 January 2022                [Page 37]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
+
+
+   Email: pthubert@cisco.com
 
 
    Tony Przygienda
@@ -2027,6 +2086,10 @@ Internet-Draft               EVPN Secure MAC                   July 2021
    Email: prz@juniper.net
 
 
+   Jeff Tantsura
+   Microsoft
+
+   Email: jefftant.ietf@gmail.com
 
 
 
@@ -2062,11 +2125,4 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-
-
-
-
-
-
-
-Thubert & Przygienda     Expires 8 January 2022                [Page 37]
+Thubert, et al.          Expires 9 January 2022                [Page 38]

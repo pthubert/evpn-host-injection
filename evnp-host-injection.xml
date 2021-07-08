@@ -23,14 +23,10 @@
 
     <title abbrev='EVPN Secure MAC'>Secure EVPN MAC Signaling</title>
 
-   <author initials='P' surname='Thubert' fullname='Pascal Thubert'>
+   <author initials='P' surname='Thubert' fullname="Pascal Thubert" role="editor">
       <organization abbrev='Cisco Systems'>Cisco Systems, Inc</organization>
       <address>
          <postal>
-            <street>Building D</street>
-            <street>45 Allee des Ormes - BP1200 </street>
-            <city>Mougins - Sophia Antipolis</city>
-            <code>06254</code>
           <country>France</country>
          </postal>
          <phone>+33 497 23 26 34</phone>
@@ -55,6 +51,13 @@
             <uri/>
         </address>
     </author>
+    <author initials="J." surname="Tantsura" fullname="Jeff Tantsura">
+            <organization>Microsoft</organization>
+        <address>
+                <email>jefftant.ietf@gmail.com</email>
+        </address>
+    </author>
+
 <!--
    <author initials='S' surname='Litkowski' fullname='Stephane Litkowski' >
       <organization abbrev='Cisco Systems'>Cisco Systems, Inc</organization>
@@ -105,12 +108,19 @@
 
 <t>
   <xref target='RFC8505'>"Registration Extensions for IPv6 over 6LoWPAN
-  Neighbor Discovery"</xref> (ND) provides a routing-agnostic Host-to-Router
-  Link-Local interface to claim an IPv6 address and obtain reachability services
-  for that address. <xref target='RFC8505'/> is already used to redistribute
-  host routes in RPL <xref target='RFC9010'/> and RIFT
+  Neighbor Discovery"</xref> (ND) provides a zeroconf routing-agnostic
+  Host-to-Router Link-Local interface for Stateful Address Autoconfiguration.
+  <xref target='RFC8928'>"Address-Protected Neighbor Discovery for Low-Power and
+  Lossy Networks"</xref> (AP-ND) adds a zeroconf anti-theft protection that protects the ownership of the autoconfigured address with autoconfigured proof of ownership called a Registration Ownership Verifier (ROVR).
+</t>
+<t>
+  <xref target='RFC8505'/> enables the host to claim an IPv6 address and obtain
+  reachability services for that address. It is already used to inject host
+  routes in RPL <xref target='RFC9010'/> and RIFT
   <xref target='I-D.ietf-rift-rift'>"Routing in Fat Trees"</xref>, and to
-  maintain a proxy-ND state in a backbone router <xref target='RFC8929'/>.
+  maintain a proxy-ND state in a backbone router <xref target='RFC8929'/>; this
+  specification extends its applicability to the case of Ethernet Virtual
+  Private Network (eVPN).
 </t>
 
 <t>
@@ -171,40 +181,42 @@
     </t>
 
     <dl  spacing='compact'>
-    <dt>6LN:</dt><dd> 6LoWPAN Node (the Host) </dd>
-    <dt>6LR:</dt><dd> 6LoWPAN router (the router) </dd>
-    <dt>6LBR:</dt><dd> 6LoWPAN Border router (the reflector)</dd>
-    <dt>AMC:</dt><dd> Address Mapping Confirmation</dd>
-    <dt>AMR:</dt><dd> Address Mapping Request</dd>
-    <dt>EARO:</dt><dd> Extended Address Registration Option </dd>
-    <dt>DAD:</dt><dd> Duplicate Address Detection </dd>
+    <dt>6CIO</dt><dd>Capability Indication Option <xref target='RFC7400'/></dd>
+    <dt>6LN:</dt><dd> 6LoWPAN Node (the Host) <xref target='RFC6775'/> </dd>
+    <dt>6LR:</dt><dd> 6LoWPAN router (the router) <xref target='RFC6775'/></dd>
+    <dt>6LBR:</dt><dd> 6LoWPAN Border router  <xref target='RFC6775'/></dd>
+    <dt>AMC:</dt><dd> Address Mapping Confirmation <xref target="I-D.thubert-6lo-unicast-lookup"/></dd>
+    <dt>AMR:</dt><dd> Address Mapping Request <xref target="I-D.thubert-6lo-unicast-lookup"/></dd>
+    <dt>ARO</dt><dd>Address Registration Option  <xref target='RFC6775'/></dd>
+    <dt>DAD:</dt><dd> Duplicate Address Detection <xref target='RFC4862'/></dd>
     <dt>ICMPv6:</dt><dd> Internet Control Message Protocol for IPv6</dd>
-    <dt>EVPN:</dt><dd> Ethernet VPN </dd>
+    <dt>DAC</dt><dd>Duplicate Address Confirmation  <xref target='RFC6775'/> </dd>
+    <dt>DAR</dt><dd>Duplicate Address Request <xref target='RFC6775'/></dd>
+    <dt>EDAC</dt><dd>Extended Duplicate Address Confirmation  <xref target='RFC8505'/></dd>
+    <dt>EDAR</dt><dd>Extended Duplicate Address Request <xref target='RFC8505'/></dd>
+    <dt>EARO:</dt><dd> Extended Address Registration Option <xref target='RFC8505'/></dd>
+    <dt>EVPN:</dt><dd> Ethernet VPN  <xref target='RFC7432'/></dd>
     <dt>LLA:</dt><dd> Link-Layer Address (the MAC address on Ethernet)</dd>
-    <dt>NA:</dt><dd>  Neighbor Advertisement </dd>
-    <dt>NCE:</dt><dd>  Neighbor Cache Entry  </dd>
-    <dt>ND:</dt><dd>  Neighbor Discovery  </dd>
-    <dt>NS:</dt><dd>  Neighbor Solicitation  </dd>
-    <dt>RA:</dt><dd>  Router Advertisement  </dd>
-    <dt>ROVR:</dt><dd> Registration Ownership Verifier </dd>
-    <dt>TID:</dt><dd> Transaction ID (a sequence counter in the EARO) </dd>
-    <dt>TIO:</dt><dd> Transit Information Option</dd>
-    <dt>SLAAC:</dt><dd> Stateless Address Autoconfiguration</dd>
-    <dt>SLLAO:</dt><dd> Source Link-Layer Address Option</dd>
-    <dt>TLLAO:</dt><dd> Target Link-Layer Address Option</dd>
+    <dt>LLN</dt><dd>Low-Power and Lossy Network <xref target='RFC6550'/></dd>
+    <dt>NA:</dt><dd>  Neighbor Advertisement <xref target='RFC4861'/></dd>
+    <dt>NCE:</dt><dd>  Neighbor Cache Entry <xref target='RFC4861'/> </dd>
+    <dt>ND:</dt><dd>  Neighbor Discovery <xref target='RFC4861'/> </dd>
+    <dt>NS:</dt><dd>  Neighbor Solicitation <xref target='RFC4861'/> </dd>
+    <dt>RA:</dt><dd>  Router Advertisement <xref target='RFC4861'/> </dd>
+    <dt>ROVR:</dt><dd> Registration Ownership Verifier <xref target='RFC8505'/></dd>
+    <dt>TID:</dt><dd> Transaction ID (a sequence counter in the EARO) <xref target='RFC8505'/></dd>
+    <dt>SLAAC:</dt><dd> Stateless Address Autoconfiguration <xref target='RFC4862'/></dd>
+    <dt>SLLAO:</dt><dd> Source Link-Layer Address Option <xref target='RFC4861'/></dd>
+    <dt>TLLAO:</dt><dd> Target Link-Layer Address Option <xref target='RFC4861'/></dd>
 
-        <dt>ROVR MAC:</dt><dd> MAC obtained from a host meeting requirements in <xref target="prereq"/> </dd>
-        <dt>Validated ROVR MAC:</dt><dd> ROVR MAC validated by procedures specified in <xref target='RFC8928'/></dd>
-        <dt>ROVR Node:</dt><dd> EVPN node capable of advertising ROVR MACs </dd>
-        <dt>non-ROVR Node:</dt><dd> EVPN node not supporting extensions defined in this document.</dd>
+    <dt>ROVR MAC:</dt><dd> MAC obtained from a host meeting requirements in <xref target="prereq"/> </dd>
+    <dt>Validated ROVR MAC:</dt><dd> ROVR MAC validated by procedures specified in <xref target='RFC8928'/></dd>
+    <dt>ROVR Node:</dt><dd> EVPN node capable of advertising ROVR MACs </dd>
+    <dt>non-ROVR Node:</dt><dd> EVPN node not supporting extensions defined in this document.</dd>
+    <dt>VPN:</dt><dd> Virtual Private Network</dd>
 
-        <dt>LLN</dt><dd>?</dd>
-        <dt>6CIO</dt><dd>?</dd>
-        <dt>DAR</dt><dd>?</dd>
-        <dt>DAC</dt><dd>?</dd>
-        <dt>EDAR</dt><dd>?</dd>
-        <dt>EDAC</dt><dd>?</dd>
-        <dt>ARO</dt><dd>?</dd>
+
+
     </dl>
 
 
@@ -331,11 +343,11 @@ expect other functionality such as 6LoWPAN Header Compression:
    Registration Option (ARO) that is carried in the unicast
    Neighbor Solicitation (NS) and Neighbor Advertisement (NA) messages between
    the 6LoWPAN Node (6LN) and the 6LoWPAN router (6LR).
-
    It also defines the Duplicate Address Request (DAR) and Duplicate
    Address Confirmation (DAC) messages between the 6LR and the 6LBR.
-   In an LLN, the 6LBR is the central repository of all the Registered Addresses
-   in its domain and the source of truth for uniqueness and ownership.
+   In a Low-Power and Lossy Network (LLN), the 6LBR is the central repository of
+   all the Registered Addresses in its domain and the authoritative source of
+   truth for uniqueness and ownership.
 </t>
 </section>	<!-- end section "RFC 6775" -->
 <section anchor='R8505E'><name>RFC 8505 Extended Address Registration</name>
@@ -1672,6 +1684,9 @@ Same ES (multihomed):
 <section anchor='Acks'><name>Acknowledgments</name>
 <t>
    The authors wish to thank you for reading that far.
+   We acknowledge and express gratitude to Wen Lin, Stephane Litkowski, Eric
+   Levy-Abegnoli, Lukas Krattiger, Jerome Tollet, and Ali Sajassi, for their
+   help and support.
   </t>
 
 </section>
@@ -1703,6 +1718,7 @@ Same ES (multihomed):
 
  </references>
  <references><name>Informative References</name>
+   <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.6550.xml'/>
    <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.8929.xml'/>
 
    <xi:include href='https://xml2rfc.tools.ietf.org/public/rfc/bibxml/reference.RFC.9010.xml'/>
