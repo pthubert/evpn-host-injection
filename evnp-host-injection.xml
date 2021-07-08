@@ -1328,9 +1328,12 @@ expect other functionality such as 6LoWPAN Header Compression:
 
 <t>
   With this specification, the 6LBR communicates internally with the collocated
-  eVPN router to inject the route in eVPN. Once this is done, the local 6LBR
-  installs a local state associated to the NCE and becomes owner of the registration, whereas the remote leaves optionally install a remote state for the address with the indication of the 6LBR that owns the registration.
-
+  eVPN router to inject the route in eVPN. Since the <xref target='RFC8928'/>
+  validation was performed, hte V flag is set. Once this is done, the local 6LBR
+  installs a local state associated to the NCE and becomes owner of the
+  registration, whereas the remote leaves optionally install a remote state for
+  the address with the indication of the 6LBR that owns the registration. The
+  local 6LBR MUST be signalled as EVPN Next Hop for the route.
 </t>
 
  <figure anchor='fReg1' suppress-title='false'><name>Host Registration</name>
@@ -1344,18 +1347,23 @@ expect other functionality such as 6LoWPAN Header Compression:
       |    Ethernet    |      [via BGP signaling]         |
       |                |                 |                |
       |                |                 |                |
-      |  NS(EARO)      |                 |                |
+      |  NS(EARO(      |                 |                |
+      |       R set))  |                 |                |
       |--------------->|                 |                |
       |                |                 |                |
       |   ROVR in EARO is cryptographic  |                |
       |                |                 |                |
       |     NA(EARO(   |                 |                |
+      |   R not set,   |                 |                |
       |   status = 5), |                 |                |
-      |   Nonce1)      |                 |                |
+      |        Nonce1) |                 |                |
       |<---------------|                 |                |
       |                |                 |                |
-      | NS(EARO, CIPO, |                 |                |
-      | Nonce2, NDPSO) |                 |                |
+      |   NS(EARO(     |                 |                |
+      |        R set), |                 |                |
+      |      CIPO,     |                 |                |
+      |      Nonce2,   |                 |                |
+      |      NDPSO)    |                 |                |
       |--------------->|                 |                |
       |                |                 |                |
       |        Proof verified            |                |
@@ -1365,7 +1373,12 @@ expect other functionality such as 6LoWPAN Header Compression:
       |                |                 |                |
       |                |  ROVR MAC Route A'               |
       |                |---------------->|                |
-      |   NA(EARO)     |                 |                |
+      |                |                 |                |
+      |        route injected            |                |
+      |                |                 |                |
+      |     NA(EARO(   |                 |                |
+      |   R set,       |                 |                |
+      |   status = 0)) |                 |                |
       |<---------------|                 |                |
       |                |                 | ROVR MAC Route A'
       |                |                 |--------------->|
@@ -1375,6 +1388,17 @@ expect other functionality such as 6LoWPAN Header Compression:
 
 ]]></artwork>
  </figure>
+ <t>
+  <xref target='fRegmul'/> presents the same flow but for a multihomed address;
+  here and in the following flows, the proof of ownership section is not shown,
+  but its use is RECOMMENDED. The interesting piece is that when the node
+  registers to the second 6LBR, that second 6LBR find that there is a first
+  6LBR that already own the registration. Using and EDAR / EDAC flow, the
+  second 6LBR validates that the ROVR and TID are identical, in which case it
+  accepts the registration and becomes another 6LBR owner of the registration.
+  The result is that the 2 6LBRs are synchronized and any of the 2 can now be
+  used, e.g., if the address is registered a third time.
+</t>
  <figure anchor='fRegmul' suppress-title='false'><name>Multihoming</name>
  <artwork align="center"><![CDATA[
     Local            Local          Local
@@ -1419,6 +1443,11 @@ expect other functionality such as 6LoWPAN Header Compression:
       |                |              |                 |
 ]]></artwork>
  </figure>
+ <t>
+   The registration is associated with a lifetime, and it must be renewed with
+   an incremented TID. The new TID is propagated in eVPN as illustrated in
+  <xref target='fReg2'/>.
+ </t>
  <figure anchor='fReg2' suppress-title='false'><name>Host Registration Renewal</name>
  <artwork align="center"><![CDATA[
 
@@ -1447,6 +1476,12 @@ expect other functionality such as 6LoWPAN Header Compression:
 ]]></artwork>
 </figure>
 
+ <t>
+  <xref target='fRegdup'/> illustrates the case where a second host registers
+  the same address, creating a potential address duplication situation.
+  in most cases, the ROVR hash will be different, and the local 6LBR can reject
+  the registration is a status of 1 (duplicate) right away.
+ </t>
 
  <figure anchor='fRegdup' suppress-title='false'><name>Duplicate Addresses</name>
  <artwork align="center"><![CDATA[
@@ -1479,6 +1514,12 @@ expect other functionality such as 6LoWPAN Header Compression:
       |                |                 |                |
 ]]></artwork> </figure>
 
+ <t>
+  <xref target='fRegdup2'/> illustrates the case of an address duplication
+  situation where by chance, the ROVR hashes are the same. In that case, the
+  local 6LR checks with the 6LBR that owns the registration using an EDAR/EDAC message exchange. As opposed to the ROVR hash, the full ROVRs do not collide
+  and the registration is also rejected.
+ </t>
  <figure anchor='fRegdup2' suppress-title='false'><name>Duplicate Addresses, ROVR Hash Collision</name>
  <artwork align="center"><![CDATA[
    Local            Local              Route           Remote
@@ -1515,6 +1556,13 @@ expect other functionality such as 6LoWPAN Header Compression:
       |<-------------|                                       |
       |              |                                       |
 ]]></artwork> </figure>
+
+ <t>
+  <xref target='fRegold'/> shows a rare case where the registration has already
+  moved elsewhere with an incremented TID when the local registration is
+  received after being delayed in the network. In that case, the registration is
+  rejected with a status of 3 (moved).
+ </t>
  <figure anchor='fRegold' suppress-title='false'><name>Address Already Moved</name>
  <artwork align="center"><![CDATA[
    Local            Local              Route           Remote
@@ -1614,7 +1662,12 @@ Same ES (multihomed):
       |                |<----------------|                |
       |                |                 |                |
 ]]></artwork> </figure>
-
+ <t>
+  The host that registered the address may cancel the registration at any time,
+  e.g., if the address is removed fmor its own interface. This is done by
+  registering with a lifetime if 0 as shown in <xref target='fRegArmov'/>.
+  The Leaf may respond with a status of 0 to indicate success, but a status of 4 (removed) is preferred for this situation.
+ </t>
  <figure anchor='fRegArmov' suppress-title='false'><name>Address Removal</name>
  <artwork align="center"><![CDATA[
    Local            Local              Route           Remote
@@ -1641,6 +1694,12 @@ Same ES (multihomed):
       |                |                 |                |
 ]]></artwork> </figure>
 
+ <t>
+  The host that registered the address may withdraw the route but maintain the
+  NCE, e.g., in the case where it is multihomed but does not want to use one
+  interface for the traffic back as this time. This is done by
+  registering with the R flag set to 0 as shown in <xref target='fRegRrmov'/>.
+ </t>
 
  <figure anchor='fRegRrmov' suppress-title='false'><name>Route Type 2 Removal</name>
  <artwork align="center"><![CDATA[
@@ -1659,7 +1718,10 @@ Same ES (multihomed):
       |     retain only NCE              |                |
       |                |                 |                |
 ]]></artwork> </figure>
-
+ <t>
+  When the lifetime elapses, the 6LBR requires the collocated eVPN router to
+  withdraw the route.
+ </t>
  <figure anchor='fRegTO' suppress-title='false'><name>Lifetime Elapse</name>
  <artwork align="center"><![CDATA[
     Local            Local              Route           Remote
