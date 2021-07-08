@@ -618,7 +618,7 @@ expect other functionality such as 6LoWPAN Header Compression:
     This specification leverages <xref target='RFC8929'/> that augments the
     abstract data model of the 6LBR to store the LLA associated with the
     registered address. Based on that additional state, the 6LBR in a leaf can
-    communicate the mapping to the colocated EVPN function and respond to
+    communicate the mapping to the collocated EVPN function and respond to
     unicast address mapping lookups from the server side.
    </t>
    <t>
@@ -1356,7 +1356,6 @@ expect other functionality such as 6LoWPAN Header Compression:
       |  NS(EARO(      |                 |                |
       |       R set))  |                 |                |
       |--------------->|                 |                |
-      |                |                 |                |
       |   ROVR in EARO is cryptographic  |                |
       |                |                 |                |
       |     NA(EARO(   |                 |                |
@@ -1371,15 +1370,12 @@ expect other functionality such as 6LoWPAN Header Compression:
       |      Nonce2,   |                 |                |
       |      NDPSO)    |                 |                |
       |--------------->|                 |                |
-      |                |                 |                |
       |        Proof verified            |                |
-      |                |                 |                |
       |     no state for that address    |                |
       |      install local state         |                |
       |                |                 |                |
       |                |  ROVR MAC Route A'               |
       |                |---------------->|                |
-      |                |                 |                |
       |        route injected            |                |
       |                |                 |                |
       |     NA(EARO(   |                 |                |
@@ -1388,7 +1384,6 @@ expect other functionality such as 6LoWPAN Header Compression:
       |<---------------|                 |                |
       |                |                 | ROVR MAC Route A'
       |                |                 |--------------->|
-      |                |                 |                |
       |                |                 |    install remote state
       |                |                 |                |
 
@@ -1469,7 +1464,6 @@ expect other functionality such as 6LoWPAN Header Compression:
       |  NS(EARO(      |                 |                |
       |    TID+1))     |                 |                |
       |--------------->|                 |                |
-      |                |                 |                |
       |   renew lifetime locally         |                |
       |                |                 |                |
       |                |  ROVR MAC Route A'(TID+1)        |
@@ -1506,7 +1500,6 @@ expect other functionality such as 6LoWPAN Header Compression:
       |                |              ROVR Hash G         |
       |                |                 |<---------------|
       |                |<----------------|                |
-      |                |                 |                |
       |      Create remote state for A'  |                |
       |                |                 |                |
       |   NS(EARO)     |                 |                |
@@ -1546,7 +1539,7 @@ expect other functionality such as 6LoWPAN Header Compression:
       |      Create remote state for A'  |               |   |
       |              |   |                               |   |
       |              |                                       |
-      |              |     [out of band signaling]           |
+      |              |       [[out of band signaling]]       |
       |   NS(EARO)   |                                       |
       |------------->|                                       |
       |         compute ROVR Hash G                          |
@@ -1554,7 +1547,7 @@ expect other functionality such as 6LoWPAN Header Compression:
       |              |      EDAR to EVPN Next Hop            |
       |              |-------------------------------------->|
       |              |                                       |
-      |              |               EDAR (status = 1)       |
+      |              |               EDAC (status = 1)       |
       |              |<--------------------------------------|
       |              |                                       |
       |  NA(EARO(    |                                       |
@@ -1578,8 +1571,7 @@ expect other functionality such as 6LoWPAN Header Compression:
      6LN           6LBR/EVPN            BGP            EVPN/6LBR
       |                |                 |                |
       |    Ethernet    |                 |                |
-      |                |        [via BGP signaling]      |
-      |                |                 |                |
+      |                |        [via BGP signaling]       |
       |                |                 |                |
       |                |          ROVR MAC Route A'       |
       |                |         ESI X', Hash F, TID Z    |
@@ -1624,26 +1616,33 @@ expect other functionality such as 6LoWPAN Header Compression:
       |                |                 |                |
       |    Ethernet    |                 |                |
       |                |        [via BGP signaling]       |
-      |                |                 |                |
       |   NS(EARO)     |                 |                |
       |--------------->|                 |                |
-      |                |                 |                |
       |        Create local state        |                |
-      |                |  ROVR MAC Route A'               |
-      |                |  ESI X', TID Z  |                |
-      |                |  ROVR Hash F    |                |
-      |                |---------------->|         Install remote
-      |                |                 |              state
+      |                |        ROVR MAC Route A'         |
+      |                |     ESI X', ROVR Hash F, TID Z   |
+      |                |---------------->|                |
       |                |                 |--------------->|
+      |                |                 |     Create remote state
 
-
-Different ES (movement):
-      |                |                 |                |<----
-      |                |                 |     New local state A'
-      |                |                 |            created
+Same ES (multihomed):
+      |                |                 |                |<--
+      |                |                 | New local state A' created
       |                |                 |                |
       |                |          ROVR MAC Route A'       |
-      |                |         ESI X'', Hash F, TID Z+1 |
+      |                |         ESI X', Hash F, TID Z+1  |
+      |                |                 |<---------------|
+      |                |<----------------|                |
+      |        Create remote state       |                |
+      |       Keep local expect renew    |                |
+      |                |                 |                |
+
+Different ES (movement):
+      |                |                 |                |<--
+      |                |                 | New local state A' created
+      |                |                 |                |
+      |                |          ROVR MAC Route A'       |
+      |                |    ESI X'', ROVR Hash F, TID Z+1 |
       |                |                 |<---------------|
       |                |<----------------|                |
       |        Create remote state       |                |
@@ -1657,16 +1656,6 @@ Different ES (movement):
       |     remove local state           |                |
       |                |                 |                |
 
-
-Same ES (multihomed):
-      |                |                 |                |<--
-      |                |                 | New local state A' created
-      |                |                 |                |
-      |                |          ROVR MAC Route A'       |
-      |                |         ESI X', Hash F, TID Z+1  |
-      |                |                 |<---------------|
-      |                |<----------------|                |
-      |                |                 |                |
 ]]></artwork> </figure>
  <t>
   The host that registered the address may cancel the registration at any time,

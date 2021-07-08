@@ -7,6 +7,7 @@
 <title>Secure EVPN MAC Signaling</title>
 <meta content="Pascal Thubert" name="author">
 <meta content="Tony Przygienda" name="author">
+<meta content="Jeff Tantsura" name="author">
 <meta content="
        
   This specification adds attributes to EVPN to carry IPv6 address metadata
@@ -1176,8 +1177,8 @@ dt+dd:empty::before{
 <td class="right">July 2021</td>
 </tr></thead>
 <tfoot><tr>
-<td class="left">Thubert &amp; Przygienda</td>
-<td class="center">Expires 8 January 2022</td>
+<td class="left">Thubert, et al.</td>
+<td class="center">Expires 9 January 2022</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1188,21 +1189,26 @@ dt+dd:empty::before{
 <dd class="workgroup">BESS</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2021-07-07" class="published">7 July 2021</time>
+<time datetime="2021-07-08" class="published">8 July 2021</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Standards Track</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2022-01-08">8 January 2022</time></dd>
+<dd class="expires"><time datetime="2022-01-09">9 January 2022</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
-      <div class="author-name">P. Thubert</div>
+      <div class="author-name">P. Thubert, <span class="editor">Ed.</span>
+</div>
 <div class="org">Cisco Systems</div>
 </div>
 <div class="author">
       <div class="author-name">A. Przygienda</div>
-<div class="org">Juniper Networks</div>
+<div class="org">Juniper Networks, Inc</div>
+</div>
+<div class="author">
+      <div class="author-name">J. Tantsura</div>
+<div class="org">Microsoft</div>
 </div>
 </dd>
 </dl>
@@ -1235,7 +1241,7 @@ dt+dd:empty::before{
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 8 January 2022.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 9 January 2022.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1263,107 +1269,107 @@ dt+dd:empty::before{
         <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
 <a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
         </h2>
-<nav class="toc"><ul class="ulEmpty toc compact">
-<li class="ulEmpty toc compact" id="section-toc.1-1.1">
+<nav class="toc"><ul class="compact ulEmpty toc">
+<li class="compact ulEmpty toc" id="section-toc.1-1.1">
             <p id="section-toc.1-1.1.1" class="keepWithNext"><a href="#section-1" class="xref">1</a>.  <a href="#name-introduction" class="xref">Introduction</a><a href="#section-toc.1-1.1.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="ulEmpty toc compact" id="section-toc.1-1.2">
+          <li class="compact ulEmpty toc" id="section-toc.1-1.2">
             <p id="section-toc.1-1.2.1"><a href="#section-2" class="xref">2</a>.  <a href="#name-terminology" class="xref">Terminology</a><a href="#section-toc.1-1.2.1" class="pilcrow">¶</a></p>
-<ul class="ulEmpty toc compact">
-<li class="ulEmpty toc compact" id="section-toc.1-1.2.2.1">
+<ul class="compact ulEmpty toc">
+<li class="compact ulEmpty toc" id="section-toc.1-1.2.2.1">
                 <p id="section-toc.1-1.2.2.1.1" class="keepWithNext"><a href="#section-2.1" class="xref">2.1</a>.  <a href="#name-requirements-language" class="xref">Requirements Language</a><a href="#section-toc.1-1.2.2.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="ulEmpty toc compact" id="section-toc.1-1.2.2.2">
+              <li class="compact ulEmpty toc" id="section-toc.1-1.2.2.2">
                 <p id="section-toc.1-1.2.2.2.1" class="keepWithNext"><a href="#section-2.2" class="xref">2.2</a>.  <a href="#name-glossary" class="xref">Glossary</a><a href="#section-toc.1-1.2.2.2.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="ulEmpty toc compact" id="section-toc.1-1.2.2.3">
+              <li class="compact ulEmpty toc" id="section-toc.1-1.2.2.3">
                 <p id="section-toc.1-1.2.2.3.1"><a href="#section-2.3" class="xref">2.3</a>.  <a href="#name-references" class="xref">References</a><a href="#section-toc.1-1.2.2.3.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 </li>
-          <li class="ulEmpty toc compact" id="section-toc.1-1.3">
+          <li class="compact ulEmpty toc" id="section-toc.1-1.3">
             <p id="section-toc.1-1.3.1"><a href="#section-3" class="xref">3</a>.  <a href="#name-6lowpan-neighbor-discovery" class="xref">6LoWPAN Neighbor Discovery</a><a href="#section-toc.1-1.3.1" class="pilcrow">¶</a></p>
-<ul class="ulEmpty toc compact">
-<li class="ulEmpty toc compact" id="section-toc.1-1.3.2.1">
+<ul class="compact ulEmpty toc">
+<li class="compact ulEmpty toc" id="section-toc.1-1.3.2.1">
                 <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="xref">3.1</a>.  <a href="#name-rfc-6775-address-registrati" class="xref">RFC 6775 Address Registration</a><a href="#section-toc.1-1.3.2.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="ulEmpty toc compact" id="section-toc.1-1.3.2.2">
+              <li class="compact ulEmpty toc" id="section-toc.1-1.3.2.2">
                 <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="xref">3.2</a>.  <a href="#name-rfc-8505-extended-address-r" class="xref">RFC 8505 Extended Address Registration</a><a href="#section-toc.1-1.3.2.2.1" class="pilcrow">¶</a></p>
-<ul class="ulEmpty toc compact">
-<li class="ulEmpty toc compact" id="section-toc.1-1.3.2.2.2.1">
+<ul class="compact ulEmpty toc">
+<li class="compact ulEmpty toc" id="section-toc.1-1.3.2.2.2.1">
                     <p id="section-toc.1-1.3.2.2.2.1.1"><a href="#section-3.2.1" class="xref">3.2.1</a>.  <a href="#name-r-flag" class="xref">R Flag</a><a href="#section-toc.1-1.3.2.2.2.1.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="ulEmpty toc compact" id="section-toc.1-1.3.2.2.2.2">
+                  <li class="compact ulEmpty toc" id="section-toc.1-1.3.2.2.2.2">
                     <p id="section-toc.1-1.3.2.2.2.2.1"><a href="#section-3.2.2" class="xref">3.2.2</a>.  <a href="#name-tid-i-field-and-opaque-fiel" class="xref">TID, "I" Field and Opaque Fields</a><a href="#section-toc.1-1.3.2.2.2.2.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="ulEmpty toc compact" id="section-toc.1-1.3.2.2.2.3">
+                  <li class="compact ulEmpty toc" id="section-toc.1-1.3.2.2.2.3">
                     <p id="section-toc.1-1.3.2.2.2.3.1"><a href="#section-3.2.3" class="xref">3.2.3</a>.  <a href="#name-status" class="xref">Status</a><a href="#section-toc.1-1.3.2.2.2.3.1" class="pilcrow">¶</a></p>
 </li>
-                  <li class="ulEmpty toc compact" id="section-toc.1-1.3.2.2.2.4">
+                  <li class="compact ulEmpty toc" id="section-toc.1-1.3.2.2.2.4">
                     <p id="section-toc.1-1.3.2.2.2.4.1"><a href="#section-3.2.4" class="xref">3.2.4</a>.  <a href="#name-route-ownership-verifier" class="xref">Route Ownership Verifier</a><a href="#section-toc.1-1.3.2.2.2.4.1" class="pilcrow">¶</a></p>
 </li>
                 </ul>
 </li>
-              <li class="ulEmpty toc compact" id="section-toc.1-1.3.2.3">
+              <li class="compact ulEmpty toc" id="section-toc.1-1.3.2.3">
                 <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="xref">3.3</a>.  <a href="#name-rfc-8505-extended-dar-dac" class="xref">RFC 8505 Extended DAR/DAC</a><a href="#section-toc.1-1.3.2.3.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="ulEmpty toc compact" id="section-toc.1-1.3.2.4">
+              <li class="compact ulEmpty toc" id="section-toc.1-1.3.2.4">
                 <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="xref">3.4</a>.  <a href="#name-rfc-7400-capability-indicat" class="xref">RFC 7400 Capability Indication Option</a><a href="#section-toc.1-1.3.2.4.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 </li>
-          <li class="ulEmpty toc compact" id="section-toc.1-1.4">
+          <li class="compact ulEmpty toc" id="section-toc.1-1.4">
             <p id="section-toc.1-1.4.1"><a href="#section-4" class="xref">4</a>.  <a href="#name-extending-6lowpan-nd" class="xref">Extending 6LoWPAN ND</a><a href="#section-toc.1-1.4.1" class="pilcrow">¶</a></p>
-<ul class="ulEmpty toc compact">
-<li class="ulEmpty toc compact" id="section-toc.1-1.4.2.1">
+<ul class="compact ulEmpty toc">
+<li class="compact ulEmpty toc" id="section-toc.1-1.4.2.1">
                 <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="xref">4.1</a>.  <a href="#name-use-of-the-r-flag-in-na" class="xref">Use of the R flag in NA</a><a href="#section-toc.1-1.4.2.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="ulEmpty toc compact" id="section-toc.1-1.4.2.2">
+              <li class="compact ulEmpty toc" id="section-toc.1-1.4.2.2">
                 <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="xref">4.2</a>.  <a href="#name-distributing-the-6lbr" class="xref">Distributing the 6LBR</a><a href="#section-toc.1-1.4.2.2.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="ulEmpty toc compact" id="section-toc.1-1.4.2.3">
+              <li class="compact ulEmpty toc" id="section-toc.1-1.4.2.3">
                 <p id="section-toc.1-1.4.2.3.1"><a href="#section-4.3" class="xref">4.3</a>.  <a href="#name-unicast-address-lookup-with" class="xref">Unicast Address Lookup with the 6LBR</a><a href="#section-toc.1-1.4.2.3.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 </li>
-          <li class="ulEmpty toc compact" id="section-toc.1-1.5">
+          <li class="compact ulEmpty toc" id="section-toc.1-1.5">
             <p id="section-toc.1-1.5.1"><a href="#section-5" class="xref">5</a>.  <a href="#name-requirements-on-the-evpn-un" class="xref">Requirements on the EVPN-Unaware Host</a><a href="#section-toc.1-1.5.1" class="pilcrow">¶</a></p>
-<ul class="ulEmpty toc compact">
-<li class="ulEmpty toc compact" id="section-toc.1-1.5.2.1">
+<ul class="compact ulEmpty toc">
+<li class="compact ulEmpty toc" id="section-toc.1-1.5.2.1">
                 <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="xref">5.1</a>.  <a href="#name-support-of-6lowpan-nd" class="xref">Support of 6LoWPAN ND</a><a href="#section-toc.1-1.5.2.1.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 </li>
-          <li class="ulEmpty toc compact" id="section-toc.1-1.6">
+          <li class="compact ulEmpty toc" id="section-toc.1-1.6">
             <p id="section-toc.1-1.6.1"><a href="#section-6" class="xref">6</a>.  <a href="#name-enhancements-to-evpn" class="xref">Enhancements to EVPN</a><a href="#section-toc.1-1.6.1" class="pilcrow">¶</a></p>
-<ul class="ulEmpty toc compact">
-<li class="ulEmpty toc compact" id="section-toc.1-1.6.2.1">
+<ul class="compact ulEmpty toc">
+<li class="compact ulEmpty toc" id="section-toc.1-1.6.2.1">
                 <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="xref">6.1</a>.  <a href="#name-rovr-mac-mobility-extended-" class="xref">ROVR MAC Mobility Extended Community</a><a href="#section-toc.1-1.6.2.1.1" class="pilcrow">¶</a></p>
 </li>
-              <li class="ulEmpty toc compact" id="section-toc.1-1.6.2.2">
+              <li class="compact ulEmpty toc" id="section-toc.1-1.6.2.2">
                 <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="xref">6.2</a>.  <a href="#name-extended-rovr-mac-procedure" class="xref">Extended ROVR MAC Procedures</a><a href="#section-toc.1-1.6.2.2.1" class="pilcrow">¶</a></p>
 </li>
             </ul>
 </li>
-          <li class="ulEmpty toc compact" id="section-toc.1-1.7">
+          <li class="compact ulEmpty toc" id="section-toc.1-1.7">
             <p id="section-toc.1-1.7.1"><a href="#section-7" class="xref">7</a>.  <a href="#name-protocol-operations" class="xref">Protocol Operations</a><a href="#section-toc.1-1.7.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="ulEmpty toc compact" id="section-toc.1-1.8">
+          <li class="compact ulEmpty toc" id="section-toc.1-1.8">
             <p id="section-toc.1-1.8.1"><a href="#section-8" class="xref">8</a>.  <a href="#name-security-considerations" class="xref">Security Considerations</a><a href="#section-toc.1-1.8.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="ulEmpty toc compact" id="section-toc.1-1.9">
+          <li class="compact ulEmpty toc" id="section-toc.1-1.9">
             <p id="section-toc.1-1.9.1"><a href="#section-9" class="xref">9</a>.  <a href="#name-iana-considerations" class="xref">IANA Considerations</a><a href="#section-toc.1-1.9.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="ulEmpty toc compact" id="section-toc.1-1.10">
+          <li class="compact ulEmpty toc" id="section-toc.1-1.10">
             <p id="section-toc.1-1.10.1"><a href="#section-10" class="xref">10</a>. <a href="#name-acknowledgments" class="xref">Acknowledgments</a><a href="#section-toc.1-1.10.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="ulEmpty toc compact" id="section-toc.1-1.11">
+          <li class="compact ulEmpty toc" id="section-toc.1-1.11">
             <p id="section-toc.1-1.11.1"><a href="#section-11" class="xref">11</a>. <a href="#name-normative-references" class="xref">Normative References</a><a href="#section-toc.1-1.11.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="ulEmpty toc compact" id="section-toc.1-1.12">
+          <li class="compact ulEmpty toc" id="section-toc.1-1.12">
             <p id="section-toc.1-1.12.1"><a href="#section-12" class="xref">12</a>. <a href="#name-informative-references" class="xref">Informative References</a><a href="#section-toc.1-1.12.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="ulEmpty toc compact" id="section-toc.1-1.13">
+          <li class="compact ulEmpty toc" id="section-toc.1-1.13">
             <p id="section-toc.1-1.13.1"><a href="#section-appendix.a" class="xref"></a><a href="#name-authors-addresses" class="xref">Authors' Addresses</a><a href="#section-toc.1-1.13.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
@@ -1377,13 +1383,19 @@ dt+dd:empty::before{
       </h2>
 <p id="section-1-1">
   <span><a href="#RFC8505" class="xref">"Registration Extensions for IPv6 over 6LoWPAN
-  Neighbor Discovery"</a> [<a href="#RFC8505" class="xref">RFC8505</a>]</span> (ND) provides a routing-agnostic Host-to-Router
-  Link-Local interface to claim an IPv6 address and obtain reachability services
-  for that address. <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span> is already used to redistribute
-  host routes in RPL <span>[<a href="#RFC9010" class="xref">RFC9010</a>]</span> and RIFT
-  <span><a href="#I-D.ietf-rift-rift" class="xref">"Routing in Fat Trees"</a> [<a href="#I-D.ietf-rift-rift" class="xref">RIFT</a>]</span>, and to
-  maintain a proxy-ND state in a backbone router <span>[<a href="#RFC8929" class="xref">RFC8929</a>]</span>.<a href="#section-1-1" class="pilcrow">¶</a></p>
+  Neighbor Discovery"</a> [<a href="#RFC8505" class="xref">RFC8505</a>]</span> (ND) provides a zeroconf routing-agnostic
+  Host-to-Router Link-Local interface for Stateful Address Autoconfiguration.
+  <span><a href="#RFC8928" class="xref">"Address-Protected Neighbor Discovery for Low-Power and
+  Lossy Networks"</a> [<a href="#RFC8928" class="xref">RFC8928</a>]</span> (AP-ND) adds a zeroconf anti-theft protection that protects the ownership of the autoconfigured address with autoconfigured proof of ownership called a Registration Ownership Verifier (ROVR).<a href="#section-1-1" class="pilcrow">¶</a></p>
 <p id="section-1-2">
+  <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span> enables the host to claim an IPv6 address and obtain
+  reachability services for that address. It is already used to inject host
+  routes in RPL <span>[<a href="#RFC9010" class="xref">RFC9010</a>]</span> and RIFT
+  <span><a href="#I-D.ietf-rift-rift" class="xref">"Routing in Fat Trees"</a> [<a href="#I-D.ietf-rift-rift" class="xref">RIFT</a>]</span>, and to
+  maintain a proxy-ND state in a backbone router <span>[<a href="#RFC8929" class="xref">RFC8929</a>]</span>; this
+  specification extends its applicability to the case of Ethernet Virtual
+  Private Network (eVPN).<a href="#section-1-2" class="pilcrow">¶</a></p>
+<p id="section-1-3">
   <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span> specifies a unicast address registration mechanism
   that enables the host called a 6LowPAN Node (6LN) to install a ND binding
   state in the 6LowPAN Router (6LR) that can serve as Neighbor Cache Entry (NCE),
@@ -1391,8 +1403,8 @@ dt+dd:empty::before{
   The protocol provides the means to reject the registration in case of address
   duplication. It also enables to discriminate mobility from multihoming.
   <span>[<a href="#RFC8928" class="xref">RFC8928</a>]</span> adds the capability to verify the ownership of the
-  address and prevent an attacker from stealing and/or impersonating an address.<a href="#section-1-2" class="pilcrow">¶</a></p>
-<p id="section-1-3">
+  address and prevent an attacker from stealing and/or impersonating an address.<a href="#section-1-3" class="pilcrow">¶</a></p>
+<p id="section-1-4">
   <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span> defines the 6LoWPAN Border Router (6LBR) as an
   abstract address registrar that provides authoritative service for Address
   Registration and duplicate detection. The 6LBR stores address metadata
@@ -1404,13 +1416,13 @@ dt+dd:empty::before{
   This specification extends the 6LBR abstract data model to store the
   Link Layer Address (LLA) of the Registering Node. This enables the 6LBR to
   perform locally, and using unicast communication, the IPv6 ND services of
-  address lookup and duplicate address detection.<a href="#section-1-3" class="pilcrow">¶</a></p>
-<p id="section-1-4">
+  address lookup and duplicate address detection.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-5">
   The <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span> address registrar can be centralized, but it can
   also be distributed and maintained synchronized using a routing protocol.
   This specification adds attributes to EVPN to carry the IPv6 address metadata
   learned from <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span> so as to maintain a synchronized copy of
-  the 6LBR abstract data at each EVPN router.<a href="#section-1-4" class="pilcrow">¶</a></p>
+  the 6LBR abstract data at each EVPN router.<a href="#section-1-5" class="pilcrow">¶</a></p>
 </section>
 </div>
 <section id="section-2">
@@ -1438,132 +1450,140 @@ dt+dd:empty::before{
         </h3>
 <p id="section-2.2-1"> This document uses the following acronyms:<a href="#section-2.2-1" class="pilcrow">¶</a></p>
 <span class="break"></span><dl class="dlParallel dlCompact" id="section-2.2-2">
-          <dt id="section-2.2-2.1">6LN:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.2"> 6LoWPAN Node (the Host)<a href="#section-2.2-2.2" class="pilcrow">¶</a>
+          <dt id="section-2.2-2.1">6CIO</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.2">Capability Indication Option <span>[<a href="#RFC7400" class="xref">RFC7400</a>]</span><a href="#section-2.2-2.2" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.3">6LR:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.4"> 6LoWPAN router (the router)<a href="#section-2.2-2.4" class="pilcrow">¶</a>
+<dt id="section-2.2-2.3">6LN:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.4"> 6LoWPAN Node (the Host) <span>[<a href="#RFC6775" class="xref">RFC6775</a>]</span><a href="#section-2.2-2.4" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.5">6LBR:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.6"> 6LoWPAN Border router (the reflector)<a href="#section-2.2-2.6" class="pilcrow">¶</a>
+<dt id="section-2.2-2.5">6LR:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.6"> 6LoWPAN router (the router) <span>[<a href="#RFC6775" class="xref">RFC6775</a>]</span><a href="#section-2.2-2.6" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.7">AMC:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.8"> Address Mapping Confirmation<a href="#section-2.2-2.8" class="pilcrow">¶</a>
+<dt id="section-2.2-2.7">6LBR:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.8"> 6LoWPAN Border router  <span>[<a href="#RFC6775" class="xref">RFC6775</a>]</span><a href="#section-2.2-2.8" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.9">AMR:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.10"> Address Mapping Request<a href="#section-2.2-2.10" class="pilcrow">¶</a>
+<dt id="section-2.2-2.9">AMC:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.10"> Address Mapping Confirmation <span>[<a href="#I-D.thubert-6lo-unicast-lookup" class="xref">UNICAST-LOOKUP</a>]</span><a href="#section-2.2-2.10" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.11">EARO:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.12"> Extended Address Registration Option<a href="#section-2.2-2.12" class="pilcrow">¶</a>
+<dt id="section-2.2-2.11">AMR:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.12"> Address Mapping Request <span>[<a href="#I-D.thubert-6lo-unicast-lookup" class="xref">UNICAST-LOOKUP</a>]</span><a href="#section-2.2-2.12" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.13">DAD:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.14"> Duplicate Address Detection<a href="#section-2.2-2.14" class="pilcrow">¶</a>
+<dt id="section-2.2-2.13">ARO</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.14">Address Registration Option  <span>[<a href="#RFC6775" class="xref">RFC6775</a>]</span><a href="#section-2.2-2.14" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.15">ICMPv6:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.16"> Internet Control Message Protocol for IPv6<a href="#section-2.2-2.16" class="pilcrow">¶</a>
+<dt id="section-2.2-2.15">CIPO:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.16">Crypto-ID Parameters Option<a href="#section-2.2-2.16" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.17">EVPN:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.18"> Ethernet VPN<a href="#section-2.2-2.18" class="pilcrow">¶</a>
+<dt id="section-2.2-2.17">DAD:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.18"> Duplicate Address Detection <span>[<a href="#RFC4862" class="xref">RFC4862</a>]</span><a href="#section-2.2-2.18" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.19">LLA:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.20"> Link-Layer Address (the MAC address on Ethernet)<a href="#section-2.2-2.20" class="pilcrow">¶</a>
+<dt id="section-2.2-2.19">ICMPv6:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.20"> Internet Control Message Protocol for IPv6<a href="#section-2.2-2.20" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.21">NA:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.22">  Neighbor Advertisement<a href="#section-2.2-2.22" class="pilcrow">¶</a>
+<dt id="section-2.2-2.21">DAC</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.22">Duplicate Address Confirmation  <span>[<a href="#RFC6775" class="xref">RFC6775</a>]</span><a href="#section-2.2-2.22" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.23">NCE:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.24">  Neighbor Cache Entry<a href="#section-2.2-2.24" class="pilcrow">¶</a>
+<dt id="section-2.2-2.23">DAR</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.24">Duplicate Address Request <span>[<a href="#RFC6775" class="xref">RFC6775</a>]</span><a href="#section-2.2-2.24" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.25">ND:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.26">  Neighbor Discovery<a href="#section-2.2-2.26" class="pilcrow">¶</a>
+<dt id="section-2.2-2.25">EDAC</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.26">Extended Duplicate Address Confirmation  <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span><a href="#section-2.2-2.26" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.27">NS:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.28">  Neighbor Solicitation<a href="#section-2.2-2.28" class="pilcrow">¶</a>
+<dt id="section-2.2-2.27">EDAR</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.28">Extended Duplicate Address Request <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span><a href="#section-2.2-2.28" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.29">RA:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.30">  Router Advertisement<a href="#section-2.2-2.30" class="pilcrow">¶</a>
+<dt id="section-2.2-2.29">EARO:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.30"> Extended Address Registration Option <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span><a href="#section-2.2-2.30" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.31">ROVR:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.32"> Registration Ownership Verifier<a href="#section-2.2-2.32" class="pilcrow">¶</a>
+<dt id="section-2.2-2.31">EVPN:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.32"> Ethernet VPN  <span>[<a href="#RFC7432" class="xref">RFC7432</a>]</span><a href="#section-2.2-2.32" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.33">TID:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.34"> Transaction ID (a sequence counter in the EARO)<a href="#section-2.2-2.34" class="pilcrow">¶</a>
+<dt id="section-2.2-2.33">LLA:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.34"> Link-Layer Address (the MAC address on Ethernet)<a href="#section-2.2-2.34" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.35">TIO:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.36"> Transit Information Option<a href="#section-2.2-2.36" class="pilcrow">¶</a>
+<dt id="section-2.2-2.35">LLN</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.36">Low-Power and Lossy Network <span>[<a href="#RFC6550" class="xref">RFC6550</a>]</span><a href="#section-2.2-2.36" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.37">SLAAC:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.38"> Stateless Address Autoconfiguration<a href="#section-2.2-2.38" class="pilcrow">¶</a>
+<dt id="section-2.2-2.37">NA:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.38">  Neighbor Advertisement <span>[<a href="#RFC4861" class="xref">RFC4861</a>]</span><a href="#section-2.2-2.38" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.39">SLLAO:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.40"> Source Link-Layer Address Option<a href="#section-2.2-2.40" class="pilcrow">¶</a>
+<dt id="section-2.2-2.39">NCE:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.40">  Neighbor Cache Entry <span>[<a href="#RFC4861" class="xref">RFC4861</a>]</span><a href="#section-2.2-2.40" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.41">TLLAO:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.42"> Target Link-Layer Address Option<a href="#section-2.2-2.42" class="pilcrow">¶</a>
+<dt id="section-2.2-2.41">ND:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.42">  Neighbor Discovery <span>[<a href="#RFC4861" class="xref">RFC4861</a>]</span><a href="#section-2.2-2.42" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.43">ROVR MAC:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.44"> MAC obtained from a host meeting requirements in <a href="#prereq" class="xref">Section 5</a><a href="#section-2.2-2.44" class="pilcrow">¶</a>
+<dt id="section-2.2-2.43">NDPSO:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.44"> Neighbor Discovery Protocol Signature Option<a href="#section-2.2-2.44" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.45">Validated ROVR MAC:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.46"> ROVR MAC validated by procedures specified in <span>[<a href="#RFC8928" class="xref">RFC8928</a>]</span><a href="#section-2.2-2.46" class="pilcrow">¶</a>
+<dt id="section-2.2-2.45">NS:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.46">  Neighbor Solicitation <span>[<a href="#RFC4861" class="xref">RFC4861</a>]</span><a href="#section-2.2-2.46" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.47">ROVR Node:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.48"> EVPN node capable of advertising ROVR MACs<a href="#section-2.2-2.48" class="pilcrow">¶</a>
+<dt id="section-2.2-2.47">RA:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.48">  Router Advertisement <span>[<a href="#RFC4861" class="xref">RFC4861</a>]</span><a href="#section-2.2-2.48" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.49">non-ROVR Node:</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.50"> EVPN node not supporting extensions defined in this document.<a href="#section-2.2-2.50" class="pilcrow">¶</a>
+<dt id="section-2.2-2.49">ROVR:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.50"> Registration Ownership Verifier <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span><a href="#section-2.2-2.50" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.51">LLN</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.52">?<a href="#section-2.2-2.52" class="pilcrow">¶</a>
+<dt id="section-2.2-2.51">TID:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.52"> Transaction ID (a sequence counter in the EARO) <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span><a href="#section-2.2-2.52" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.53">6CIO</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.54">?<a href="#section-2.2-2.54" class="pilcrow">¶</a>
+<dt id="section-2.2-2.53">SLAAC:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.54"> Stateless Address Autoconfiguration <span>[<a href="#RFC4862" class="xref">RFC4862</a>]</span><a href="#section-2.2-2.54" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.55">DAR</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.56">?<a href="#section-2.2-2.56" class="pilcrow">¶</a>
+<dt id="section-2.2-2.55">SLLAO:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.56"> Source Link-Layer Address Option <span>[<a href="#RFC4861" class="xref">RFC4861</a>]</span><a href="#section-2.2-2.56" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.57">DAC</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.58">?<a href="#section-2.2-2.58" class="pilcrow">¶</a>
+<dt id="section-2.2-2.57">TLLAO:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.58"> Target Link-Layer Address Option <span>[<a href="#RFC4861" class="xref">RFC4861</a>]</span><a href="#section-2.2-2.58" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.59">EDAR</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.60">?<a href="#section-2.2-2.60" class="pilcrow">¶</a>
+<dt id="section-2.2-2.59">ROVR MAC:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.60"> MAC obtained from a host meeting requirements in <a href="#prereq" class="xref">Section 5</a><a href="#section-2.2-2.60" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.61">EDAC</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.62">?<a href="#section-2.2-2.62" class="pilcrow">¶</a>
+<dt id="section-2.2-2.61">Validated ROVR MAC:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.62"> ROVR MAC validated by procedures specified in <span>[<a href="#RFC8928" class="xref">RFC8928</a>]</span><a href="#section-2.2-2.62" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
-<dt id="section-2.2-2.63">ARO</dt>
-          <dd style="margin-left: 1.5em" id="section-2.2-2.64">?<a href="#section-2.2-2.64" class="pilcrow">¶</a>
+<dt id="section-2.2-2.63">ROVR Node:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.64"> EVPN node capable of advertising ROVR MACs<a href="#section-2.2-2.64" class="pilcrow">¶</a>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.2-2.65">non-ROVR Node:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.66"> EVPN node not supporting extensions defined in this document.<a href="#section-2.2-2.66" class="pilcrow">¶</a>
+</dd>
+          <dd class="break"></dd>
+<dt id="section-2.2-2.67">VPN:</dt>
+          <dd style="margin-left: 1.5em" id="section-2.2-2.68"> Virtual Private Network<a href="#section-2.2-2.68" class="pilcrow">¶</a>
 </dd>
         <dd class="break"></dd>
 </dl>
@@ -1648,7 +1668,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
   neighbors for the duration of their interaction. Though it is also called a
   Neighbor Cache Entry (BCE) in <span>[<a href="#RFC6775" class="xref">RFC6775</a>]</span>, and in contrast with
   the the BCE in SLAAC, that state is not a cache that can be casually flushed and rebuilt. It must be installed proactively  and refreshed periodically to
-  maintain the connecticity and enable unicast-only operations.<a href="#section-3-2" class="pilcrow">¶</a></p>
+  maintain the connectivity and enable unicast-only operations.<a href="#section-3-2" class="pilcrow">¶</a></p>
 <p id="section-3-3">
   The typical abstraction for an IP Link with 6LoWPAN ND is point-to-point (P2P)
   between a node and a router. An IP interface bundles multiple links between
@@ -1684,11 +1704,11 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
    Registration Option (ARO) that is carried in the unicast
    Neighbor Solicitation (NS) and Neighbor Advertisement (NA) messages between
    the 6LoWPAN Node (6LN) and the 6LoWPAN router (6LR).
-
    It also defines the Duplicate Address Request (DAR) and Duplicate
    Address Confirmation (DAC) messages between the 6LR and the 6LBR.
-   In an LLN, the 6LBR is the central repository of all the Registered Addresses
-   in its domain and the source of truth for uniqueness and ownership.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+   In a Low-Power and Lossy Network (LLN), the 6LBR is the central repository of
+   all the Registered Addresses in its domain and the authoritative source of
+   truth for uniqueness and ownership.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="R8505E">
@@ -1876,9 +1896,8 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
    The EDAR/EDAC
    exchange is protected by the retry mechanism specified in Section 8.2.6 of
    <span>[<a href="#RFC6775" class="xref">RFC6775</a>]</span>, though in a data center, a duration significantly
-   shorter than the default value of the RetransTimer  <span>[<a href="#RFC4861" class="xref">RFC4861</a>]</span>
-   of 1 second may be sufficient to cover the round-trip delay between the 6LR
-   and the 6LBR.<a href="#section-3.3-4" class="pilcrow">¶</a></p>
+   shorter than the default value of the Retransmission Timer <span>[<a href="#RFC4861" class="xref">RFC4861</a>]</span> of 1 second may be sufficient to cover the round-trip delay
+   between the 6R and the 6LBR.<a href="#section-3.3-4" class="pilcrow">¶</a></p>
 <p id="section-3.3-5">
    With this specification, the 6LBR is distributed across the leaves, and all
    the leaves where an address is currently registered maintain a full 6LBR
@@ -1989,7 +2008,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
     This specification leverages <span>[<a href="#RFC8929" class="xref">RFC8929</a>]</span> that augments the
     abstract data model of the 6LBR to store the LLA associated with the
     registered address. Based on that additional state, the 6LBR in a leaf can
-    communicate the mapping to the colocated EVPN function and respond to
+    communicate the mapping to the collocated EVPN function and respond to
     unicast address mapping lookups from the server side.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
 <p id="section-4.2-3">
     In an environment where the server ranges from a classical host to a more
@@ -2451,7 +2470,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
    The routers recognize the same (ROVR, TID) as the signal of a multihomed
    address and maintain all the routes.
    In the case of EVPN, the Ethernet Segment must also be the same. The flow
-   for a successful multihomed registrtaion is illustrated in
+   for a successful multihomed registration is illustrated in
    <a href="#fRegmul" class="xref">Figure 13</a>.<a href="#section-5.1-5" class="pilcrow">¶</a></p>
 <p id="section-5.1-6"><span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span> introduces error Status values in the NA(EARO)
    which can be received synchronously upon an NS(EARO) or asynchronously.
@@ -2496,10 +2515,17 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
            distinguish a TID-generated sequence number from a legacy sequence number.<a href="#section-6-2.2" class="pilcrow">¶</a>
 </li>
         <li class="normal" id="section-6-2.3">
-          <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span> supports IP multihoming, but does not differentiate multihoming from anycast, e.g., using the MAC address, to enable MAC address rotation. If an anycast IP address is registered with a different ROVR it will be rejected as duplicate. If it is
-           registered with a different TID, the older sequence will be withdrawn. So the basic expectation with <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span> is that
-           the advertisement of an anycast address is coordinated, with the same keypair known to all parties, and the same value of the TID used by all nodes (and possibly never increasing), in other words, with no concept of mobility.
-           This specification adds a flag in EVPN that signals that the IP address is anycast and requires the local 6LBR to ignore the duplication if the same IP address is registered locally, and then to inject the NLRI with the flag set as well.<a href="#section-6-2.3" class="pilcrow">¶</a>
+          <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span> supports IP multihoming, but does not differentiate multihoming from
+            anycast, e.g., using the MAC address, to enable MAC address rotation. If an anycast IP address
+            is registered with a different ROVR it will be rejected as duplicate. If it is
+           registered with a different TID, the older sequence will be withdrawn. So the basic expectation
+            with <span>[<a href="#RFC8505" class="xref">RFC8505</a>]</span> is that
+           the advertisement of an anycast address is coordinated, with the same keypair known to all parties,
+            and the same value of the TID used by all nodes (and possibly never increasing), in other words,
+            with no concept of mobility.
+           This specification adds a flag in EVPN that signals that the IP address is anycast and requires
+            the local 6LBR to ignore the duplication if the same IP address is registered locally, and then to
+            inject the NLRI with the A flag set on mobility extended community as well.<a href="#section-6-2.3" class="pilcrow">¶</a>
 </li>
         <li class="normal" id="section-6-2.4">
           <span>[<a href="#RFC8928" class="xref">RFC8928</a>]</span> needs the full ROVR to validate the address ownership,
@@ -2531,7 +2557,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
             registered by a 6LN in the network and the according validation with
             the node advertising the U-bit version of the route performed, the
             owner will inject the route without the U-bit. A node advertising the
-            NLRI with U-bit MUST withdraw the U-bit route once it sees a validated
+            NLRI with U-bit in its mobility extended community MUST withdraw the U-bit route once it sees a validated
             NLRI without the U-bit and it MAY reinject the route with the U-bit once all routes without the U-bit are withdrawn to protect the address again.<a href="#section-6-2.5" class="pilcrow">¶</a>
 </li>
       </ul>
@@ -2561,7 +2587,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
         to look like "sticky" MACs for non-ROVR nodes.
         As defined in the glossary, for simplicity reasons such nodes will be called non-ROVR nodes vs. ROVR nodes.
         The "sticky" bit will force non-ROVR nodes to disregard the sequence number and
-        accept any NLRI route provided.<a href="#section-6.1-2" class="pilcrow">¶</a></p>
+        accept any IP/MAC route provided.<a href="#section-6.1-2" class="pilcrow">¶</a></p>
 <p id="section-6.1-3">ROVR nodes MUST set the "R" flag in Mobility Extended Community to indicate that
     the advertisement is a ROVR MAC in case the host followed the according procedures.
         ROVR MACs use (instead of increasing the normal sequence
@@ -2574,7 +2600,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 <p id="section-6.1-5">In case a ROVR node configures the address as "sticky" (since the sticky bit semantics
     have been changed to the point a ROVR cannot tell whether address is really sticky unless
     advertised as such by non-ROVR node) a new "X" flag called "super sticky" is introduced.<a href="#section-6.1-5" class="pilcrow">¶</a></p>
-<span id="name-new-nlri"></span><div id="feVPNtgt">
+<span id="name-modified-mac-mobility-exten"></span><div id="feVPNtgt">
 <figure id="figure-11">
           <div class="artwork art-text alignLeft" id="section-6.1-6.1">
 <pre>
@@ -2587,7 +2613,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 </pre>
 </div>
 <figcaption><a href="#figure-11" class="selfRef">Figure 11</a>:
-<a href="#name-new-nlri" class="selfRef">New NLRI</a>
+<a href="#name-modified-mac-mobility-exten" class="selfRef">Modified MAC Mobility Extended Community</a>
           </figcaption></figure>
 </div>
 <p id="section-6.1-7">Flags:<a href="#section-6.1-7" class="pilcrow">¶</a></p>
@@ -2618,8 +2644,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
           <dd class="break"></dd>
 <dt id="section-6.1-8.9">V:</dt>
           <dd style="margin-left: 1.5em" id="section-6.1-8.10">ROVR Validated indicates that the MAC passed proof of ownership per
-            <span>[<a href="#RFC8928" class="xref">RFC8928</a>]</span>. Presence of this bit implies the "R" bit being set irregardless of
-    its value.<a href="#section-6.1-8.10" class="pilcrow">¶</a>
+            <span>[<a href="#RFC8928" class="xref">RFC8928</a>]</span>. Presence of this bit implies the "R" bit being set irregardless of its value.<a href="#section-6.1-8.10" class="pilcrow">¶</a>
 </dd>
           <dd class="break"></dd>
 <dt id="section-6.1-8.11">X:</dt>
@@ -2657,7 +2682,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
         then fall back to advertising the TID generated sequence number again. In case a non-ROVR node persists in
         increasing the sequence number after that it is indication of violation of  <span>[<a href="#RFC7432" class="xref">RFC7432</a>]</span> on its part.<a href="#section-6.2-2" class="pilcrow">¶</a></p>
 <p id="section-6.2-3">
-            A ROVR node advertising a ROVR MAC that has not been validated and receiving same type-2 NLRI that has been
+            A ROVR node advertising a ROVR MAC that has not been validated and receiving same type-2 route that has been
             validated MUST immediately withdraw its advertisement.<a href="#section-6.2-3" class="pilcrow">¶</a></p>
 <p id="section-6.2-4">
             A ROVR node advertising a ROVR MAC and receiving an equivalent ROVR MAC from other node with a higher TID
@@ -2665,7 +2690,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
             the sequence as MAC move despite ignoring the sequence number due to presence of "S" bit.<a href="#section-6.2-4" class="pilcrow">¶</a></p>
 <p id="section-6.2-5">
             A ROVR node that receives a ROVR MAC with "super sticky" indication and seeing the MAC locally MUST
-            follow analogous procedures to  <span>[<a href="#RFC7432" class="xref">RFC7432</a>]</span>.<a href="#section-6.2-5" class="pilcrow">¶</a></p>
+            follow analogous procedures to <span>[<a href="#RFC7432" class="xref">RFC7432</a>]</span>.<a href="#section-6.2-5" class="pilcrow">¶</a></p>
 <p id="section-6.2-6">
             Multi-homing a MAC on mix of ROVR and non-ROVR nodes will lead to operational notifications since
             per <span>[<a href="#RFC7432" class="xref">RFC7432</a>]</span> the non-ROVR node will interpret the situation as a sticky MAC that
@@ -2684,9 +2709,31 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 <p id="section-7-1">
    Following section illustrates several situations and resulting signaling
    in EVPN from the point of view of a ROVR node.<a href="#section-7-1" class="pilcrow">¶</a></p>
+<p id="section-7-2">
+  <a href="#fReg1" class="xref">Figure 12</a> illustrates the registration flow of a new address
+  protected by <span>[<a href="#RFC8928" class="xref">RFC8928</a>]</span>. The ROVR in the EARO is a Crypto-ID
+  that derives from a public address through hashing with some other terms.
+  The router challenges the host with a status of 5 (validation requested).<a href="#section-7-2" class="pilcrow">¶</a></p>
+<p id="section-7-3">
+  The host performs the NS again, passing the parameters that enable to build
+  the Crypto-ID in a Crypto-ID Parameters Option (CIPO), and signing that set
+  of parameters together with a pair of Nonce values, one from each side, in a
+  resulting Neighbor Discovery Protocol Signature Option (NDPDO). The 6LR first
+  verifies that the Crypto-ID can be rebuilt based on the public key, then verifies that the signature in the NDPSO was effectively performed with the
+  associated public key. When that is the case, the registration flow can
+  continue, else the registration is rejected with a status of 10 (Validation
+  Failed) in the NA(EARO).<a href="#section-7-3" class="pilcrow">¶</a></p>
+<p id="section-7-4">
+  With this specification, the 6LBR communicates internally with the collocated
+  eVPN router to inject the route in eVPN. Since the <span>[<a href="#RFC8928" class="xref">RFC8928</a>]</span>
+  validation was performed, the V flag is set. Once this is done, the local 6LBR
+  installs a local state associated to the NCE and becomes owner of the
+  registration, whereas the remote leaves optionally install a remote state for
+  the address with the indication of the 6LBR that owns the registration. The
+  local 6LBR MUST be signalled as EVPN Next Hop for the route.<a href="#section-7-4" class="pilcrow">¶</a></p>
 <span id="name-host-registration"></span><div id="fReg1">
 <figure id="figure-12">
-        <div class="artwork art-text alignCenter" id="section-7-2.1">
+        <div class="artwork art-text alignCenter" id="section-7-5.1">
 <pre>
    Local            Local              Route           Remote
    Server           Leaf             Reflector         Leaf
@@ -2694,22 +2741,40 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
   |       |       |         |        |       |        |         |
      6LN           6LBR/EVPN            BGP            EVPN/6LBR
       |                |                 |                |
-      |    Ethernet    |      [via BGP signaling]        |
+      |    Ethernet    |      [via BGP signaling]         |
       |                |                 |                |
       |                |                 |                |
-      |   NS(EARO)     |                 |                |
+      |  NS(EARO(      |                 |                |
+      |       R set))  |                 |                |
       |---------------&gt;|                 |                |
+      |   ROVR in EARO is cryptographic  |                |
       |                |                 |                |
+      |     NA(EARO(   |                 |                |
+      |   R not set,   |                 |                |
+      |   status = 5), |                 |                |
+      |        Nonce1) |                 |                |
+      |&lt;---------------|                 |                |
+      |                |                 |                |
+      |   NS(EARO(     |                 |                |
+      |        R set), |                 |                |
+      |      CIPO,     |                 |                |
+      |      Nonce2,   |                 |                |
+      |      NDPSO)    |                 |                |
+      |---------------&gt;|                 |                |
+      |        Proof verified            |                |
       |     no state for that address    |                |
       |      install local state         |                |
       |                |                 |                |
       |                |  ROVR MAC Route A'               |
       |                |----------------&gt;|                |
-      |   NA(EARO)     |                 |                |
+      |        route injected            |                |
+      |                |                 |                |
+      |     NA(EARO(   |                 |                |
+      |   R set,       |                 |                |
+      |   status = 0)) |                 |                |
       |&lt;---------------|                 |                |
       |                |                 | ROVR MAC Route A'
       |                |                 |---------------&gt;|
-      |                |                 |                |
       |                |                 |    install remote state
       |                |                 |                |
 
@@ -2719,9 +2784,19 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 <a href="#name-host-registration" class="selfRef">Host Registration</a>
         </figcaption></figure>
 </div>
+<p id="section-7-6">
+  <a href="#fRegmul" class="xref">Figure 13</a> presents the same flow but for a multihomed address;
+  here and in the following flows, the proof of ownership section is not shown,
+  but its use is RECOMMENDED. The interesting piece is that when the node
+  registers to the second 6LBR, that second 6LBR find that there is a first
+  6LBR that already own the registration. Using and EDAR / EDAC flow, the
+  second 6LBR validates that the ROVR and TID are identical, in which case it
+  accepts the registration and becomes another 6LBR owner of the registration.
+  The result is that the 2 6LBRs are synchronized and any of the 2 can now be
+  used, e.g., if the address is registered a third time.<a href="#section-7-6" class="pilcrow">¶</a></p>
 <span id="name-multihoming"></span><div id="fRegmul">
 <figure id="figure-13">
-        <div class="artwork art-text alignCenter" id="section-7-3.1">
+        <div class="artwork art-text alignCenter" id="section-7-7.1">
 <pre>
     Local            Local          Local
     Server           Leaf 1         Leaf 2           Reflector
@@ -2769,9 +2844,13 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 <a href="#name-multihoming" class="selfRef">Multihoming</a>
         </figcaption></figure>
 </div>
+<p id="section-7-8">
+   The registration is associated with a lifetime, and it must be renewed with
+   an incremented TID. The new TID is propagated in eVPN as illustrated in
+  <a href="#fReg2" class="xref">Figure 14</a>.<a href="#section-7-8" class="pilcrow">¶</a></p>
 <span id="name-host-registration-renewal"></span><div id="fReg2">
 <figure id="figure-14">
-        <div class="artwork art-text alignCenter" id="section-7-4.1">
+        <div class="artwork art-text alignCenter" id="section-7-9.1">
 <pre>
 
    Local            Local              Route           Remote
@@ -2786,7 +2865,6 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
       |  NS(EARO(      |                 |                |
       |    TID+1))     |                 |                |
       |---------------&gt;|                 |                |
-      |                |                 |                |
       |   renew lifetime locally         |                |
       |                |                 |                |
       |                |  ROVR MAC Route A'(TID+1)        |
@@ -2802,9 +2880,14 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 <a href="#name-host-registration-renewal" class="selfRef">Host Registration Renewal</a>
         </figcaption></figure>
 </div>
+<p id="section-7-10">
+  <a href="#fRegdup" class="xref">Figure 15</a> illustrates the case where a second host registers
+  the same address, creating a potential address duplication situation.
+  in most cases, the ROVR hash will be different, and the local 6LBR can reject
+  the registration is a status of 1 (duplicate) right away.<a href="#section-7-10" class="pilcrow">¶</a></p>
 <span id="name-duplicate-addresses"></span><div id="fRegdup">
 <figure id="figure-15">
-        <div class="artwork art-text alignCenter" id="section-7-5.1">
+        <div class="artwork art-text alignCenter" id="section-7-11.1">
 <pre>
    Local            Local              Route           Remote
    Server           Leaf             Reflector         Leaf
@@ -2821,7 +2904,6 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
       |                |              ROVR Hash G         |
       |                |                 |&lt;---------------|
       |                |&lt;----------------|                |
-      |                |                 |                |
       |      Create remote state for A'  |                |
       |                |                 |                |
       |   NS(EARO)     |                 |                |
@@ -2839,9 +2921,14 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 <a href="#name-duplicate-addresses" class="selfRef">Duplicate Addresses</a>
         </figcaption></figure>
 </div>
+<p id="section-7-12">
+  <a href="#fRegdup2" class="xref">Figure 16</a> illustrates the case of an address duplication
+  situation where by chance, the ROVR hashes are the same. In that case, the
+  local 6LR checks with the 6LBR that owns the registration using an EDAR/EDAC message exchange. As opposed to the ROVR hash, the full ROVRs do not collide
+  and the registration is also rejected.<a href="#section-7-12" class="pilcrow">¶</a></p>
 <span id="name-duplicate-addresses-rovr-ha"></span><div id="fRegdup2">
 <figure id="figure-16">
-        <div class="artwork art-text alignCenter" id="section-7-6.1">
+        <div class="artwork art-text alignCenter" id="section-7-13.1">
 <pre>
    Local            Local              Route           Remote
    Server           Leaf             Reflector         Leaf
@@ -2861,7 +2948,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
       |      Create remote state for A'  |               |   |
       |              |   |                               |   |
       |              |                                       |
-      |              |     [out of band signaling]           |
+      |              |       [[out of band signaling]]       |
       |   NS(EARO)   |                                       |
       |-------------&gt;|                                       |
       |         compute ROVR Hash G                          |
@@ -2869,7 +2956,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
       |              |      EDAR to EVPN Next Hop            |
       |              |--------------------------------------&gt;|
       |              |                                       |
-      |              |               EDAR (status = 1)       |
+      |              |               EDAC (status = 1)       |
       |              |&lt;--------------------------------------|
       |              |                                       |
       |  NA(EARO(    |                                       |
@@ -2882,9 +2969,14 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 <a href="#name-duplicate-addresses-rovr-ha" class="selfRef">Duplicate Addresses, ROVR Hash Collision</a>
         </figcaption></figure>
 </div>
+<p id="section-7-14">
+  <a href="#fRegold" class="xref">Figure 17</a> shows a rare case where the registration has already
+  moved elsewhere with an incremented TID when the local registration is
+  received after being delayed in the network. In that case, the registration is
+  rejected with a status of 3 (moved).<a href="#section-7-14" class="pilcrow">¶</a></p>
 <span id="name-address-already-moved"></span><div id="fRegold">
 <figure id="figure-17">
-        <div class="artwork art-text alignCenter" id="section-7-7.1">
+        <div class="artwork art-text alignCenter" id="section-7-15.1">
 <pre>
    Local            Local              Route           Remote
    Server           Leaf             Reflector         Leaf
@@ -2893,8 +2985,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
      6LN           6LBR/EVPN            BGP            EVPN/6LBR
       |                |                 |                |
       |    Ethernet    |                 |                |
-      |                |        [via BGP signaling]      |
-      |                |                 |                |
+      |                |        [via BGP signaling]       |
       |                |                 |                |
       |                |          ROVR MAC Route A'       |
       |                |         ESI X', Hash F, TID Z    |
@@ -2919,7 +3010,7 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
 <a href="#name-address-already-moved" class="selfRef">Address Already Moved</a>
         </figcaption></figure>
 </div>
-<p id="section-7-8">
+<p id="section-7-16">
         Address move differs from multi-homing by the ESI being different
         as visualized by <a href="#fRegmov" class="xref">Figure 18</a>.
         In case of different ESI BGP signalling happens immediately, in
@@ -2929,10 +3020,10 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
         new remote state can be installed as is. However, if 6LN is
         not refreshing it registration we can expect elapsed lifetime
         to create scenario
-        <a href="#fRegTO" class="xref">Figure 21</a> over time.<a href="#section-7-8" class="pilcrow">¶</a></p>
+        <a href="#fRegTO" class="xref">Figure 21</a> over time.<a href="#section-7-16" class="pilcrow">¶</a></p>
 <span id="name-address-move"></span><div id="fRegmov">
 <figure id="figure-18">
-        <div class="artwork art-text alignCenter" id="section-7-9.1">
+        <div class="artwork art-text alignCenter" id="section-7-17.1">
 <pre>
 
    Local            Local              Route           Remote
@@ -2943,26 +3034,33 @@ expect other functionality such as 6LoWPAN Header Compression:<a href="#section-
       |                |                 |                |
       |    Ethernet    |                 |                |
       |                |        [via BGP signaling]       |
-      |                |                 |                |
       |   NS(EARO)     |                 |                |
       |---------------&gt;|                 |                |
-      |                |                 |                |
       |        Create local state        |                |
-      |                |  ROVR MAC Route A'               |
-      |                |  ESI X', TID Z  |                |
-      |                |  ROVR Hash F    |                |
-      |                |----------------&gt;|         Install remote
-      |                |                 |              state
+      |                |        ROVR MAC Route A'         |
+      |                |     ESI X', ROVR Hash F, TID Z   |
+      |                |----------------&gt;|                |
       |                |                 |---------------&gt;|
+      |                |                 |     Create remote state
 
-
-Different ES (movement):
-      |                |                 |                |&lt;----
-      |                |                 |     New local state A'
-      |                |                 |            created
+Same ES (multihomed):
+      |                |                 |                |&lt;--
+      |                |                 | New local state A' created
       |                |                 |                |
       |                |          ROVR MAC Route A'       |
-      |                |         ESI X'', Hash F, TID Z+1 |
+      |                |         ESI X', Hash F, TID Z+1  |
+      |                |                 |&lt;---------------|
+      |                |&lt;----------------|                |
+      |        Create remote state       |                |
+      |       Keep local expect renew    |                |
+      |                |                 |                |
+
+Different ES (movement):
+      |                |                 |                |&lt;--
+      |                |                 | New local state A' created
+      |                |                 |                |
+      |                |          ROVR MAC Route A'       |
+      |                |    ESI X'', ROVR Hash F, TID Z+1 |
       |                |                 |&lt;---------------|
       |                |&lt;----------------|                |
       |        Create remote state       |                |
@@ -2976,25 +3074,20 @@ Different ES (movement):
       |     remove local state           |                |
       |                |                 |                |
 
-
-Same ES (multihomed):
-      |                |                 |                |&lt;--
-      |                |                 | New local state A' created
-      |                |                 |                |
-      |                |          ROVR MAC Route A'       |
-      |                |         ESI X', Hash F, TID Z+1  |
-      |                |                 |&lt;---------------|
-      |                |&lt;----------------|                |
-      |                |                 |                |
 </pre>
 </div>
 <figcaption><a href="#figure-18" class="selfRef">Figure 18</a>:
 <a href="#name-address-move" class="selfRef">Address Move</a>
         </figcaption></figure>
 </div>
+<p id="section-7-18">
+  The host that registered the address may cancel the registration at any time,
+  e.g., if the address is removed fmor its own interface. This is done by
+  registering with a lifetime if 0 as shown in <a href="#fRegArmov" class="xref">Figure 19</a>.
+  The Leaf may respond with a status of 0 to indicate success, but a status of 4 (removed) is preferred for this situation.<a href="#section-7-18" class="pilcrow">¶</a></p>
 <span id="name-address-removal"></span><div id="fRegArmov">
 <figure id="figure-19">
-        <div class="artwork art-text alignCenter" id="section-7-10.1">
+        <div class="artwork art-text alignCenter" id="section-7-19.1">
 <pre>
    Local            Local              Route           Remote
    Server           Leaf             Reflector         Leaf
@@ -3024,9 +3117,14 @@ Same ES (multihomed):
 <a href="#name-address-removal" class="selfRef">Address Removal</a>
         </figcaption></figure>
 </div>
+<p id="section-7-20">
+  The host that registered the address may withdraw the route but maintain the
+  NCE, e.g., in the case where it is multihomed but does not want to use one
+  interface for the traffic back as this time. This is done by
+  registering with the R flag set to 0 as shown in <a href="#fRegRrmov" class="xref">Figure 20</a>.<a href="#section-7-20" class="pilcrow">¶</a></p>
 <span id="name-route-type-2-removal"></span><div id="fRegRrmov">
 <figure id="figure-20">
-        <div class="artwork art-text alignCenter" id="section-7-11.1">
+        <div class="artwork art-text alignCenter" id="section-7-21.1">
 <pre>
       | NS(EARO,       |                 |                |
       |    R reset)    |                 |                |
@@ -3048,9 +3146,12 @@ Same ES (multihomed):
 <a href="#name-route-type-2-removal" class="selfRef">Route Type 2 Removal</a>
         </figcaption></figure>
 </div>
+<p id="section-7-22">
+  When the lifetime elapses, the 6LBR requires the collocated eVPN router to
+  withdraw the route.<a href="#section-7-22" class="pilcrow">¶</a></p>
 <span id="name-lifetime-elapse"></span><div id="fRegTO">
 <figure id="figure-21">
-        <div class="artwork art-text alignCenter" id="section-7-12.1">
+        <div class="artwork art-text alignCenter" id="section-7-23.1">
 <pre>
     Local            Local              Route           Remote
    Server           Leaf             Reflector         Leaf
@@ -3101,7 +3202,10 @@ Same ES (multihomed):
 <a href="#section-10" class="section-number selfRef">10. </a><a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
       </h2>
 <p id="section-10-1">
-   The authors wish to thank you for reading that far.<a href="#section-10-1" class="pilcrow">¶</a></p>
+   The authors wish to thank you for reading that far.
+   We acknowledge and express gratitude to Wen Lin, Stephane Litkowski, Eric
+   Levy-Abegnoli, Lukas Krattiger, Jerome Tollet, and Ali Sajassi, for their
+   help and support.<a href="#section-10-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <section id="section-11">
@@ -3168,6 +3272,10 @@ Same ES (multihomed):
 <a href="#section-12" class="section-number selfRef">12. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
       </h2>
 <dl class="references">
+<dt id="RFC6550">[RFC6550]</dt>
+      <dd>
+<span class="refAuthor">Winter, T., Ed.</span><span class="refAuthor">, Thubert, P., Ed.</span><span class="refAuthor">, Brandt, A.</span><span class="refAuthor">, Hui, J.</span><span class="refAuthor">, Kelsey, R.</span><span class="refAuthor">, Levis, P.</span><span class="refAuthor">, Pister, K.</span><span class="refAuthor">, Struik, R.</span><span class="refAuthor">, Vasseur, JP.</span><span class="refAuthor">, and R. Alexander</span>, <span class="refTitle">"RPL: IPv6 Routing Protocol for Low-Power and Lossy Networks"</span>, <span class="seriesInfo">RFC 6550</span>, <span class="seriesInfo">DOI 10.17487/RFC6550</span>, <time datetime="2012-03" class="refDate">March 2012</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc6550">https://www.rfc-editor.org/info/rfc6550</a>&gt;</span>. </dd>
+<dd class="break"></dd>
 <dt id="RFC8929">[RFC8929]</dt>
       <dd>
 <span class="refAuthor">Thubert, P., Ed.</span><span class="refAuthor">, Perkins, C.E.</span><span class="refAuthor">, and E. Levy-Abegnoli</span>, <span class="refTitle">"IPv6 Backbone Router"</span>, <span class="seriesInfo">RFC 8929</span>, <span class="seriesInfo">DOI 10.17487/RFC8929</span>, <time datetime="2020-11" class="refDate">November 2020</time>, <span>&lt;<a href="https://www.rfc-editor.org/info/rfc8929">https://www.rfc-editor.org/info/rfc8929</a>&gt;</span>. </dd>
@@ -3192,12 +3300,8 @@ Same ES (multihomed):
 <a href="#name-authors-addresses" class="section-name selfRef">Authors' Addresses</a>
       </h2>
 <address class="vcard">
-        <div dir="auto" class="left"><span class="fn nameRole">Pascal Thubert</span></div>
+        <div dir="auto" class="left"><span class="fn nameRole">Pascal Thubert (<span class="role">editor</span>)</span></div>
 <div dir="auto" class="left"><span class="org">Cisco Systems, Inc</span></div>
-<div dir="auto" class="left"><span class="street-address">Building D<br>45 Allee des Ormes - BP1200</span></div>
-<div dir="auto" class="left">
-<span class="postal-code">06254</span> <span class="locality">Mougins - Sophia Antipolis</span>
-</div>
 <div dir="auto" class="left"><span class="country-name">France</span></div>
 <div class="tel">
 <span>Phone:</span>
@@ -3210,14 +3314,19 @@ Same ES (multihomed):
 </address>
 <address class="vcard">
         <div dir="auto" class="left"><span class="fn nameRole">Tony Przygienda</span></div>
-<div dir="auto" class="left"><span class="org">Juniper Networks</span></div>
-<div dir="auto" class="left"><span class="street-address">Zürcherstrasse 42</span></div>
-<div dir="auto" class="left">CH-<span class="postal-code">8103</span> <span class="locality">Unterengstringen</span>
-</div>
+<div dir="auto" class="left"><span class="org">Juniper Networks, Inc</span></div>
 <div dir="auto" class="left"><span class="country-name">Switzerland</span></div>
 <div class="email">
 <span>Email:</span>
 <a href="mailto:prz@juniper.net" class="email">prz@juniper.net</a>
+</div>
+</address>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Jeff Tantsura</span></div>
+<div dir="auto" class="left"><span class="org">Microsoft</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:jefftant.ietf@gmail.com" class="email">jefftant.ietf@gmail.com</a>
 </div>
 </address>
 </section>

@@ -93,12 +93,12 @@ Table of Contents
      6.1.  ROVR MAC Mobility Extended Community  . . . . . . . . . .  24
      6.2.  Extended ROVR MAC Procedures  . . . . . . . . . . . . . .  25
    7.  Protocol Operations . . . . . . . . . . . . . . . . . . . . .  26
-   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  37
-   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  38
-   10. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  38
-   11. Normative References  . . . . . . . . . . . . . . . . . . . .  38
-   12. Informative References  . . . . . . . . . . . . . . . . . . .  39
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  40
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  36
+   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  37
+   10. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  37
+   11. Normative References  . . . . . . . . . . . . . . . . . . . .  37
+   12. Informative References  . . . . . . . . . . . . . . . . . . .  38
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  39
 
 
 
@@ -621,7 +621,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
    This specification leverages [RFC8929] that augments the abstract
    data model of the 6LBR to store the LLA associated with the
    registered address.  Based on that additional state, the 6LBR in a
-   leaf can communicate the mapping to the colocated EVPN function and
+   leaf can communicate the mapping to the collocated EVPN function and
    respond to unicast address mapping lookups from the server side.
 
    In an environment where the server ranges from a classical host to a
@@ -1463,57 +1463,6 @@ Internet-Draft               EVPN Secure MAC                   July 2021
    of the 6LBR that owns the registration.  The local 6LBR MUST be
    signalled as EVPN Next Hop for the route.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Thubert, et al.          Expires 9 January 2022                [Page 27]
-
-Internet-Draft               EVPN Secure MAC                   July 2021
-
-
        Local            Local              Route           Remote
        Server           Leaf             Reflector         Leaf
       +-------+       +---------+        +-------+        +---------+
@@ -1526,7 +1475,6 @@ Internet-Draft               EVPN Secure MAC                   July 2021
           |  NS(EARO(      |                 |                |
           |       R set))  |                 |                |
           |--------------->|                 |                |
-          |                |                 |                |
           |   ROVR in EARO is cryptographic  |                |
           |                |                 |                |
           |     NA(EARO(   |                 |                |
@@ -1541,15 +1489,12 @@ Internet-Draft               EVPN Secure MAC                   July 2021
           |      Nonce2,   |                 |                |
           |      NDPSO)    |                 |                |
           |--------------->|                 |                |
-          |                |                 |                |
           |        Proof verified            |                |
-          |                |                 |                |
           |     no state for that address    |                |
           |      install local state         |                |
           |                |                 |                |
           |                |  ROVR MAC Route A'               |
           |                |---------------->|                |
-          |                |                 |                |
           |        route injected            |                |
           |                |                 |                |
           |     NA(EARO(   |                 |                |
@@ -1558,14 +1503,13 @@ Internet-Draft               EVPN Secure MAC                   July 2021
           |<---------------|                 |                |
           |                |                 | ROVR MAC Route A'
           |                |                 |--------------->|
-          |                |                 |                |
           |                |                 |    install remote state
           |                |                 |                |
 
 
 
 
-Thubert, et al.          Expires 9 January 2022                [Page 28]
+Thubert, et al.          Expires 9 January 2022                [Page 27]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1621,7 +1565,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert, et al.          Expires 9 January 2022                [Page 29]
+Thubert, et al.          Expires 9 January 2022                [Page 28]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1677,7 +1621,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert, et al.          Expires 9 January 2022                [Page 30]
+Thubert, et al.          Expires 9 January 2022                [Page 29]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1694,7 +1638,6 @@ Internet-Draft               EVPN Secure MAC                   July 2021
           |  NS(EARO(      |                 |                |
           |    TID+1))     |                 |                |
           |--------------->|                 |                |
-          |                |                 |                |
           |   renew lifetime locally         |                |
           |                |                 |                |
           |                |  ROVR MAC Route A'(TID+1)        |
@@ -1733,7 +1676,8 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert, et al.          Expires 9 January 2022                [Page 31]
+
+Thubert, et al.          Expires 9 January 2022                [Page 30]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1753,7 +1697,6 @@ Internet-Draft               EVPN Secure MAC                   July 2021
          |                |              ROVR Hash G         |
          |                |                 |<---------------|
          |                |<----------------|                |
-         |                |                 |                |
          |      Create remote state for A'  |                |
          |                |                 |                |
          |   NS(EARO)     |                 |                |
@@ -1789,7 +1732,8 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert, et al.          Expires 9 January 2022                [Page 32]
+
+Thubert, et al.          Expires 9 January 2022                [Page 31]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1812,7 +1756,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
            |      Create remote state for A'  |               |   |
            |              |   |                               |   |
            |              |                                       |
-           |              |     [out of band signaling]           |
+           |              |       [[out of band signaling]]       |
            |   NS(EARO)   |                                       |
            |------------->|                                       |
            |         compute ROVR Hash G                          |
@@ -1820,7 +1764,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
            |              |      EDAR to EVPN Next Hop            |
            |              |-------------------------------------->|
            |              |                                       |
-           |              |               EDAR (status = 1)       |
+           |              |               EDAC (status = 1)       |
            |              |<--------------------------------------|
            |              |                                       |
            |  NA(EARO(    |                                       |
@@ -1845,7 +1789,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert, et al.          Expires 9 January 2022                [Page 33]
+Thubert, et al.          Expires 9 January 2022                [Page 32]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -1857,8 +1801,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
           6LN           6LBR/EVPN            BGP            EVPN/6LBR
            |                |                 |                |
            |    Ethernet    |                 |                |
-           |                |        [via BGP signaling]      |
-           |                |                 |                |
+           |                |        [via BGP signaling]       |
            |                |                 |                |
            |                |          ROVR MAC Route A'       |
            |                |         ESI X', Hash F, TID Z    |
@@ -1889,6 +1832,24 @@ Internet-Draft               EVPN Secure MAC                   July 2021
    not refreshing it registration we can expect elapsed lifetime to
    create scenario Figure 21 over time.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+Thubert, et al.          Expires 9 January 2022                [Page 33]
+
+Internet-Draft               EVPN Secure MAC                   July 2021
+
+
       Local            Local              Route           Remote
       Server           Leaf             Reflector         Leaf
      +-------+       +---------+        +-------+        +---------+
@@ -1897,34 +1858,33 @@ Internet-Draft               EVPN Secure MAC                   July 2021
          |                |                 |                |
          |    Ethernet    |                 |                |
          |                |        [via BGP signaling]       |
-         |                |                 |                |
-
-
-
-Thubert, et al.          Expires 9 January 2022                [Page 34]
-
-Internet-Draft               EVPN Secure MAC                   July 2021
-
-
          |   NS(EARO)     |                 |                |
          |--------------->|                 |                |
-         |                |                 |                |
          |        Create local state        |                |
-         |                |  ROVR MAC Route A'               |
-         |                |  ESI X', TID Z  |                |
-         |                |  ROVR Hash F    |                |
-         |                |---------------->|         Install remote
-         |                |                 |              state
+         |                |        ROVR MAC Route A'         |
+         |                |     ESI X', ROVR Hash F, TID Z   |
+         |                |---------------->|                |
          |                |                 |--------------->|
+         |                |                 |     Create remote state
 
-
-   Different ES (movement):
-         |                |                 |                |<----
-         |                |                 |     New local state A'
-         |                |                 |            created
+   Same ES (multihomed):
+         |                |                 |                |<--
+         |                |                 | New local state A' created
          |                |                 |                |
          |                |          ROVR MAC Route A'       |
-         |                |         ESI X'', Hash F, TID Z+1 |
+         |                |         ESI X', Hash F, TID Z+1  |
+         |                |                 |<---------------|
+         |                |<----------------|                |
+         |        Create remote state       |                |
+         |       Keep local expect renew    |                |
+         |                |                 |                |
+
+   Different ES (movement):
+         |                |                 |                |<--
+         |                |                 | New local state A' created
+         |                |                 |                |
+         |                |          ROVR MAC Route A'       |
+         |                |    ESI X'', ROVR Hash F, TID Z+1 |
          |                |                 |<---------------|
          |                |<----------------|                |
          |        Create remote state       |                |
@@ -1939,28 +1899,14 @@ Internet-Draft               EVPN Secure MAC                   July 2021
          |                |                 |                |
 
 
-   Same ES (multihomed):
-         |                |                 |                |<--
-         |                |                 | New local state A' created
-         |                |                 |                |
-         |                |          ROVR MAC Route A'       |
-         |                |         ESI X', Hash F, TID Z+1  |
-         |                |                 |<---------------|
-         |                |<----------------|                |
-         |                |                 |                |
-
-                          Figure 18: Address Move
 
 
-
-
-
-
-
-Thubert, et al.          Expires 9 January 2022                [Page 35]
+Thubert, et al.          Expires 9 January 2022                [Page 34]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
+
+                          Figure 18: Address Move
 
    The host that registered the address may cancel the registration at
    any time, e.g., if the address is removed fmor its own interface.
@@ -2011,9 +1957,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-
-
-Thubert, et al.          Expires 9 January 2022                [Page 36]
+Thubert, et al.          Expires 9 January 2022                [Page 35]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -2069,7 +2013,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert, et al.          Expires 9 January 2022                [Page 37]
+Thubert, et al.          Expires 9 January 2022                [Page 36]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -2125,7 +2069,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert, et al.          Expires 9 January 2022                [Page 38]
+Thubert, et al.          Expires 9 January 2022                [Page 37]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -2181,7 +2125,7 @@ Internet-Draft               EVPN Secure MAC                   July 2021
 
 
 
-Thubert, et al.          Expires 9 January 2022                [Page 39]
+Thubert, et al.          Expires 9 January 2022                [Page 38]
 
 Internet-Draft               EVPN Secure MAC                   July 2021
 
@@ -2237,4 +2181,4 @@ Authors' Addresses
 
 
 
-Thubert, et al.          Expires 9 January 2022                [Page 40]
+Thubert, et al.          Expires 9 January 2022                [Page 39]
