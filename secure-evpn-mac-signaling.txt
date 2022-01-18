@@ -5,14 +5,14 @@
 BESS                                                     P. Thubert, Ed.
 Internet-Draft                                             Cisco Systems
 Intended status: Standards Track                           A. Przygienda
-Expires: 6 June 2022                               Juniper Networks, Inc
+Expires: 22 July 2022                              Juniper Networks, Inc
                                                              J. Tantsura
                                                                Microsoft
-                                                         3 December 2021
+                                                         18 January 2022
 
 
                        Secure EVPN MAC Signaling
-            draft-thubert-bess-secure-evpn-mac-signaling-01
+            draft-thubert-bess-secure-EVPN-mac-signaling-03
 
 Abstract
 
@@ -37,11 +37,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 6 June 2022.
+   This Internet-Draft will expire on 22 July 2022.
 
 Copyright Notice
 
-   Copyright (c) 2021 IETF Trust and the persons identified as the
+   Copyright (c) 2022 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
 
@@ -53,9 +53,9 @@ Copyright Notice
 
 
 
-Thubert, et al.            Expires 6 June 2022                  [Page 1]
+Thubert, et al.           Expires 22 July 2022                  [Page 1]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -75,32 +75,33 @@ Table of Contents
      2.2.  Glossary  . . . . . . . . . . . . . . . . . . . . . . . .   4
      2.3.  References  . . . . . . . . . . . . . . . . . . . . . . .   5
    3.  6LoWPAN Neighbor Discovery  . . . . . . . . . . . . . . . . .   6
-     3.1.  RFC 6775 Address Registration . . . . . . . . . . . . . .   6
-     3.2.  RFC 8505 Extended Address Registration  . . . . . . . . .   7
-       3.2.1.  R Flag  . . . . . . . . . . . . . . . . . . . . . . .   8
-       3.2.2.  TID, "I" Field and Opaque Fields  . . . . . . . . . .   8
-       3.2.3.  Status  . . . . . . . . . . . . . . . . . . . . . . .   8
-       3.2.4.  Route Ownership Verifier  . . . . . . . . . . . . . .   9
-       3.2.5.  Anycast and Multicast Addresses . . . . . . . . . . .   9
-     3.3.  RFC 8505 Extended DAR/DAC . . . . . . . . . . . . . . . .  10
-     3.4.  RFC 7400 Capability Indication Option . . . . . . . . . .  11
-   4.  Extending 6LoWPAN ND  . . . . . . . . . . . . . . . . . . . .  11
-     4.1.  Use of the R flag in NA . . . . . . . . . . . . . . . . .  11
-     4.2.  Distributing the 6LBR . . . . . . . . . . . . . . . . . .  12
-     4.3.  Unicast Address Lookup with the 6LBR  . . . . . . . . . .  15
-   5.  Requirements on the EVPN-Unaware Host . . . . . . . . . . . .  21
-     5.1.  Support of 6LoWPAN ND . . . . . . . . . . . . . . . . . .  21
-   6.  Enhancements to EVPN  . . . . . . . . . . . . . . . . . . . .  22
-     6.1.  ARP/ND Extended Community . . . . . . . . . . . . . . . .  24
-     6.2.  ROVR MAC Mobility Extended Community  . . . . . . . . . .  26
-     6.3.  Extended ROVR MAC Procedures  . . . . . . . . . . . . . .  27
-   7.  Protocol Operations . . . . . . . . . . . . . . . . . . . . .  27
-   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  38
-   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  38
-   10. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  38
-   11. Normative References  . . . . . . . . . . . . . . . . . . . .  38
-   12. Informative References  . . . . . . . . . . . . . . . . . . .  40
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  41
+     3.1.  IPv6 Interface, Link, and Subnet  . . . . . . . . . . . .   6
+     3.2.  RFC 6775 Address Registration . . . . . . . . . . . . . .  10
+     3.3.  RFC 8505 Extended Address Registration  . . . . . . . . .  10
+       3.3.1.  R Flag  . . . . . . . . . . . . . . . . . . . . . . .  11
+       3.3.2.  TID, "I" Field and Opaque Fields  . . . . . . . . . .  11
+       3.3.3.  Status  . . . . . . . . . . . . . . . . . . . . . . .  12
+       3.3.4.  Route Ownership Verifier  . . . . . . . . . . . . . .  12
+       3.3.5.  Anycast and Multicast Addresses . . . . . . . . . . .  13
+     3.4.  RFC 8505 Extended DAR/DAC . . . . . . . . . . . . . . . .  13
+     3.5.  RFC 7400 Capability Indication Option . . . . . . . . . .  14
+   4.  Extending 6LoWPAN ND  . . . . . . . . . . . . . . . . . . . .  15
+     4.1.  Use of the R flag in NA . . . . . . . . . . . . . . . . .  15
+     4.2.  Distributing the 6LBR . . . . . . . . . . . . . . . . . .  15
+     4.3.  Unicast Address Lookup with the 6LBR  . . . . . . . . . .  19
+   5.  Requirements on the EVPN-Unaware Host . . . . . . . . . . . .  25
+     5.1.  Support of 6LoWPAN ND . . . . . . . . . . . . . . . . . .  25
+   6.  Enhancements to EVPN  . . . . . . . . . . . . . . . . . . . .  26
+     6.1.  ARP/ND Extended Community . . . . . . . . . . . . . . . .  28
+     6.2.  ROVR MAC Mobility Extended Community  . . . . . . . . . .  30
+     6.3.  Extended ROVR MAC Procedures  . . . . . . . . . . . . . .  31
+   7.  Protocol Operations . . . . . . . . . . . . . . . . . . . . .  31
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . .  42
+   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .  42
+   10. Acknowledgments . . . . . . . . . . . . . . . . . . . . . . .  42
+   11. Normative References  . . . . . . . . . . . . . . . . . . . .  42
+   12. Informative References  . . . . . . . . . . . . . . . . . . .  44
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .  45
 
 
 
@@ -108,10 +109,9 @@ Table of Contents
 
 
 
-
-Thubert, et al.            Expires 6 June 2022                  [Page 2]
+Thubert, et al.           Expires 22 July 2022                  [Page 2]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
 1.  Introduction
@@ -130,7 +130,7 @@ Internet-Draft               EVPN Secure MAC               December 2021
    host routes in RPL [RFC9010] and RIFT "Routing in Fat Trees" [RIFT],
    and to maintain a proxy-ND state in a backbone router [RFC8929]; this
    specification extends its applicability to the case of Ethernet
-   Virtual Private Network (eVPN).
+   Virtual Private Network (EVPN).
 
    [RFC8505] specifies a unicast address registration mechanism that
    enables the host called a 6LowPAN Node (6LN) to install a ND binding
@@ -165,9 +165,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                  [Page 3]
+Thubert, et al.           Expires 22 July 2022                  [Page 3]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
 2.  Terminology
@@ -221,9 +221,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                  [Page 4]
+Thubert, et al.           Expires 22 July 2022                  [Page 4]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
       document.
@@ -277,9 +277,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                  [Page 5]
+Thubert, et al.           Expires 22 July 2022                  [Page 5]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
 3.  6LoWPAN Neighbor Discovery
@@ -303,40 +303,221 @@ Internet-Draft               EVPN Secure MAC               December 2021
    refreshed periodically to maintain the connectivity and enable
    unicast-only operations.
 
-   The typical abstraction for an IP Link with 6LoWPAN ND is point-to-
-   point (P2P) between a node and a router.  An IP interface bundles
-   multiple links between this node and peers in the same subnet, aka
-   point-to-multipoint (P2MP).  The subnet is a not-on-link L3-connected
-   collection of such nodes and links, which means that the any-to-any
-   connectivity across the subnet is ensured through L3 routing as
-   opposed to transitive (any-to-any) reachability from L2.
+   This section goes through the 6LoWPAN ND network abstractions and
+   mechanisms that this specification leverages, as a non-normative
+   reference to the reader.  The relevant normative text is to be found
+   in [RFC6775], [RFC8505], and [RFC8928].
 
-   This section goes through the 6LoWPAN ND mechanisms that this
-   specification leverages, as a non-normative reference to the reader.
-   The relevant normative text is to be found in [RFC6775], [RFC8505],
-   and [RFC8928].
+3.1.  IPv6 Interface, Link, and Subnet
 
-3.1.  RFC 6775 Address Registration
+   The typical abstraction for an IP Link with 6LoWPAN ND is a logical
+   point-to-point (P2P) link between a node (a host or a router) and a
+   router, regardless of the physical medium between the node and the
+   router, which may or may not be shared with other nodes.
+
+   A Subnet is deployed over a mesh of nodes connected with those
+   logical P2P Links, where routers form a connected dominating set as
+   represented in Figure 1; the resulting aggregate is called a
+   multilink subnet (MLSN).  An MLSN may be only partially meshed, and
+   the underlaying network is not expected to provide a multicast or a
+   broadcast service across the subnet.
+
+
+
+
+
+
+
+
+
+
+
+
+Thubert, et al.           Expires 22 July 2022                  [Page 6]
+
+Internet-Draft               EVPN Secure MAC                January 2022
+
+
+                    +------+                     +------+
+                    | Host |----------+    +-----| Host |
+                    +------+          |    |     +------+
+                        |           +--------+
+                        |   +-------| Router |
+                        |   |       +--------+
+                     +--------+        |   |       +------+
+                     | Router |        |   +------ | Host |
+                     +--------+        |           +------+
+                        |   |   +--------+
+                        |   +---| Router |
+                        |       +--------+
+                      +------+     |  |     +------+
+                      | Host |-----+  +-----| Host |
+                      +------+                +------+
+
+
+
+                    Figure 1: PPP Links in an NBMA Mesh
+
+   Consequently, the subnet model is not-on-link, meaning that the any-
+   to-any connectivity across the subnet is ensured through L3
+   operations (routing or proxy) as opposed to transitive (any-to-any)
+   reachability from L2.  It also means that hosts do not lookup other
+   nodes using IPv6 Neighbor Discovery but forward all their traffic via
+   their connected routers.  Which in turn means that only routers need
+   to be discovered, which is done by sending Router Advertisement (RA)
+   messages to all directly reachable nodes in the subnet, e.g., using a
+   radio broadcast.
+
+   As illustrated in Figure 2, an IP interface bundles multiple sub-
+   interfaces to connect the IP links between this node and peers in the
+   same subnet, which is known as a point-to-multipoint (P2MP)
+   interface.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Thubert, et al.           Expires 22 July 2022                  [Page 7]
+
+Internet-Draft               EVPN Secure MAC                January 2022
+
+
+                        +---------------------
+                        | P2MP Interface
+                        | --------------
+                        |  MAC Address
+                        |  IPv6 Link-Local address(es)
+                        |  IPv6 global addresses
+                        |
+                        |   +------------------------
+                        |   | P2P sub-interface
+                        |   | -----------------
+                        |   |  Peer MAC Address
+                        |   |  Peer IP addresses
+                        |   +------------------------
+                        |
+                        |   +------------------------
+                        |   | P2P sub-interface
+                        |   | -----------------
+                        |   |  Peer MAC Address
+                        |   |  Peer IP addresses
+                        |   +------------------------
+                        |
+                        |   +------------------------
+                        |   | P2P sub-interface
+                        |   | -----------------
+                        |   |  Peer MAC Address
+                        |   |  Peer IP addresses
+                        |   +------------------------
+                        |
+                        |    ....
+                        |
+                        +---------------
+
+
+                          Figure 2: P2MP Interface
+
+   In the case of a 6LoWPAN radio, the IP Interface may be physical, and
+   the P2P IP links are virtual based on discovered neighbor routers;
+   the same model can apply when the node is connected via a switch to
+   one or more routers.
+
+   In the case of a multihomed NIC card in a datacenter, the NIC is
+   connected to several Top-of-Rack (ToR) switches acting as leaves in
+   the fabric, over as many Ethernet physical interfaces.  If the NIC
+   provides a L2 virtual switch, then the stack can apply the same model
+   as above, modeling the virtual port to the virtual switch as a P2MP
+   interface.
+
+
+
+
+
+Thubert, et al.           Expires 22 July 2022                  [Page 8]
+
+Internet-Draft               EVPN Secure MAC                January 2022
+
+
+   On the other hand, if the NIC provides a virtual router, then
+   Ethernet ports are L3 ports and the physical link to the leaf is
+   modeled as P2P.  To form the P2MP interface, the router bundles
+   (aggregates) the physical interfaces as the sub-interfaces of a
+   single logical P2MP Link, as shown in Figure 3.
+
+
+
+                      +---------------------
+                      | NIC Aggregate interface
+                      | -----------------------
+                      |  virtual MAC Address
+                      |  IPv6 global addresses
+                      |
+                      |   +------------------------
+                      |   |  Ethernet Port 1
+                      |   | -----------------
+                      |   |  Physical MAC Address
+                      |   |  IPv6 Link-Local address(es)
+                      |   |  Leaf MAC Address
+                      |   |  Leaf IP addresses
+                      |   +------------------------
+                      |
+                      |   +------------------------
+                      |   | Ethernet Port 2
+                      |   | -----------------
+                      |   |  Physical MAC Address
+                      |   |  IPv6 Link-Local address(es)
+                      |   |  Leaf MAC Address
+                      |   |  Leaf IP addresses
+                      |   +------------------------
+                      |
+                      |    ....
+                      |
+                      +---------------
+
+
+                      Figure 3: Logical P2MP Interface
+
+   To conserve the same model, it makes sense to configure the same
+   (virtual) MAC address on all the physical interfaces, and use it for
+   the purpose of IPv6 ND.  In that case, the same MAC address is
+   exposed as Link-layer Address (LLA) to both leaves for the NIC IP
+   addresses, and the IPv6 address still appears as unicast.  Note that
+   the Link-Local addresses used to register the global IPv6 addresses
+   to the leaf may be different but that does not affect the exposed
+   mapping.
+
+
+
+
+Thubert, et al.           Expires 22 July 2022                  [Page 9]
+
+Internet-Draft               EVPN Secure MAC                January 2022
+
+
+   When that is not possible, then the same IP address is advertised
+   with the physical MAC address of each port as the LLA over that port.
+   In that case, the global IPv6 address appears as anycast, and SHOULD
+   be advertised as such, more in Section 3.3.5.
+
+3.2.  RFC 6775 Address Registration
 
    The classical "IPv6 Neighbor Discovery (IPv6 ND) Protocol" [RFC4861]
    [RFC4862] was defined for serial links and transit media such as
    Ethernet.  It is a reactive protocol that relies heavily on multicast
    operations for Address Discovery (aka Lookup) and Duplicate Address
    Detection (DAD).
-
-
-
-
-
-
-
-
-
-
-Thubert, et al.            Expires 6 June 2022                  [Page 6]
-
-Internet-Draft               EVPN Secure MAC               December 2021
-
 
    "Neighbor Discovery Optimizations for 6LoWPAN networks" [RFC6775]
    adapts IPv6 ND for operations over energy-constrained LLNs.  The main
@@ -356,13 +537,29 @@ Internet-Draft               EVPN Secure MAC               December 2021
    domain and the authoritative source of truth for uniqueness and
    ownership.
 
-3.2.  RFC 8505 Extended Address Registration
+3.3.  RFC 8505 Extended Address Registration
 
    "Registration Extensions for 6LoWPAN Neighbor Discovery" [RFC8505]
    updates RFC 6775 into a generic Address Registration mechanism that
    can be used to access services such as routing and ND proxy.  To that
    effect, [RFC8505] defines the Extended Address Registration Option
-   (EARO), shown in Figure 1:
+   (EARO), shown in Figure 4:
+
+
+
+
+
+
+
+
+
+
+
+
+
+Thubert, et al.           Expires 22 July 2022                 [Page 10]
+
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
       0                   1                   2                   3
@@ -377,24 +574,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
      |                                                               |
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-                        Figure 1: EARO Option Format
+                        Figure 4: EARO Option Format
 
-
-
-
-
-
-
-
-
-
-
-Thubert, et al.            Expires 6 June 2022                  [Page 7]
-
-Internet-Draft               EVPN Secure MAC               December 2021
-
-
-3.2.1.  R Flag
+3.3.1.  R Flag
 
    [RFC8505] introduces the R Flag in the EARO.  The Registering Node
    sets the R Flag to indicate whether the 6LR should ensure
@@ -417,7 +599,7 @@ Internet-Draft               EVPN Secure MAC               December 2021
    messages if and only if the route was installed.  This specification
    echoes that behavior.
 
-3.2.2.  TID, "I" Field and Opaque Fields
+3.3.2.  TID, "I" Field and Opaque Fields
 
    When the T Flag is set to 1, the EARO includes a sequence counter
    called Transaction ID (TID), that is needed to format the MAC
@@ -428,10 +610,18 @@ Internet-Draft               EVPN Secure MAC               December 2021
    and an associated "I" field that describes what the Opaque field
    transports and how to use it.
 
+
+
+
+Thubert, et al.           Expires 22 July 2022                 [Page 11]
+
+Internet-Draft               EVPN Secure MAC                January 2022
+
+
    This document specifies the use of the "I" field and the Opaque field
    by a Host.
 
-3.2.3.  Status
+3.3.3.  Status
 
    The values of the EARO status are maintained by IANA in the Address
    Registration Option Status Values subregistry [IANA-EARO-STATUS] of
@@ -442,21 +632,13 @@ Internet-Draft               EVPN Secure MAC               December 2021
    reduced range to 64 values and reformatted the octet field to enable
    to transport an external error, e.g., coming form a routing protocol.
 
-
-
-
-Thubert, et al.            Expires 6 June 2022                  [Page 8]
-
-Internet-Draft               EVPN Secure MAC               December 2021
-
-
    This specification uses the format expressed in [RFC9010].  The value
    of 0 denotes an unqualified success, 1 indicates an address
    duplication, 3 a TID value that is outdated, and 4 is used in an
    asynchronous NA to indicate that 6LN should remove that address and
    possibly form new ones.
 
-3.2.4.  Route Ownership Verifier
+3.3.4.  Route Ownership Verifier
 
    Section 5.3 of [RFC8505] introduces the Registration Ownership
    Verifier (ROVR) field of variable length from 64 to 256 bits.  The
@@ -478,7 +660,21 @@ Internet-Draft               EVPN Secure MAC               December 2021
    associated to the Target Address, whether it is cryptographic and
    should be verified.
 
-3.2.5.  Anycast and Multicast Addresses
+
+
+
+
+
+
+
+
+
+Thubert, et al.           Expires 22 July 2022                 [Page 12]
+
+Internet-Draft               EVPN Secure MAC                January 2022
+
+
+3.3.5.  Anycast and Multicast Addresses
 
    "IPv6 Neighbor Discovery Multicast Address Registration"
    [I-D.thubert-6lo-multicast-registration] updates [RFC8505] to enable
@@ -493,20 +689,7 @@ Internet-Draft               EVPN Secure MAC               December 2021
    the need for the host to listen to pollings from the router, and
    allows the host to sleep for periods of time.
 
-
-
-
-
-
-
-
-
-Thubert, et al.            Expires 6 June 2022                  [Page 9]
-
-Internet-Draft               EVPN Secure MAC               December 2021
-
-
-3.3.  RFC 8505 Extended DAR/DAC
+3.4.  RFC 8505 Extended DAR/DAC
 
    [RFC8505] updates the DAR/DAC messages to EDAR/EDAC messages to carry
    the ROVR field.  The EDAR/EDAC exchange takes place between the 6LR
@@ -521,6 +704,30 @@ Internet-Draft               EVPN Secure MAC               December 2021
    The status of 0 (success) indicates that the address is either new or
    that the current registration matches, and in particular that the
    ROVR at the 6LBR and the one in the EDAR message are identical.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Thubert, et al.           Expires 22 July 2022                 [Page 13]
+
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
                   6LN               6LR                6LBR
@@ -541,7 +748,7 @@ Internet-Draft               EVPN Secure MAC               December 2021
                    |                 |                   |
 
 
-                          Figure 2: EDAR/EDAC flow
+                          Figure 5: EDAR/EDAC flow
 
    The EDAR/EDAC exchange is protected by the retry mechanism specified
    in Section 8.2.6 of [RFC6775], though in a data center, a duration
@@ -554,21 +761,13 @@ Internet-Draft               EVPN Secure MAC               December 2021
    a full 6LBR state for the address, aka local state in the following
    text.  The specification leverages the EDAR/EDAC exchange to ensure
    that a leaf (acting as a 6LR) that needs to create a 6LBR state for a
-
-
-
-Thubert, et al.            Expires 6 June 2022                 [Page 10]
-
-Internet-Draft               EVPN Secure MAC               December 2021
-
-
    new registration has the same value for the ROVR as any 6LBR already
    serving that address on another leaf.  At the same time, the
    specification avoids placing full ROVR information in BGP so 1) it is
    not observable by a potential attacker and 2) the new attributes
    remain reasonably small.
 
-3.4.  RFC 7400 Capability Indication Option
+3.5.  RFC 7400 Capability Indication Option
 
    "6LoWPAN-GHC: Generic Header Compression for IPv6 over Low-Power
    Wireless Personal Area Networks (6LoWPANs)" [RFC7400] defines the
@@ -579,6 +778,14 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
    L:  Node is a 6LR.
    E:  Node is an IPv6 ND Registrar -- i.e., it supports registrations
+
+
+
+Thubert, et al.           Expires 22 July 2022                 [Page 14]
+
+Internet-Draft               EVPN Secure MAC                January 2022
+
+
       based on EARO.
    P:  Node is a Routing Registrar, -- i.e., an IPv6 ND Registrar that
       also provides reachability services for the Registered Address.
@@ -591,7 +798,7 @@ Internet-Draft               EVPN Secure MAC               December 2021
       |                           Reserved                            |
       +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-                            Figure 3: 6CIO flags
+                            Figure 6: 6CIO flags
 
    A 6LR that provides reachability services for a Host in an EVPN
    network as specified in this document includes a 6CIO in its RA
@@ -611,13 +818,6 @@ Internet-Draft               EVPN Secure MAC               December 2021
    *  The use of the R Flag is extended to the NA(EARO) to confirm
       whether the route was installed.
 
-
-
-Thubert, et al.            Expires 6 June 2022                 [Page 11]
-
-Internet-Draft               EVPN Secure MAC               December 2021
-
-
 4.2.  Distributing the 6LBR
 
    This specification enables to distribute the 6LBR at the edge of the
@@ -629,9 +829,18 @@ Internet-Draft               EVPN Secure MAC               December 2021
    assumption on whether the 6LBR stores its own representation of the
    full EVPN state, which means that the EVPN support informs the 6LBR
    in case of any change on the EVPN side (this is called the push
-   model, see Figure 10), or if the 6LBR queries the EVPN support when
+   model, see Figure 13), or if the 6LBR queries the EVPN support when
    it does not have a mapping to satisfy a request (pull model, see
-   Figure 9).
+   Figure 12).
+
+
+
+
+
+Thubert, et al.           Expires 22 July 2022                 [Page 15]
+
+Internet-Draft               EVPN Secure MAC                January 2022
+
 
    This specification leverages [RFC8929] that augments the abstract
    data model of the 6LBR to store the LLA associated with the
@@ -648,7 +857,7 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
    In that case, the MAC address associated to the Registered Address is
    indicated in the Target Link-Layer Address Option (TLLAO) in the NS
-   message used for the registration, as shown in Figure 4.  In the case
+   message used for the registration, as shown in Figure 7.  In the case
    of a pull model, if the 6LBR does not have a local state for the
    mapping, it queries the EVPN support to obtain the EVPN state if any.
    If a mapping is known then the 6LR/6LBR evaluates the registration
@@ -669,9 +878,24 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 12]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Thubert, et al.           Expires 22 July 2022                 [Page 16]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
                 Server              Leaf
@@ -702,7 +926,7 @@ Internet-Draft               EVPN Secure MAC               December 2021
             |                    |            |
 
 
-                       Figure 4: Direct Registration
+                       Figure 7: Direct Registration
 
    In another type of deployment, the 6LR may be a virtual router in the
    server whereas the 6LBR runs in the leaf node.  To address that case,
@@ -711,7 +935,7 @@ Internet-Draft               EVPN Secure MAC               December 2021
    options in the EDAR and EDAC messages introduced in [RFC8929] to
    place a TLLAO that carries the MAC address associated to the
    Registered address in the EDAR and EDAC messages as shown in
-   Figure 5:
+   Figure 8:
 
 
 
@@ -725,9 +949,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 13]
+Thubert, et al.           Expires 22 July 2022                 [Page 17]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
             Server                       Leaf
@@ -762,7 +986,7 @@ Internet-Draft               EVPN Secure MAC               December 2021
         |            |              |            |
 
 
-                         Figure 5: leveraging EDAR
+                         Figure 8: leveraging EDAR
 
    [RFC8505] updates the DAR/DAC messages into the Extended DAR/DAC to
    carry the ROVR field.  With this specification, the abstract 6LBR is
@@ -781,9 +1005,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 14]
+Thubert, et al.           Expires 22 July 2022                 [Page 18]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
    6LBR.  Based on its local state, the 6LBR in the leaf checks whether
@@ -805,7 +1029,7 @@ Internet-Draft               EVPN Secure MAC               December 2021
    packet as a unicast MAC to the LLA that is stored for the IPv6
    address as expected by [RFC6085].  The actual owner of the address
    can then answer unicast with a NA message, setting the override (O)
-   bit to 1, as shown in Figure 6.
+   bit to 1, as shown in Figure 9.
 
 
               Local             Local                   Remote
@@ -830,16 +1054,16 @@ Internet-Draft               EVPN Secure MAC               December 2021
                 |                 |                       |
 
 
-                  Figure 6: Forwarding legacy NS (Lookup)
+                  Figure 9: Forwarding legacy NS (Lookup)
 
 
 
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 15]
+Thubert, et al.           Expires 22 July 2022                 [Page 19]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
    Section 3.1. of [RFC8929] adds the capability to insert IPv6 ND
@@ -864,7 +1088,7 @@ Internet-Draft               EVPN Secure MAC               December 2021
    The message contains the SLLAO of the router to which the 6LBR will
    reply.  If the binding is found, the 6LBR replies with an AMC message
    that contains the TLLOA with the requested MAC address, as shown in
-   Figure 7.
+   Figure 10.
 
 
 
@@ -893,9 +1117,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 16]
+Thubert, et al.           Expires 22 July 2022                 [Page 20]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
                   Local                 Local             Remote
@@ -930,7 +1154,7 @@ Internet-Draft               EVPN Secure MAC               December 2021
               |            |              |                 |
 
 
-               Figure 7: Unicast Lookup from the virtual Host
+              Figure 10: Unicast Lookup from the virtual Host
 
    If it is not found, [UNICAST-LOOKUP] provides the capability to
    indicate immediately that the mapping is not known with a "not found"
@@ -941,7 +1165,7 @@ Internet-Draft               EVPN Secure MAC               December 2021
    addresses with [RFC8505], this means that the looked up address is
    not present in the network; in that case the packet is dropped and an
    ICMP error type 1 "Destination Unreachable" code 3 "Address
-   unreachable" [RFC4443] is returned as shown in Figure 8.
+   unreachable" [RFC4443] is returned as shown in Figure 11.
 
 
 
@@ -949,9 +1173,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 17]
+Thubert, et al.           Expires 22 July 2022                 [Page 21]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
                             Local                 Local
@@ -985,12 +1209,12 @@ Internet-Draft               EVPN Secure MAC               December 2021
                         |            |              |
 
 
-                      Figure 8: Unicast Lookup failure
+                     Figure 11: Unicast Lookup failure
 
    Note that the figures above make no assumption on the pull vs. push
    model.  In the case of pull model, the 6LBR queries the EVPN support
    when it does not have the mapping information to satisfy a request.
-   Figure 9 illustrates a successful pull model lookup flow, when the
+   Figure 12 illustrates a successful pull model lookup flow, when the
    route type 2 for the mapping is already known on the EVPN side.
 
 
@@ -1005,9 +1229,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 18]
+Thubert, et al.           Expires 22 July 2022                 [Page 22]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
             Server                       Leaf
@@ -1045,13 +1269,13 @@ Internet-Draft               EVPN Secure MAC               December 2021
         |            |              |            |
 
 
-                            Figure 9: Pull model
+                           Figure 12: Pull model
 
    In the case of push model, the EVPN support synchronizes its state
    upon a route type 2 with the 6LBR, and the 6LBR maintains an abstract
    data structure for all information known to EVPN.  This way, the 6LBR
    already has the mapping information to satisfy any request for an
-   existing mapping and it can answer right away.  Figure 10 illustrates
+   existing mapping and it can answer right away.  Figure 13 illustrates
    a successful push model lookup flow, when the 6LBR is already in
    possession of the mapping.
 
@@ -1061,9 +1285,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 19]
+Thubert, et al.           Expires 22 July 2022                 [Page 23]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
             Server                       Leaf
@@ -1101,13 +1325,13 @@ Internet-Draft               EVPN Secure MAC               December 2021
         |            |              |            |
 
 
-                           Figure 10: Push model
+                           Figure 13: Push model
 
    In a mixed environment, a lookup failure (the mapping is not found
    though the address is present in the network) may be caused by a
    legacy node that was node discovered (aka a silent node).  In that
    case, it is an administrative decision for the 6LR to broadcast an
-   NS(lookup) or to return an error as shown in Figure 8.
+   NS(lookup) or to return an error as shown in Figure 11.
 
 
 
@@ -1117,9 +1341,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 20]
+Thubert, et al.           Expires 22 July 2022                 [Page 24]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
 5.  Requirements on the EVPN-Unaware Host
@@ -1142,11 +1366,11 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
    The Host is expected to request routing services from a router only
    if that router originates RA messages with a 6CIO that has the L, P,
-   and E flags all set to 1 as discussed in Section 3.4, unless
+   and E flags all set to 1 as discussed in Section 3.5, unless
    configured to do so.  To obtain routing services for one of its
    addresses, the host must register the address to a router that
    advertises the prefix, setting the "R" and "T" flags in the EARO to 1
-   as discussed in Section 3.2.1 and Section 3.2.2, respectively.
+   as discussed in Section 3.3.1 and Section 3.3.2, respectively.
 
    This document echoes the behavior specified in [RFC9010] whereby,
    when the R Flag set to 1 in a NS(EARO) is not echoed in the NA(EARO),
@@ -1173,15 +1397,15 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 21]
+Thubert, et al.           Expires 22 July 2022                 [Page 25]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
    those routes.  The routers recognize the same (ROVR, TID) as the
    signal of a multihomed address and maintain all the routes.  In the
    case of EVPN, the Ethernet Segment must also be the same.  The flow
-   for a successful multihomed registration is illustrated in Figure 14.
+   for a successful multihomed registration is illustrated in Figure 17.
 
    [RFC8505] introduces error Status values in the NA(EARO) which can be
    received synchronously upon an NS(EARO) or asynchronously.  The Host
@@ -1189,7 +1413,7 @@ Internet-Draft               EVPN Secure MAC               December 2021
    the Status value indicates a rejection.
 
    This specification can be used to register Anycast and Multicast IPv6
-   addresses as discussed in Section 3.2.5 and replace MLDv2.  To
+   addresses as discussed in Section 3.3.5 and replace MLDv2.  To
    benefit from that capability, both the host and the 6LR MUST support
    the "A" and "M" flags that indicate Anycast and Multicast Addresses
    respectively.  Those flags are defined in
@@ -1229,9 +1453,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 22]
+Thubert, et al.           Expires 22 July 2022                 [Page 26]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
    *  The TID field in the EARO is smaller than the mobility sequence
@@ -1285,9 +1509,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 23]
+Thubert, et al.           Expires 22 July 2022                 [Page 27]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
    *  [RFC8928] expects nodes to autoconfigure the keypair that is used
@@ -1341,9 +1565,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 24]
+Thubert, et al.           Expires 22 July 2022                 [Page 28]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
    ROVR nodes MUST set the "H" flag in Mobility Extended Community to
@@ -1376,7 +1600,7 @@ Internet-Draft               EVPN Secure MAC               December 2021
      |       |I| |O|R|   |M|U|M|X|V|H|
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-                Figure 11: Updated ARP/ND Extended Community
+                Figure 14: Updated ARP/ND Extended Community
 
    Flags:
 
@@ -1397,9 +1621,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 25]
+Thubert, et al.           Expires 22 July 2022                 [Page 29]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
    X:  Super Sticky indicates that the ROVR MAC is sticky and should
@@ -1418,7 +1642,7 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
    Extending MAC Mobility Extended Community to transport the TID allows
    to design a solution that, while backwards compatible, allows to
-   introduce ROVR MAC as "more trusted" entities.  Figure 12 presents
+   introduce ROVR MAC as "more trusted" entities.  Figure 15 presents
    the according extensions that will however necessitate some further
    explanation.
 
@@ -1436,7 +1660,7 @@ Internet-Draft               EVPN Secure MAC               December 2021
     |T| Flags = 0   |       TID     |     Reserved = 0              |
     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-            Figure 12: Modified MAC Mobility Extended Community
+            Figure 15: Modified MAC Mobility Extended Community
 
    This specification updates the Sequence Number field defined in
    [RFC7432].  The field is split in 3 parts, one 8-bit flags field, the
@@ -1453,9 +1677,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 26]
+Thubert, et al.           Expires 22 July 2022                 [Page 30]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
    TID:  contains the ROVR MAC TID per [RFC8505].  This MUST NOT be
@@ -1509,12 +1733,12 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 27]
+Thubert, et al.           Expires 22 July 2022                 [Page 31]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
-   Figure 13 illustrates the registration flow of a new address
+   Figure 16 illustrates the registration flow of a new address
    protected by [RFC8928].  The ROVR in the EARO is a Crypto-ID that
    derives from a public address through hashing with some other terms.
    The router challenges the host with a status of 5 (validation
@@ -1532,7 +1756,7 @@ Internet-Draft               EVPN Secure MAC               December 2021
    (Validation Failed) in the NA(EARO).
 
    With this specification, the 6LBR communicates internally with the
-   collocated eVPN router to inject the route in eVPN.  Since the
+   collocated EVPN router to inject the route in EVPN.  Since the
    [RFC8928] validation was performed, the V flag is set.  Once this is
    done, the local 6LBR installs a local state associated to the NCE and
    becomes owner of the registration, whereas the remote leaves
@@ -1565,9 +1789,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 28]
+Thubert, et al.           Expires 22 July 2022                 [Page 32]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
        Local            Local              Route           Remote
@@ -1613,17 +1837,17 @@ Internet-Draft               EVPN Secure MAC               December 2021
           |                |                 |    install remote state
           |                |                 |                |
 
-                        Figure 13: Host Registration
+                        Figure 16: Host Registration
 
-   Figure 14 presents the same flow but for a multihomed address; here
+   Figure 17 presents the same flow but for a multihomed address; here
    and in the following flows, the proof of ownership section is not
    shown, but its use is RECOMMENDED.  The interesting piece is that
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 29]
+Thubert, et al.           Expires 22 July 2022                 [Page 33]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
    when the node registers to the second 6LBR, that second 6LBR find
@@ -1677,16 +1901,16 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 30]
+Thubert, et al.           Expires 22 July 2022                 [Page 34]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
-                           Figure 14: Multihoming
+                           Figure 17: Multihoming
 
    The registration is associated with a lifetime, and it must be
-   renewed with an incremented TID.  The new TID is propagated in eVPN
-   as illustrated in Figure 15.
+   renewed with an incremented TID.  The new TID is propagated in EVPN
+   as illustrated in Figure 18.
 
        Local            Local              Route           Remote
        Server           Leaf             Reflector         Leaf
@@ -1710,9 +1934,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
           |                |                 |                |
           |                |                 |                |
 
-                    Figure 15: Host Registration Renewal
+                    Figure 18: Host Registration Renewal
 
-   Figure 16 illustrates the case where a second host registers the same
+   Figure 19 illustrates the case where a second host registers the same
    address, creating a potential address duplication situation.  in most
    cases, the ROVR hash will be different, and the local 6LBR can reject
    the registration is a status of 1 (duplicate) right away.
@@ -1733,9 +1957,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 31]
+Thubert, et al.           Expires 22 July 2022                 [Page 35]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
       Local            Local              Route           Remote
@@ -1765,9 +1989,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
          |                |                 |                |
          |                |                 |                |
 
-                       Figure 16: Duplicate Addresses
+                       Figure 19: Duplicate Addresses
 
-   Figure 17 illustrates the case of an address duplication situation
+   Figure 20 illustrates the case of an address duplication situation
    where by chance, the ROVR hashes are the same.  In that case, the
    local 6LR checks with the 6LBR that owns the registration using an
    EDAR/EDAC message exchange.  As opposed to the ROVR hash, the full
@@ -1789,9 +2013,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 32]
+Thubert, et al.           Expires 22 July 2022                 [Page 36]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
         Local            Local              Route           Remote
@@ -1828,9 +2052,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
            |<-------------|                                       |
            |              |                                       |
 
-            Figure 17: Duplicate Addresses, ROVR Hash Collision
+            Figure 20: Duplicate Addresses, ROVR Hash Collision
 
-   Figure 18 shows a rare case where the registration has already moved
+   Figure 21 shows a rare case where the registration has already moved
    elsewhere with an incremented TID when the local registration is
    received after being delayed in the network.  In that case, the
    registration is rejected with a status of 3 (moved).
@@ -1845,9 +2069,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 33]
+Thubert, et al.           Expires 22 July 2022                 [Page 37]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
         Local            Local              Route           Remote
@@ -1877,16 +2101,16 @@ Internet-Draft               EVPN Secure MAC               December 2021
            |<---------------|                 |                |
            |                |                 |                |
 
-                      Figure 18: Address Already Moved
+                      Figure 21: Address Already Moved
 
    Address move differs from multi-homing by the ESI being different as
-   visualized by Figure 19.  In case of different ESI BGP signalling
+   visualized by Figure 22.  In case of different ESI BGP signalling
    happens immediately, in case of multi-homing we can reasonably expect
    for the signalling to catch up on the other leg with a new, higher
    TID.  However, since ESI matches TID doesn't matter strictly speaking
    and the new remote state can be installed as is.  However, if 6LN is
    not refreshing it registration we can expect elapsed lifetime to
-   create scenario Figure 22 over time.
+   create scenario Figure 25 over time.
 
 
 
@@ -1901,9 +2125,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 34]
+Thubert, et al.           Expires 22 July 2022                 [Page 38]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
       Local            Local              Route           Remote
@@ -1957,17 +2181,17 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 35]
+Thubert, et al.           Expires 22 July 2022                 [Page 39]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
-                          Figure 19: Address Move
+                          Figure 22: Address Move
 
    The host that registered the address may cancel the registration at
    any time, e.g., if the address is removed fmor its own interface.
    This is done by registering with a lifetime if 0 as shown in
-   Figure 20.  The Leaf may respond with a status of 0 to indicate
+   Figure 23.  The Leaf may respond with a status of 0 to indicate
    success, but a status of 4 (removed) is preferred for this situation.
 
         Local            Local              Route           Remote
@@ -1993,13 +2217,13 @@ Internet-Draft               EVPN Secure MAC               December 2021
            |     remove local state           |                |
            |                |                 |                |
 
-                         Figure 20: Address Removal
+                         Figure 23: Address Removal
 
    The host that registered the address may withdraw the route but
    maintain the NCE, e.g., in the case where it is multihomed but does
    not want to use one interface for the traffic back as this time.
    This is done by registering with the R flag set to 0 as shown in
-   Figure 21.
+   Figure 24.
 
 
 
@@ -2013,9 +2237,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 36]
+Thubert, et al.           Expires 22 July 2022                 [Page 40]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
          Local            Local              Route           Remote
@@ -2042,9 +2266,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
            |     retain only NCE              |                |
            |                |                 |                |
 
-                      Figure 21: Route Type 2 Removal
+                      Figure 24: Route Type 2 Removal
 
-   When the lifetime elapses, the 6LBR requires the collocated eVPN
+   When the lifetime elapses, the 6LBR requires the collocated EVPN
    router to withdraw the route.
 
 
@@ -2069,9 +2293,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 37]
+Thubert, et al.           Expires 22 July 2022                 [Page 41]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
          Local            Local              Route           Remote
@@ -2095,7 +2319,7 @@ Internet-Draft               EVPN Secure MAC               December 2021
            |     remove local state           |                |
            |                |                 |                |
 
-                         Figure 22: Lifetime Elapse
+                         Figure 25: Lifetime Elapse
 
 8.  Security Considerations
 
@@ -2125,9 +2349,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 38]
+Thubert, et al.           Expires 22 July 2022                 [Page 42]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
    [RFC4443]  Conta, A., Deering, S., and M. Gupta, Ed., "Internet
@@ -2181,9 +2405,9 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 39]
+Thubert, et al.           Expires 22 July 2022                 [Page 43]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
    [RFC8365]  Sajassi, A., Ed., Drake, J., Ed., Bitar, N., Shekhar, R.,
@@ -2237,15 +2461,16 @@ Internet-Draft               EVPN Secure MAC               December 2021
 
 
 
-Thubert, et al.            Expires 6 June 2022                 [Page 40]
+Thubert, et al.           Expires 22 July 2022                 [Page 44]
 
-Internet-Draft               EVPN Secure MAC               December 2021
+Internet-Draft               EVPN Secure MAC                January 2022
 
 
-   [RIFT]     Sharma, A., Thubert, P., Rijsman, B., and D. Afanasiev,
-              "RIFT: Routing in Fat Trees", Work in Progress, Internet-
-              Draft, draft-ietf-rift-rift-13, 12 July 2021,
-              <https://tools.ietf.org/html/draft-ietf-rift-rift-13>.
+   [RIFT]     Sharma, A., Thubert, P., Rijsman, B., Afanasiev, D., and
+              A. Przygienda, "RIFT: Routing in Fat Trees", Work in
+              Progress, Internet-Draft, draft-ietf-rift-rift-15, 3
+              January 2022,
+              <https://tools.ietf.org/html/draft-ietf-rift-rift-15>.
 
    [IANA-EARO-STATUS]
               IANA, "Address Registration Option Status Values",
@@ -2292,5 +2517,4 @@ Authors' Addresses
 
 
 
-
-Thubert, et al.            Expires 6 June 2022                 [Page 41]
+Thubert, et al.           Expires 22 July 2022                 [Page 45]

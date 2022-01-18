@@ -15,7 +15,7 @@
 <?rfc tocappendix="yes"?>
 <rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true" updates='' obsoletes="" consensus="true"
       submissionType="IETF" xml:lang="en" version="3"
-      docName="draft-thubert-bess-secure-evpn-mac-signaling-02" >
+      docName="draft-thubert-bess-secure-EVPN-mac-signaling-03" >
 
 
 <front>
@@ -116,7 +116,7 @@
   <xref target='I-D.ietf-rift-rift'>"Routing in Fat Trees"</xref>, and to
   maintain a proxy-ND state in a backbone router <xref target='RFC8929'/>; this
   specification extends its applicability to the case of Ethernet Virtual
-  Private Network (eVPN).
+  Private Network (EVPN).
 </t>
 
 <t>
@@ -304,24 +304,185 @@ expect other functionality such as 6LoWPAN Header Compression:
   and address lookup, 6LoWPAN ND installs and maintains a state in the
   neighbors for the duration of their interaction. Though it is also called a
   Neighbor Cache Entry (BCE) in <xref target='RFC6775'/>, and in contrast with
-  the the BCE in SLAAC, that state is not a cache that can be casually flushed and rebuilt. It must be installed proactively  and refreshed periodically to
+  the the BCE in SLAAC, that state is not a cache that can be casually flushed
+  and rebuilt. It must be installed proactively and refreshed periodically to
   maintain the connectivity and enable unicast-only operations.
 </t>
+
 <t>
-  The typical abstraction for an IP Link with 6LoWPAN ND is point-to-point (P2P)
-  between a node and a router. An IP interface bundles multiple links between
-  this node and peers in the same subnet, aka point-to-multipoint (P2MP). The
-  subnet is a not-on-link L3-connected collection of such nodes and links, which
-  means that the any-to-any connectivity across the subnet is ensured through L3
-  routing as opposed to transitive (any-to-any) reachability from L2.
-</t>
-<t>
-  This section goes through the 6LoWPAN ND mechanisms that this specification
-  leverages, as a non-normative reference to the reader. The relevant normative
-  text is to be found in <xref target='RFC6775'/>, <xref target='RFC8505'/>, and
-  <xref target='RFC8928'/>.
+  This section goes through the 6LoWPAN ND network abstractions and mechanisms
+  that this specification leverages, as a non-normative reference to the reader.
+  The relevant normative text is to be found in <xref target='RFC6775'/>,
+  <xref target='RFC8505'/>, and <xref target='RFC8928'/>.
 </t>
 
+<section anchor='link'><name>IPv6 Interface, Link, and Subnet</name>
+<t>
+  The typical abstraction for an IP Link with 6LoWPAN ND is a logical
+  point-to-point (P2P) link between a node (a host or a router) and a router,
+  regardless of the physical medium between the node and the router, which
+  may or may not be shared with other nodes.
+</t>
+<t>
+  A Subnet is deployed over a mesh of nodes connected with those logical P2P
+  Links, where routers form a connected dominating set as represented in
+  <xref target="FigMesh"/>; the resulting aggregate is called a multilink subnet
+  (MLSN). An MLSN may be only partially meshed, and the underlaying network is
+  not expected to provide a multicast or a broadcast service across the subnet.
+  </t>
+<figure anchor="FigMesh">
+          <name>PPP Links in an NBMA Mesh</name>
+       <artwork align="center" name="" type="" alt="">
+       <![CDATA[
+
+    +------+                     +------+
+    | Host |----------+    +-----| Host |
+    +------+          |    |     +------+
+        |           +--------+
+        |   +-------| Router |
+        |   |       +--------+
+     +--------+        |   |       +------+
+     | Router |        |   +------ | Host |
+     +--------+        |           +------+
+        |   |   +--------+
+        |   +---| Router |
+        |       +--------+
+      +------+     |  |     +------+
+      | Host |-----+  +-----| Host |
+      +------+                +------+
+
+]]>
+       </artwork>
+</figure>
+<t>
+  Consequently, the subnet model is not-on-link, meaning that the any-to-any
+  connectivity across the subnet is ensured through L3 operations (routing or
+  proxy) as opposed to transitive (any-to-any) reachability from L2. It also
+  means that hosts do not lookup other nodes using IPv6 Neighbor Discovery but
+  forward all their traffic via their connected routers. Which in turn means
+  that only routers need to be discovered, which is done by sending Router
+  Advertisement (RA) messages to all directly reachable nodes in the subnet,
+  e.g., using a radio broadcast.
+</t>
+
+<t>
+  As illustrated in <xref target="FigIntf"/>, an IP interface bundles multiple
+  sub-interfaces to connect the IP links between this node and peers in the
+  same subnet, which is known as a point-to-multipoint (P2MP) interface.
+</t>
+
+
+<figure anchor="FigIntf">
+          <name>P2MP Interface</name>
+       <artwork align="center" name="" type="" alt="">
+       <![CDATA[
+
+    +---------------------
+    | P2MP Interface
+    | --------------
+    |  MAC Address
+    |  IPv6 Link-Local address(es)
+    |  IPv6 global addresses
+    |
+    |   +------------------------
+    |   | P2P sub-interface
+    |   | -----------------
+    |   |  Peer MAC Address
+    |   |  Peer IP addresses
+    |   +------------------------
+    |
+    |   +------------------------
+    |   | P2P sub-interface
+    |   | -----------------
+    |   |  Peer MAC Address
+    |   |  Peer IP addresses
+    |   +------------------------
+    |
+    |   +------------------------
+    |   | P2P sub-interface
+    |   | -----------------
+    |   |  Peer MAC Address
+    |   |  Peer IP addresses
+    |   +------------------------
+    |
+    |    ....
+    |
+    +---------------
+]]>
+       </artwork>
+</figure>
+<t>
+  In the case of a 6LoWPAN radio, the IP Interface may be physical, and the P2P
+  IP links are virtual based on discovered neighbor routers; the same model can
+  apply when the node is connected via a switch to one or more routers.
+</t>
+<t>
+  In the case of a multihomed NIC card in a datacenter, the NIC is connected to
+  several Top-of-Rack (ToR) switches acting as leaves in the fabric, over as
+  many Ethernet physical interfaces.
+  If the NIC provides a L2 virtual switch, then the stack can apply the same
+  model as above, modeling the virtual port to the virtual switch as a P2MP
+  interface.
+</t>
+<t>
+  On the other hand, if the NIC provides a virtual router, then Ethernet ports
+  are L3 ports and the physical link to the leaf is modeled as P2P. To form
+  the P2MP interface, the router bundles (aggregates) the physical interfaces as
+  the sub-interfaces of a single logical P2MP Link, as shown in
+  <xref target="FigbundleIntf"/>.
+</t>
+<figure anchor="FigbundleIntf">
+          <name>Logical P2MP Interface</name>
+       <artwork align="center" name="" type="" alt="">
+       <![CDATA[
+
+    +---------------------
+    | NIC Aggregate interface
+    | -----------------------
+    |  virtual MAC Address
+    |  IPv6 global addresses
+    |
+    |   +------------------------
+    |   |  Ethernet Port 1
+    |   | -----------------
+    |   |  Physical MAC Address
+    |   |  IPv6 Link-Local address(es)
+    |   |  Leaf MAC Address
+    |   |  Leaf IP addresses
+    |   +------------------------
+    |
+    |   +------------------------
+    |   | Ethernet Port 2
+    |   | -----------------
+    |   |  Physical MAC Address
+    |   |  IPv6 Link-Local address(es)
+    |   |  Leaf MAC Address
+    |   |  Leaf IP addresses
+    |   +------------------------
+    |
+    |    ....
+    |
+    +---------------
+]]>
+       </artwork>
+</figure>
+<t>
+  To conserve the same model, it makes sense to configure the same (virtual) MAC
+  address on all the physical interfaces, and use it for the purpose of IPv6 ND.
+  In that case, the same MAC address is exposed as Link-layer Address (LLA) to
+  both leaves for the NIC IP addresses, and the IPv6 address still appears as
+  unicast.
+  Note that the Link-Local addresses used to register the global IPv6 addresses
+  to the leaf may be different but that does not affect the exposed mapping.
+</t>
+<t>
+  When that is not possible, then the same IP address is advertised with
+  the physical MAC address of each port as the LLA over that port. In that
+  case, the global IPv6 address appears as anycast, and SHOULD be advertised
+  as such, more in <xref target='mcast'/>.
+</t>
+
+</section> <!--IPv6 Interface, Link, and Subnet -->
 <section anchor='R6775'><name>RFC 6775 Address Registration</name>
 
 <t>
@@ -1314,7 +1475,7 @@ expect other functionality such as 6LoWPAN Header Compression:
         Extending MAC Mobility Extended Community to transport the TID
         allows to design a solution that,
         while backwards compatible, allows to introduce ROVR MAC as "more trusted"
-        entities. <xref target="feVPNtgt"/> presents the according extensions that
+        entities. <xref target="fEVPNtgt"/> presents the according extensions that
         will however necessitate some further explanation.
     </t>
 
@@ -1327,7 +1488,7 @@ expect other functionality such as 6LoWPAN Header Compression:
     </t>
 
 
- <figure anchor='feVPNtgt' suppress-title='false'><name>Modified MAC Mobility Extended Community</name>
+ <figure anchor='fEVPNtgt' suppress-title='false'><name>Modified MAC Mobility Extended Community</name>
  <artwork>
   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -1424,7 +1585,7 @@ expect other functionality such as 6LoWPAN Header Compression:
 
 <t>
   With this specification, the 6LBR communicates internally with the collocated
-  eVPN router to inject the route in eVPN. Since the <xref target='RFC8928'/>
+  EVPN router to inject the route in EVPN. Since the <xref target='RFC8928'/>
   validation was performed, the V flag is set. Once this is done, the local 6LBR
   installs a local state associated to the NCE and becomes owner of the
   registration, whereas the remote leaves optionally install a remote state for
@@ -1536,7 +1697,7 @@ expect other functionality such as 6LoWPAN Header Compression:
  </figure>
  <t>
    The registration is associated with a lifetime, and it must be renewed with
-   an incremented TID. The new TID is propagated in eVPN as illustrated in
+   an incremented TID. The new TID is propagated in EVPN as illustrated in
   <xref target='fReg2'/>.
  </t>
  <figure anchor='fReg2' suppress-title='false'><name>Host Registration Renewal</name>
@@ -1813,7 +1974,7 @@ Different ES (movement):
       |                |                 |                |
 ]]></artwork> </figure>
  <t>
-  When the lifetime elapses, the 6LBR requires the collocated eVPN router to
+  When the lifetime elapses, the 6LBR requires the collocated EVPN router to
   withdraw the route.
  </t>
  <figure anchor='fRegTO' suppress-title='false'><name>Lifetime Elapse</name>
