@@ -12,7 +12,7 @@ Expires: 22 July 2022                              Juniper Networks, Inc
 
 
                        Secure EVPN MAC Signaling
-            draft-thubert-bess-secure-EVPN-mac-signaling-03
+            draft-thubert-bess-secure-evpn-mac-signaling-03
 
 Abstract
 
