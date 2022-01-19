@@ -331,7 +331,7 @@ expect other functionality such as 6LoWPAN Header Compression:
   not expected to provide a multicast or a broadcast service across the subnet.
   </t>
 <figure anchor="FigMesh">
-          <name>PPP Links in an NBMA Mesh</name>
+          <name>P2P Links in a Multilink Subnet</name>
        <artwork align="center" name="" type="" alt="">
        <![CDATA[
 
