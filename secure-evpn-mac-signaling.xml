@@ -2073,7 +2073,7 @@ Different ES (movement):
    </thead><tbody>
 
       <tr> <td>0..5</td> <td>Unassigned</td> <td>N/A</td> </tr>
-      <tr><td>6</td><td>Super-sticky (X)</td><td>THIS RFC</td></tr>
+      <tr><td>6 (Suggested)</td><td>Super-sticky (X)</td><td>THIS RFC</td></tr>
       <tr><td>7 </td><td>Sticky (S)</td><td>RFC 7432</td></tr>
    </tbody>
    </table>
