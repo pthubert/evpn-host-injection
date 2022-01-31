@@ -624,7 +624,7 @@ expect other functionality such as 6LoWPAN Header Compression:
    This specification does not address how the protection by
    <xref target='RFC8928'/> could be extended for use in EVPN.
    On the other hand, it adds the ROVR to the BGP advertisement to share the
-   state with the other routers via the Reflector (see <xref target='tgt'/>),
+   state with the other routers via the Reflector (see <xref target='aec'/>),
    which means that the routers that are aware of the Host route are also aware
    of the ROVR associated to the Target Address, whether it is cryptographic
    and should be verified.
@@ -1297,7 +1297,8 @@ expect other functionality such as 6LoWPAN Header Compression:
         Basically the MAC Mobility Extended Community <xref target='RFC7432'/> and the
         ARP/ND Extended Community <xref target='RFC9047'/> are extended to advertise
         the sequencing and ownership validation information received in the EARO.
-        With 6LR injecting not only MACs via packet sources and TLLAO options but also ROVR into MAC Mobility and ARP/ND Extended Community, their semantics will be somewhat extended. Specifically following issues have to be addressed:</t>
+        With 6LRs injecting not only MACs via packet sources and TLLAO options but also ROVR into MAC Mobility and ARP/ND Extended Community, their semantics must be extended.
+        Specifically following issues have to be addressed:</t>
     <ul>
         <li>
             The ROVR extends the semantics of the type-2 MAC advertisement via changes in ARP/ND
@@ -1309,11 +1310,11 @@ expect other functionality such as 6LoWPAN Header Compression:
             topological information (it will be called ROVR MAC in further
             text). EVPN nodes not supporting extensions introduced by this document
             will need to be led to believe that a ROVR MAC is to be preferred over any advertisement
-            they see as long a ROVR MAC route is present. Nevertheless, primary key of NRLI is still
+            they see as long a ROVR MAC route is present. The primary key of NRLI is still
             the (IP, MAC, Ethernet Tag ID) tuple as defined in <xref target='RFC7432'/>, Section 7.2 and 7.7.
-            This implies
-            that the same MAC (and consequently ROVR MAC) can be assigned multiple IP addresses and
-            those represent independent NLRIs.
+            This implies that the same MAC (and consequently ROVR MAC) can be
+            assigned multiple IP addresses with differeent ROVRs and those
+            represent independent NLRIs.
         </li>
         <li>
            The TID field in the EARO is smaller than the mobility sequence number in <xref target='RFC7432'/>.
@@ -1322,8 +1323,7 @@ expect other functionality such as 6LoWPAN Header Compression:
            distinguish a TID-generated sequence number from a legacy sequence number.
         </li>
         <li>
-           <xref target='RFC8505'/> supports IP multihoming, but does not differentiate multihoming from
-            anycast, e.g., using the MAC address, to enable MAC address rotation. If an anycast IP address
+           <xref target='RFC8505'/> supports IP multihoming, but does not differentiate multihoming from anycast or MAC address rotation. If an anycast IP address
             is registered with a different ROVR it will be rejected as duplicate. If it is
            registered with a different TID, the older sequence will be withdrawn. So the basic expectation
             with <xref target='RFC8505'/> is that
@@ -1339,7 +1339,7 @@ expect other functionality such as 6LoWPAN Header Compression:
         </t>
         <ul>
         <li>
-           This specification uses the "O" flag in the  ARP/ND extended community to signal that the IP address is anycast, and requires
+           This specification uses the "O" flag in the ARP/ND extended community to signal that the IP address is anycast, and requires
             the local 6LBR to ignore the duplication if the same IP address is registered locally, and then to
             inject the NLRI with the "O" flag set on the ARP/ND Extended Community as well.
         </li>
@@ -1370,57 +1370,62 @@ expect other functionality such as 6LoWPAN Header Compression:
         <li>
            <xref target='RFC8928'/> expects nodes to autoconfigure the keypair that is
             used to form the ROVR, in which case the IPv6 address can be locally
-            autoconfigured with no central coordination; in that case, the ROVR only
-            protects the ownership and enforce first-come first-serve and source address
-            validation. But it is also possible to pre-provision the ROVR in the 6LBR
-            and then provision the keypair in the node, e.g., in the case of a trusted
-            server. To enable that capability in EVPN, this specification adds a flag to
+            autoconfigured with no central coordination; in that case, the ROVR
+            protects the address ownership and allows the fabric to enforce
+            first-come first-serve and source address validation (SAVI).
+            But it is also possible to provision the ROVR in the 6LBR in advance
+            and later configure the keypair in the node, e.g., in the case of a trusted
+            server. To enable that capability in EVPN, this specification adds a flag (U) to
             signal that the 6LBR that injects the address in EVPN does not provide
             reachability to the address. When that flag is set, the value of the TID is
             ignored in the mobility computation, the mapping to the MAC address is ignored,
             and the route to the IP address is not injected in the RIB on ROVR nodes.
             Non-ROVR nodes will consider the node a "honey-pot". Once the address is
             registered by a 6LN in the network and the according validation with
-            the node advertising the U-bit version of the route performed, the
+            the node advertising the U-bit version of the route is performed, the
             owner will inject the route without the U-bit. A node advertising the
             NLRI with U-bit in its ARP/ND Extended Community MUST withdraw the U-bit route once it sees a validated
             NLRI without the U-bit and it MAY reinject the route with the U-bit once all routes without the U-bit are withdrawn to protect the address again.
         </li>
     </ul>
-    <t>
-        EVPN signaling is not used to carry ROVR since without challenge per  <xref target="RFC8928"/>
-        they do not represent any difference over using the IP/MAC combination.
-        Instead, the full ROVR is verified upon a movement or a multi-homed advertisement using an EDAR/EDAC exchange.
 
-        Additionally,
-        backwards compatibility could not be preserved given comparing routes based on ROVR would
-        present a change in primary key of NLRIs which non-ROVR routers do not implement. An indication
-        from a ROVR node that a MAC has been validated by proof of ownership is enough to convey the
-        necessary information.
-        Only a small hash of the ROVR is carried to speed up the identification of an address duplication.
-    </t>
-
-<section anchor='aec'><name>ARP/ND Extended Community</name>
+<section anchor='aec'><name>Updated ARP/ND Extended Community</name>
 <t>
    The ARP/ND Extended Community defined in <xref target='RFC9047'/>
    is a transitive EVPN Extended Community (Type field value of 0x06) with a
    Sub-Type of 0x08. It is advertised along with EVPN MAC/IP Advertisement
    routes that carry an IPv4 or IPv6 address.
-   Extending the ARP/ND Extended Community to transport fields from the
+   This  the ARP/ND Extended Community to transport fields from the
    EARO is natural since the EARO is an extension to IPv6 ND.
 </t>
-<t>
+
+    <t>
+   EVPN signaling is not used to carry the full ROVR since without challenge per
+   <xref target="RFC8928"/> they do not represent any difference over using the
+   IP/MAC combination.
+   A Hash of the ROVR is still passed in the ARP/ND Extended Community to
+   immediately detect a duplication, with 2 different values of the hash
+   for the same address.
+   The full ROVR is verified upon a movement or a multi-homed advertisement
+   using an EDAR/EDAC exchange with the 6LBR that advertised the address
+   first.
 </t>
-    <t>ROVR nodes MUST set the "H" flag in Mobility Extended Community to indicate that
-    the advertisement is a ROVR MAC in case the host followed the according procedures.
-        ROVR MACs use (instead of increasing the normal sequence
-    number) the TID in the high bits of the sequence number field to "override" any normal MAC
-    advertisement (further considerations will be provided in <xref target="EVPNproc"/>). </t>
+
+    <t>
+   Additionally, backwards compatibility could not be preserved given comparing
+   routes based on ROVR would present a change in primary key of NLRIs which
+   non-ROVR routers do not implement. An indication from a ROVR node that a MAC
+   has been validated by proof of ownership is enough to convey the necessary
+   information.
+    </t>
+    <t>
+    ROVR nodes MUST set the "H" flag in the ARP/ND Extended Community to indicate
+    that the advertisement carries a TID and a ROVR Hash in case the host
+    followed the according procedures. </t>
 
     <t>ROVR nodes MUST set the "V" flag if the address assignment passed proof of ownership per
         <xref target="RFC8928"/>. Such "validated" ROVR MAC addresses will be preferred by
-        ROVR nodes over non
-    validated ROVR MACs. </t>
+        ROVR nodes over non-validated ROVR MACs. </t>
 
     <t>In case a ROVR node configures the address as "sticky" (since the sticky bit semantics
     have been changed to the point a ROVR cannot tell whether address is really sticky unless
@@ -1433,50 +1438,63 @@ expect other functionality such as 6LoWPAN Header Compression:
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  | Type=0x06     | Sub-Type=0x08 |    Flags (2 octet)            |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- | Reserved = 0  |                 ROVR Hash                     |
+ |      TID      |                 ROVR Hash                     |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
     Flags field:
   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- |       |I| |O|R|   |M|U|M|X|V|H|
+ |U|M|V|H|I| |O|R|   Reserved    |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
        </artwork>
 </figure>
 
- <t>Flags:</t>
+   <t>
+    The "I","O", and "R" flags are defined in <xref target='RFC9047'/>.
+    The following new fields are defined:
+    </t>
 
     <dl  spacing='normal'>
 
-	<dt>U:</dt><dd>Unreachable, indicating that the IP address is not reachable
+	<dt>U:</dt><dd>1-bit flag. "Unreachable", indicating that the IP address is not reachable
         via that EVPN next hop, but is advertised for the purpose of protecting
         the value of the ROVR until a first 6LBR that can reach the address
         becomes available.</dd>
-	<dt>M:</dt><dd>Multicast, indicating that the IP address duplication
+
+	<dt>M:</dt><dd>1-bit flag. "Multicast", indicating that the IP address duplication
         should be ignored. When this bit is set, TID should be ignored in
         comparison of EVPN advertisements, i.e. all ROVR MACs at same
         level of validation MUST be considered having same TID.</dd>
 
 
-    <dt>V:</dt><dd>ROVR Validated indicates that the MAC passed proof of ownership per
-            <xref target="RFC8928"/>. Presence of this bit implies the "R" bit being set irregardless of its value.</dd>
-    <dt>X:</dt><dd>Super Sticky indicates that the ROVR MAC is sticky and should follow
-                procedures of sticky per <xref target='RFC7432'/>. </dd>    <dt>H:</dt><dd>ROVR Capable indicates that the advertisement is originated
-            after processing signaling from host meeting the requirements in <xref target="prereq"/>.
-            This indicates a ROVR MAC.</dd>
-    <dt>ROVR Hash:</dt><dd>Hash of ROVR used to generate the according ROVR MAC. Hash is built
-            by XOR'ing ROVR bytes in network order into the least significant byte and rotating
-            the two bytes result after every byte by one bit to the left.</dd>
+    <dt>V:</dt><dd>1-bit flag. "ROVR Validated" indicates that the MAC passed proof of ownership per
+            <xref target="RFC8928"/>. Presence of this bit implies the "R" bit being set regardless of its value.</dd>
+
+    <dt>H:</dt><dd>1-bit flag. "ROVR Capable" indicates that the advertisement is originated
+        after processing signaling from host meeting the requirements in
+        <xref target="prereq"/>, and that the advertised MAC address is a ROVR MAC.
+        This also indicates that the TID and ROVR Hash
+        fields are populated based on information from the most recent EARO
+        <xref target="RFC8505"/> from the host.</dd>
+
+    <dt>TID:</dt><dd>8-bits structure. The TID <xref target="RFC8505"/> from the Registering Node. </dd>
+    <dt>ROVR Hash:</dt><dd>16-bits hash of ROVR <xref target="RFC8505"/> from the Registering Node.
+    The Hash is built by XOR'ing ROVR bytes in network order into the least
+    significant byte and rotating the two bytes result after every byte by one bit to the left.</dd>
 	</dl>
 </section> <!-- "ARP/ND Extended Community" -->
-<section anchor='tgt'><name>ROVR MAC Mobility Extended Community</name>
+<section anchor='mec'><name>Updated Mobility Extended Community</name>
 
     <t>
-        Extending MAC Mobility Extended Community to transport the TID
-        allows to design a solution that,
-        while backwards compatible, allows to introduce ROVR MAC as "more trusted"
-        entities. <xref target="fEVPNtgt"/> presents the according extensions that
-        will however necessitate some further explanation.
+    This specification extends the MAC Mobility Extended Community to transport
+    the TID instead of increasing the normal sequence number.
+    The TID is placed in the high bits of the sequence number field to "override"
+    any normal MAC advertisement (further considerations will be provided in
+    <xref target="EVPNproc"/>).
+    this allows to design a solution that, while backwards compatible, allows
+    to introduce ROVR MAC as "more trusted" entities.
+    <xref target="fEVPNtgt"/> presents the according extensions that
+     will however necessitate some further explanation.
     </t>
 
     <t>
@@ -1488,11 +1506,11 @@ expect other functionality such as 6LoWPAN Header Compression:
     </t>
 
 
- <figure anchor='fEVPNtgt' suppress-title='false'><name>Modified MAC Mobility Extended Community</name>
+ <figure anchor='fEVPNtgt' suppress-title='false'><name>Updating the MAC Mobility Extended Community for ROVR MACs</name>
  <artwork>
   0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
- | Type=0x06     | Sub-Type=0x00 |  Flags = 0  |S|  Reserved = 0 |
+ | Type=0x06     | Sub-Type=0x00 | Flags = 0 |X|S|  Reserved = 0 |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
  |T| Flags = 0   |       TID     |     Reserved = 0              |
  +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -1509,13 +1527,18 @@ expect other functionality such as 6LoWPAN Header Compression:
     The "S" flag is defined in <xref target='RFC7432'/>.
     The following new fields are defined:
     </t>
-    <dl  spacing='normal'>
 
-        <dt>T:</dt><dd>1-bit flag. MUST be set to 1 when this specification is used. This
+
+    <dl spacing='normal'>
+        <dt>X:</dt>
+            <dd>1-bit flag. "Super Sticky" indicates that the ROVR MAC is sticky and should follow
+                procedures of sticky per <xref target='RFC7432'/>. </dd>
+        <dt>T:</dt>
+            <dd>1-bit flag. "TID Present", MUST be set to 1 when this specification is used. This
         ensures that the TID always wins vs. the sequence counter defined in
         <xref target='RFC7432'/></dd>
-        <dt>TID:</dt><dd>contains the ROVR MAC TID per <xref target="RFC8505"/>. This MUST NOT be
-    zero, i.e. a ROVR </dd>
+        <dt>TID:</dt>
+            <dd>The TID copied from the most recent EARO <xref target="RFC8505"/> from the Registering Node. </dd>
     </dl>
 
 </section> <!-- end section "Updated EVPN Target Option" -->
@@ -2031,6 +2054,55 @@ Different ES (movement):
    </table>
 
 </section>  New EARO Status Value -->
+
+
+
+<section anchor="iana-MAC"><name>MAC Mobility Extended Community Flags</name>
+
+
+<t>
+   This document creates the "MAC Mobility Extended Community Flags" registry
+   based on one flag initially defined in <xref target='RFC9047'/> and more
+   flags defined in <xref target="mec"/> as shown in <xref target="mect"/>:
+    </t>
+
+   <table  anchor="mect">
+      <name>MAC Mobility Extended Community Flags</name>
+   <thead>
+      <tr><td>Flag Position</td><td>Name</td><td>Reference</td></tr>
+   </thead><tbody>
+
+      <tr> <td>0..5</td> <td>Unassigned</td> <td>N/A</td> </tr>
+      <tr><td>6</td><td>Super-sticky (X)</td><td>THIS RFC</td></tr>
+      <tr><td>7 </td><td>Sticky (S)</td><td>RFC 7432</td></tr>
+   </tbody>
+   </table>
+
+   </section>
+
+<section anchor="iana-ARP"><name>ARP/ND Extended Community Flags</name>
+
+
+<t>
+   This document modifies the "ARP/ND Extended Community Flags" registry
+   initially created in Section 5 of <xref target='RFC9047'/> .
+  <xref target='aec'/> suggests to assign new entries in the Registry as
+  indicated in <xref target="aect"/>:
+    </t>
+
+   <table  anchor="aect">
+      <name>New ARP/ND Extended Community Flags</name>
+   <thead>
+      <tr><td>Flag Position</td><td>Name</td><td>Reference</td></tr>
+   </thead><tbody>
+      <tr><td>0 (Suggested)</td><td>Unreachable(U)</td><td>THIS RFC</td></tr>
+      <tr><td>1 (Suggested)</td><td>Multicast (M)</td><td>THIS RFC</td></tr>
+      <tr><td>2 (Suggested)</td><td>ROVR Validated (V)</td><td>THIS RFC</td></tr>
+      <tr><td>3 (Suggested)</td><td>ROVR Capable (H)</td><td>THIS RFC</td></tr>
+   </tbody>
+   </table>
+
+   </section>
 
 
 </section>
