@@ -15,7 +15,7 @@
 <?rfc tocappendix="yes"?>
 <rfc  xmlns:xi="http://www.w3.org/2001/XInclude" category="std" ipr='trust200902' tocInclude="true" updates='' obsoletes="" consensus="true"
       submissionType="IETF" xml:lang="en" version="3"
-      docName="draft-thubert-bess-secure-evpn-mac-signaling-04" >
+      docName="draft-thubert-bess-secure-evpn-mac-signaling-05" >
 
 
 <front>
@@ -634,59 +634,9 @@ expect other functionality such as 6LoWPAN Header Compression:
    and should be verified.
 </t>
 
-</section> <!-- end section "ROVR" -->
-
-<section anchor='mcast'><name>Anycast and Multicast Addresses</name>
-<t>
-  <xref target="I-D.ietf-6lo-multicast-registration">
-  "IPv6 Neighbor Discovery Multicast Address Registration"
-  </xref> extends <xref target='RFC8505'/>  to enable the address registration
-  of IPv6 anycast and multicast addresses. From the host perspective, the
-  registration is very similar to that of unicast addresses, but for a flag in
-  the EARO that signals that the address is multicast or anycast.
-</t><t>
-  This procedure can be used as a replacement to <xref target="RFC3810">
-  "Multicast Listener Discovery Version 2 (MLDv2) for IPv6" </xref> for
-  source-independant multicast operation. As for unicast, the method saves the
-  need for the host to listen to pollings from the router, and allows the
-  host to sleep for periods of time.
-</t>
-
-
-<section anchor='mcast'><name>Prefix Registration</name>
-<t>
-  <xref target="I-D.ietf-6lo-prefix-registration">
-  "IPv6 Neighbor Discovery Prefix Registration"
-  </xref> provides another extension of <xref target='RFC8505'/>
-  to enable the registration of prefixes. The registration is agnostic to the
-  method that the Registering Node used to obtain the prefix (DHCP-PD, IPAM,
-  manual configuration, or autoconfiguration).
-</t><t>
-  As for addresses, the Registering Node may request that the router ensures
-  reachability for the Registered Prefix, typically by redistributing the prefix in a
-  routing protocol. The registration is also agnostic to the routing protocol
-  that is being used.
-</t><t>
-  The Registered Prefix may be owned by the Registering Node, for instance if
-  the prefix is used for a tethered stub or iwithin the node to address
-  applications and / or virtual machines. In that case, the
-  expectation for the routing fabric is to forward packets with a destination
-  address that matches the prefix towards the Registering Node.
-</t><t>
-  Alternatively, the Registered Prefix may be signaled as topologically correct
-  at the Registering Node. This means that the Registering Node can relay packets
-  that are sourced in the Registered Prefix to the outside, and the packets will
-  be not be filtered by the application of <xref target="RFC2827"/>.
-  This is used to announce a Provicer Assigned (PA) address range and ensure
-  that packets exit the network via the ISP that provided the prefix.
-  In that case, the
-  expectation for the routing fabric is to forward packets destined to the outside
-  and with with a source address that matches the prefix towards the
-  Registering Node.
-</t>
+</section> <!-- end section "Route Ownership Verifier" -->
 
 </section> <!-- end section "RFC 8505 Extended ARO" -->
-</section> <!-- end section Anycast and Multicast Addresses -->
 
 <section anchor='R8505D'><name>RFC 8505 Extended DAR/DAC</name>
 
@@ -751,6 +701,57 @@ expect other functionality such as 6LoWPAN Header Compression:
 </t>
 </section> <!-- end section "RFC 8505 Extended DAR/DAC" -->
 
+<section anchor='mcast'><name>Anycast and Multicast Addresses</name>
+<t>
+  <xref target="I-D.ietf-6lo-multicast-registration">
+  "IPv6 Neighbor Discovery Multicast Address Registration"
+  </xref> extends <xref target='RFC8505'/>  to enable the address registration
+  of IPv6 anycast and multicast addresses. From the host perspective, the
+  registration is very similar to that of unicast addresses, but for a flag in
+  the EARO that signals that the address is multicast or anycast.
+</t><t>
+  This procedure can be used as a replacement to <xref target="RFC3810">
+  "Multicast Listener Discovery Version 2 (MLDv2) for IPv6" </xref> for
+  source-independant multicast operation. As for unicast, the method saves the
+  need for the host to listen to pollings from the router, and allows the
+  host to sleep for periods of time.
+</t>
+
+
+</section> <!-- end section Anycast and Multicast Addresses -->
+<section anchor='prefix'><name>Prefix Registration</name>
+<t>
+  <xref target="I-D.ietf-6lo-prefix-registration">
+  "IPv6 Neighbor Discovery Prefix Registration"
+  </xref> provides another extension of <xref target='RFC8505'/>
+  to enable the registration of prefixes. The registration is agnostic to the
+  method that the Registering Node used to obtain the prefix (DHCP-PD, IPAM,
+  manual configuration, or autoconfiguration).
+</t><t>
+  As for addresses, the Registering Node may request that the router ensures
+  reachability for the Registered Prefix, typically by redistributing the prefix in a
+  routing protocol. The registration is also agnostic to the routing protocol
+  that is being used.
+</t><t>
+  The Registered Prefix may be owned by the Registering Node, for instance if
+  the prefix is used for a tethered stub or iwithin the node to address
+  applications and / or virtual machines. In that case, the
+  expectation for the routing fabric is to forward packets with a destination
+  address that matches the prefix towards the Registering Node.
+</t><t>
+  Alternatively, the Registered Prefix may be signaled as topologically correct
+  at the Registering Node. This means that the Registering Node can relay packets
+  that are sourced in the Registered Prefix to the outside, and the packets will
+  be not be filtered by the application of <xref target="RFC2827"/>.
+  This is used to announce a Provicer Assigned (PA) address range and ensure
+  that packets exit the network via the ISP that provided the prefix.
+  In that case, the
+  expectation for the routing fabric is to forward packets destined to the outside
+  and with with a source address that matches the prefix towards the
+  Registering Node.
+</t>
+
+</section> <!-- end section Prefix Registration -->
 <section anchor='R7400'><name>RFC 7400 Capability Indication Option</name>
 
 <t>
@@ -1305,7 +1306,7 @@ expect other functionality such as 6LoWPAN Header Compression:
    To benefit from that capability, both the host and the 6LR MUST support
    the "A" and "M" flags that indicate Anycast and Multicast Addresses
    respectively. Those flags are defined in
-   <xref target="I-D.thubert-6lo-multicast-registration"/> for use in the EARO
+   <xref target="I-D.ietf-6lo-multicast-registration"/> for use in the EARO
    and in the EDAR and EDAC messages.
    <!--
    If the registration is successful, the
@@ -1370,7 +1371,7 @@ expect other functionality such as 6LoWPAN Header Compression:
 
         </li>
         <li><t>
-        <xref target="I-D.thubert-6lo-multicast-registration"/> adds new flags in the EARO
+        <xref target="I-D.ietf-6lo-multicast-registration"/> adds new flags in the EARO
         to signal that an address is anycast or multicast, respectively. This specification
         injects that information in the ARP/ND extended community using matching flags as follows:
         </t>
